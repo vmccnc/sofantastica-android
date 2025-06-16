@@ -4,7 +4,7 @@ import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.CategoryDto
 import retrofit2.http.GET
 
-interface FurnitureApi {
+interface RetrofitApiService {
     @GET("sofantastic/furniture")
     suspend fun getFurniture(): List<FurnitureDto>
 
