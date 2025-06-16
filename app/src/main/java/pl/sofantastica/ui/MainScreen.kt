@@ -86,9 +86,8 @@ fun MainScreen() {
             composable(
                 route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-               FurnitureDetailRoute(id)
+            ) {
+                FurnitureDetailRoute()
             }
         }
     }
