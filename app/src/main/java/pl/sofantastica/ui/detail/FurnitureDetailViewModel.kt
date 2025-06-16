@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.domain.usecase.GetFurnitureDetailUseCase
 import pl.sofantastica.ui.common.UiState
 import javax.inject.Inject
@@ -13,7 +14,7 @@ class FurnitureDetailViewModel @Inject constructor(
     private val getDetail: GetFurnitureDetailUseCase
 ) : ViewModel() {
 
-    var uiState: UiState<pl.sofantastica.data.model.FurnitureDto> = UiState.Loading
+    var uiState: UiState<FurnitureDto> = UiState.Loading
         private set
 
     fun load(id: Int) {

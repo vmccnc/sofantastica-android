@@ -10,6 +10,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import pl.sofantastica.data.model.FurnitureDto
+import pl.sofantastica.ui.common.UiState
+
+
+@Composable
+fun FurnitureDetailRoute(
+    id: Int,
+    viewModel: FurnitureDetailViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+) {
+    LaunchedEffect(id) {
+        viewModel.load(id)
+    }
+    when (val state = viewModel.uiState) {
+        is UiState.Loading -> Text("Loading...")
+        is UiState.Error -> Text("Error: ${state.throwable.message}")
+        is UiState.Success -> FurnitureDetailScreen(state.data)
+    }
+}
 
 @Composable
 fun FurnitureDetailScreen(item: FurnitureDto) {
@@ -24,15 +41,3 @@ fun FurnitureDetailScreen(item: FurnitureDto) {
     }
 }
 
-@Composable
-fun FurnitureDetailRoute(
-    id: Int,
-    viewModel: FurnitureDetailViewModel = androidx.hilt.navigation.compose.hiltViewModel()
-) {
-    androidx.compose.runtime.LaunchedEffect(id) { viewModel.load(id) }
-    when (val state = viewModel.uiState) {
-        pl.sofantastica.ui.common.UiState.Loading -> Text("Loading...")
-        is pl.sofantastica.ui.common.UiState.Error -> Text("Error: ${state.throwable.message}")
-        is pl.sofantastica.ui.common.UiState.Success -> FurnitureDetailScreen(state.data)
-    }
-}

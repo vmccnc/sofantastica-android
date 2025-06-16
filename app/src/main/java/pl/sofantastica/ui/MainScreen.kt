@@ -25,12 +25,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import pl.sofantastica.ui.catalog.CatalogRoute
 import pl.sofantastica.ui.home.HomeScreen
 import pl.sofantastica.ui.favorites.FavoritesRoute
 import pl.sofantastica.ui.cart.CartRoute
+import pl.sofantastica.ui.detail.FurnitureDetailRoute
 
 sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
     object Home : Screen("home", "Home", { Icon(Icons.Default.Home, contentDescription = null) })
@@ -81,12 +82,13 @@ fun MainScreen() {
             composable(Screen.Catalog.route) { CatalogRoute(onItemClick = { id -> navController.navigate("detail/$id") }) }
             composable(Screen.Cart.route) { CartRoute("demoUser") }
             composable(Screen.More.route) { Text("More") }
+
             composable(
                 route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-                pl.sofantastica.ui.detail.FurnitureDetailRoute(id)
+               FurnitureDetailRoute(id)
             }
         }
     }
