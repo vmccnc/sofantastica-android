@@ -78,4 +78,5 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.config)
+    implementation(libs.coil.compose)
 }
