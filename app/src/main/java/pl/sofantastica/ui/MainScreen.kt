@@ -47,27 +47,30 @@ fun MainScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = backStackEntry?.destination?.route
-                val items = listOf(Screen.Home, Screen.Favorites, Screen.Catalog, Screen.Cart, Screen.More)
-                items.forEach { screen ->
-                    val selected = currentDestination == screen.route
-                    val iconModifier = if (screen == Screen.Catalog) Modifier
-                        .padding(vertical = 4.dp)
-                        .size(36.dp) else Modifier.size(24.dp)
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Box(modifier = iconModifier) { screen.icon() } },
-                        label = { Text(screen.label) }
-                    )
+            val backStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = backStackEntry?.destination?.route
+            val showBottom = currentRoute?.startsWith("detail") != true
+            if (showBottom) {
+                NavigationBar {
+                    val items = listOf(Screen.Home, Screen.Favorites, Screen.Catalog, Screen.Cart, Screen.More)
+                    items.forEach { screen ->
+                        val selected = currentRoute == screen.route
+                        val iconModifier = if (screen == Screen.Catalog) Modifier
+                            .padding(vertical = 4.dp)
+                            .size(36.dp) else Modifier.size(24.dp)
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            icon = { Box(modifier = iconModifier) { screen.icon() } },
+                            label = { Text(screen.label) }
+                        )
+                    }
                 }
             }
         }
@@ -87,7 +90,7 @@ fun MainScreen() {
                 route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
-                FurnitureDetailRoute()
+                FurnitureDetailRoute(navController)
             }
         }
     }
