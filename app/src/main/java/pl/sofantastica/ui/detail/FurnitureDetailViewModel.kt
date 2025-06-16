@@ -1,5 +1,8 @@
 package pl.sofantastica.ui.detail
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +17,7 @@ class FurnitureDetailViewModel @Inject constructor(
     private val getDetail: GetFurnitureDetailUseCase
 ) : ViewModel() {
 
-    var uiState: UiState<FurnitureDto> = UiState.Loading
+    var uiState by mutableStateOf<UiState<FurnitureDto>>(UiState.Loading)
         private set
 
     fun load(id: Int) {
