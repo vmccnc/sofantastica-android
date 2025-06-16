@@ -5,6 +5,8 @@ import pl.sofantastica.data.model.FabricDto
 import pl.sofantastica.data.model.OrderDto
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.DELETE
 
 interface RetrofitApiService {
     @GET("sofantastic/furniture")
@@ -36,4 +38,25 @@ interface RetrofitApiService {
 
     @retrofit2.http.POST("sofantastic/order")
     suspend fun createOrder(@retrofit2.http.Body order: OrderDto): Response<OrderDto>
+
+    @GET("sofantastic/favorites/{userId}")
+    suspend fun listFavorites(@retrofit2.http.Path("userId") userId: String): Response<List<FurnitureDto>>
+
+    @GET("sofantastic/favorites/{userId}/{furnitureId}")
+    suspend fun isFavorite(
+        @retrofit2.http.Path("userId") userId: String,
+        @retrofit2.http.Path("furnitureId") furnitureId: Long
+    ): Response<Boolean>
+
+    @POST("sofantastic/favorites/{userId}/{furnitureId}")
+    suspend fun addFavorite(
+        @retrofit2.http.Path("userId") userId: String,
+        @retrofit2.http.Path("furnitureId") furnitureId: Long
+    ): Response<Unit>
+
+    @DELETE("sofantastic/favorites/{userId}/{furnitureId}")
+    suspend fun removeFavorite(
+        @retrofit2.http.Path("userId") userId: String,
+        @retrofit2.http.Path("furnitureId") furnitureId: Long
+    ): Response<Unit>
 }
