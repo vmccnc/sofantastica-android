@@ -3,11 +3,10 @@ package pl.sofantastica.ui.catalog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import pl.sofantastica.data.model.CategoryDto
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.repository.FurnitureRepository
@@ -18,14 +17,14 @@ class CatalogViewModel @Inject constructor(
     private val repository: FurnitureRepository
 ) : ViewModel() {
 
-    private val _furniture = MutableStateFlow<List<FurnitureDto>>(emptyList())
-    val furniture: StateFlow<List<FurnitureDto>> = _furniture.asStateFlow()
+    var furniture by mutableStateOf<List<FurnitureDto>>(emptyList())
+        private set
 
-    private val _categories = MutableStateFlow<List<CategoryDto>>(emptyList())
-    val categories: StateFlow<List<CategoryDto>> = _categories.asStateFlow()
+    var categories by mutableStateOf<List<CategoryDto>>(emptyList())
+        private set
 
-    private val _selectedCategory = MutableStateFlow<CategoryDto?>(null)
-    val selectedCategory: StateFlow<CategoryDto?> = _selectedCategory.asStateFlow()
+    var selectedCategory by mutableStateOf<CategoryDto?>(null)
+        private set
 
     init {
         loadCategories()
@@ -33,23 +32,31 @@ class CatalogViewModel @Inject constructor(
     }
 
     fun selectCategory(category: CategoryDto?) {
-        _selectedCategory.value = category
+        selectedCategory = category
         loadFurniture()
     }
 
     private fun loadCategories() {
-        repository.getCategories()
-            .onEach { _categories.value = it }
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            categories = try {
+                repository.getCategories()
+            } catch (_: Exception) {
+                emptyList()
+            }
+        }
     }
 
     private fun loadFurniture() {
-        repository.getFurniture()
-            .onEach { list ->
-                _furniture.value = _selectedCategory.value?.let { cat ->
-                    list.filter { it.category == cat.name }
-                } ?: list
+        viewModelScope.launch {
+            val list = try {
+                repository.getFurniture()
+            } catch (_: Exception) {
+                emptyList()
             }
-            .launchIn(viewModelScope)
+            furniture = selectedCategory?.let { cat ->
+                list.filter { it.category == cat.name }
+            } ?: list
+        }
     }
 }
+

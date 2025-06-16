@@ -1,10 +1,9 @@
 package pl.sofantastica.data.repository
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import pl.sofantastica.data.api.RetrofitApiService
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.CategoryDto
+import retrofit2.HttpException
 import javax.inject.Inject
 
 
@@ -12,11 +11,31 @@ import javax.inject.Inject
 class FurnitureRepositoryImpl @Inject constructor(
     private val api: RetrofitApiService
 ) : FurnitureRepository {
-    override fun getFurniture(): Flow<List<FurnitureDto>> = flow {
-        emit(api.getFurniture())
+
+    override suspend fun getFurniture(): List<FurnitureDto> {
+        val response = try {
+            api.listFurniturs()
+        } catch (e: Exception) {
+            throw e
+        }
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) return body
+        }
+        throw HttpException(response)
     }
 
-    override fun getCategories(): Flow<List<CategoryDto>> = flow {
-        emit(api.getCategories().map { CategoryDto(it) })
+    override suspend fun getCategories(): List<CategoryDto> {
+        val response = try {
+            api.listCategories()
+        } catch (e: Exception) {
+            throw e
+        }
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) return body.map { CategoryDto(it) }
+        }
+        throw HttpException(response)
     }
 }
+
