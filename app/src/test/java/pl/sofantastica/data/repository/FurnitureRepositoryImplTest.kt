@@ -4,8 +4,13 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.sofantastica.data.api.RetrofitApiService
+import pl.sofantastica.data.model.AddCartItemResponse
+import pl.sofantastica.data.model.CartItemDto
+import pl.sofantastica.data.model.CartItemUpdateDto
 import pl.sofantastica.data.model.CategoryDto
 import pl.sofantastica.data.model.FurnitureDto
+import pl.sofantastica.data.model.PriceDto
+import pl.sofantastica.data.model.SuccessResponse
 import retrofit2.Response
 
 class FurnitureRepositoryImplTest {
@@ -33,10 +38,50 @@ class FurnitureRepositoryImplTest {
             throw UnsupportedOperationException()
         override suspend fun listPopularFabrics(): Response<List<pl.sofantastica.data.model.FabricDto>> =
             throw UnsupportedOperationException()
+
+        override suspend fun getPrice(furnitureId: Int, fabricId: Int): Response<PriceDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getCart(userId: String): Response<List<CartItemDto>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addCartItem(item: CartItemDto): Response<AddCartItemResponse> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateCartItem(
+            cartItemId: Int,
+            item: CartItemUpdateDto
+        ): Response<SuccessResponse> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCartItem(id: Int): Response<Unit> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun listOrders(userId: String): Response<List<pl.sofantastica.data.model.OrderDto>> =
             throw UnsupportedOperationException()
         override suspend fun createOrder(order: pl.sofantastica.data.model.OrderDto): Response<pl.sofantastica.data.model.OrderDto> =
             throw UnsupportedOperationException()
+
+        override suspend fun listFavorites(userId: String): Response<List<FurnitureDto>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun isFavorite(userId: String, furnitureId: Long): Response<Boolean> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addFavorite(userId: String, furnitureId: Long): Response<Unit> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun removeFavorite(userId: String, furnitureId: Long): Response<Unit> {
+            TODO("Not yet implemented")
+        }
     }
 
     private val repository = FurnitureRepositoryImpl(fakeApi)
