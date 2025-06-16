@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import pl.sofantastica.ui.catalog.CatalogRoute
 import pl.sofantastica.ui.home.HomeScreen
 import pl.sofantastica.ui.favorites.FavoritesRoute
-import pl.sofantastica.ui.cart.CartScreen
+import pl.sofantastica.ui.cart.CartRoute
 
 sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
     object Home : Screen("home", "Home", { Icon(Icons.Default.Home, contentDescription = null) })
@@ -45,7 +45,7 @@ fun MainScreen() {
             composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.Favorites.route) { FavoritesRoute("demoUser") }
             composable(Screen.Catalog.route) { CatalogRoute() }
-            composable(Screen.Cart.route) { CartScreen() }
+            composable(Screen.Cart.route) { CartRoute("demoUser") }
             composable(Screen.More.route) { Text("More") }
         }
         NavigationBar(modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)) {

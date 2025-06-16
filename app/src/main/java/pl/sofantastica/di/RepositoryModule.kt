@@ -12,6 +12,8 @@ import pl.sofantastica.data.repository.OrderRepository
 import pl.sofantastica.data.repository.OrderRepositoryImpl
 import pl.sofantastica.data.repository.FavoritesRepository
 import pl.sofantastica.data.repository.FavoritesRepositoryImpl
+import pl.sofantastica.data.repository.CartRepository
+import pl.sofantastica.data.repository.CartRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -40,4 +42,10 @@ abstract class RepositoryModule {
     abstract fun bindFavoritesRepository(
         impl: FavoritesRepositoryImpl
     ): FavoritesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCartRepository(
+        impl: CartRepositoryImpl
+    ): CartRepository
 }
