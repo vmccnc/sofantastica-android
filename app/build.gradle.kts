@@ -64,6 +64,9 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.retrofit.moshi)
     implementation(libs.okhttp.logging)
     implementation(libs.androidx.hilt.navigation.compose)
 }
