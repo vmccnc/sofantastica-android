@@ -3,6 +3,11 @@ package pl.sofantastica.data.api
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.FabricDto
 import pl.sofantastica.data.model.OrderDto
+import pl.sofantastica.data.model.PriceDto
+import pl.sofantastica.data.model.CartItemDto
+import pl.sofantastica.data.model.AddCartItemResponse
+import pl.sofantastica.data.model.CartItemUpdateDto
+import pl.sofantastica.data.model.SuccessResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -32,6 +37,33 @@ interface RetrofitApiService {
 
     @GET("sofantastic/fabric/popular")
     suspend fun listPopularFabrics(): Response<List<FabricDto>>
+
+    @GET("sofantastic/price")
+    suspend fun getPrice(
+        @retrofit2.http.Query("furnitureId") furnitureId: Int,
+        @retrofit2.http.Query("fabricId") fabricId: Int
+    ): Response<PriceDto>
+
+    @GET("sofantastic/cart/{userId}")
+    suspend fun getCart(
+        @retrofit2.http.Path("userId") userId: String
+    ): Response<List<CartItemDto>>
+
+    @POST("sofantastic/cart")
+    suspend fun addCartItem(
+        @retrofit2.http.Body item: CartItemDto
+    ): Response<AddCartItemResponse>
+
+    @retrofit2.http.PATCH("sofantastic/cart/{cartItemId}/color_and_quantity")
+    suspend fun updateCartItem(
+        @retrofit2.http.Path("cartItemId") cartItemId: Int,
+        @retrofit2.http.Body item: CartItemUpdateDto
+    ): Response<SuccessResponse>
+
+    @DELETE("sofantastic/cart/{id}")
+    suspend fun deleteCartItem(
+        @retrofit2.http.Path("id") id: Int
+    ): Response<Unit>
 
     @GET("sofantastic/order/{userId}")
     suspend fun listOrders(@retrofit2.http.Path("userId") userId: String): Response<List<OrderDto>>
