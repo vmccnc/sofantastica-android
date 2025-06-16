@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,12 +21,16 @@ import pl.sofantastica.data.model.CategoryDto
 import pl.sofantastica.data.model.FurnitureDto
 
 @Composable
-fun CatalogRoute(viewModel: CatalogViewModel = hiltViewModel()) {
+fun CatalogRoute(
+    onItemClick: (Int) -> Unit,
+    viewModel: CatalogViewModel = hiltViewModel()
+) {
     CatalogScreen(
         furniture = viewModel.furniture,
         categories = viewModel.categories,
         selected = viewModel.selectedCategory,
-        onSelectCategory = viewModel::selectCategory
+        onSelectCategory = viewModel::selectCategory,
+        onItemClick = onItemClick
     )
 }
 
@@ -35,7 +40,8 @@ fun CatalogScreen(
     furniture: List<FurnitureDto>,
     categories: List<CategoryDto>,
     selected: CategoryDto?,
-    onSelectCategory: (CategoryDto?) -> Unit
+    onSelectCategory: (CategoryDto?) -> Unit,
+    onItemClick: (Int) -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         val expanded = remember { mutableStateOf(false) }
@@ -58,9 +64,13 @@ fun CatalogScreen(
 
         LazyColumn {
             items(furniture) { item ->
-                Text(text = item.name, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp))
+                Text(
+                    text = item.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onItemClick(item.id) }
+                        .padding(8.dp)
+                )
             }
         }
     }
