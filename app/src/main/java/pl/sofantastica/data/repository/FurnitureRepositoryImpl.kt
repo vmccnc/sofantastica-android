@@ -17,6 +17,6 @@ class FurnitureRepositoryImpl @Inject constructor(
     }
 
     override fun getCategories(): Flow<List<CategoryDto>> = flow {
-        emit(api.getCategories())
+        emit(api.getCategories().map { CategoryDto(it) })
     }
 }
