@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "957521875132",
+    "project_id": "anna-1996",
+    "storage_bucket": "anna-1996.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957521875132:android:aeb495100b5ed444a680b9",
+        "android_client_info": {
+          "package_name": "com.app.anna"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo-U3azUCI3HXTS0GTFUpKn84UKwRF7Uw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957521875132:android:a4dae9ca3587c2faa680b9",
+        "android_client_info": {
+          "package_name": "pl.sofantastica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo-U3azUCI3HXTS0GTFUpKn84UKwRF7Uw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
