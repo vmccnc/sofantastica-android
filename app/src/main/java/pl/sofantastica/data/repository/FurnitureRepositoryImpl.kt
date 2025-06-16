@@ -7,6 +7,8 @@ import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.CategoryDto
 import javax.inject.Inject
 
+
+
 class FurnitureRepositoryImpl @Inject constructor(
     private val api: RetrofitApiService
 ) : FurnitureRepository {
