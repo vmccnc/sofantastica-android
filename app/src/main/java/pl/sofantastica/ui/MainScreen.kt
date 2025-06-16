@@ -26,7 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import pl.sofantastica.ui.catalog.CatalogRoute
 import pl.sofantastica.ui.home.HomeScreen
-import pl.sofantastica.ui.favorites.FavoritesScreen
+import pl.sofantastica.ui.favorites.FavoritesRoute
 import pl.sofantastica.ui.cart.CartScreen
 
 sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
@@ -43,7 +43,7 @@ fun MainScreen() {
     Box {
         NavHost(navController = navController, startDestination = Screen.Home.route) {
             composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Favorites.route) { FavoritesScreen() }
+            composable(Screen.Favorites.route) { FavoritesRoute("demoUser") }
             composable(Screen.Catalog.route) { CatalogRoute() }
             composable(Screen.Cart.route) { CartScreen() }
             composable(Screen.More.route) { Text("More") }
