@@ -9,20 +9,23 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import androidx.navigation.NavHostController
 import pl.sofantastica.data.model.FurnitureDto
+import pl.sofantastica.ui.ErrorUI
+import pl.sofantastica.ui.LoadingUI
 import pl.sofantastica.ui.common.UiState
 
 
 @Composable
 fun FurnitureDetailRoute(
     navController: NavHostController,
-    viewModel: FurnitureDetailViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    viewModel: FurnitureDetailViewModel = hiltViewModel()
 ) {
     when (val state = viewModel.uiState) {
-        is UiState.Loading -> Text("Loading...")
-        is UiState.Error -> Text("Error: ${state.throwable.message}")
+        is UiState.Loading -> LoadingUI() // Text("Loading...")
+        is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
         is UiState.Success -> FurnitureDetailScreen(item = state.data, onBack = { navController.popBackStack() })
     }
 }
