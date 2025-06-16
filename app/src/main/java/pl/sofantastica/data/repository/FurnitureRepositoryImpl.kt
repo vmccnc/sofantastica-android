@@ -37,5 +37,18 @@ class FurnitureRepositoryImpl @Inject constructor(
         }
         throw HttpException(response)
     }
+
+    override suspend fun getFurnitureDetail(id: Int): FurnitureDto {
+        val response = try {
+            api.getFurnitureDetail(id)
+        } catch (e: Exception) {
+            throw e
+        }
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) return body
+        }
+        throw HttpException(response)
+    }
 }
 
