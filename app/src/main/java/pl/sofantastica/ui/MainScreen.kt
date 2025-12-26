@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -20,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,6 +33,7 @@ import pl.sofantastica.ui.home.HomeScreen
 import pl.sofantastica.ui.favorites.FavoritesRoute
 import pl.sofantastica.ui.cart.CartRoute
 import pl.sofantastica.ui.detail.FurnitureDetailRoute
+import pl.sofantastica.ui.more.MoreScreen
 
 sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
     object Home : Screen("home", "Home", { Icon(Icons.Default.Home, contentDescription = null) })
@@ -42,7 +44,7 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onLogOut: () -> Unit) {
     val navController = rememberNavController()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,9 +57,7 @@ fun MainScreen() {
                     val items = listOf(Screen.Home, Screen.Favorites, Screen.Catalog, Screen.Cart, Screen.More)
                     items.forEach { screen ->
                         val selected = currentRoute == screen.route
-                        val iconModifier = if (screen == Screen.Catalog) Modifier
-                            .padding(vertical = 4.dp)
-                            .size(36.dp) else Modifier.size(24.dp)
+                        val iconModifier = Modifier.size(24.dp)
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
@@ -84,7 +84,7 @@ fun MainScreen() {
             composable(Screen.Favorites.route) { FavoritesRoute("demoUser") }
             composable(Screen.Catalog.route) { CatalogRoute(onItemClick = { id -> navController.navigate("detail/$id") }) }
             composable(Screen.Cart.route) { CartRoute("demoUser") }
-            composable(Screen.More.route) { Text("More") }
+            composable(Screen.More.route) { MoreScreen(onLogOut) }
 
             composable(
                 route = "detail/{id}",
