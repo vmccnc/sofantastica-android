@@ -11,9 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.google.firebase.Firebase
-import com.google.firebase.app
-import com.google.firebase.auth.auth
 import pl.sofantastica.ui.theme.SofantasticaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sofantastica.ui.MainScreen
@@ -29,11 +26,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             SofantasticaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MainScreen(onLogOut = {
-                        Firebase.auth.signOut()
-                        startActivity(Intent(this, AuthActivity::class.java))
-                        finish()
-                    })
+                    MainScreen(goToLogInPage = {
+                            startActivity(Intent(this, AuthActivity::class.java))
+                            finish()
+                        }
+                    )
                 }
             }
         }

@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.sofantastica.data.model.FabricDto
 import pl.sofantastica.data.repository.FabricRepository
+import pl.sofantastica.domain.usecase.fabrics.GetFabricsUseCase
 
 class GetFabricsUseCaseTest {
     private val repo = object : FabricRepository {

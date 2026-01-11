@@ -7,5 +7,9 @@ import androidx.room.PrimaryKey
 data class FurnitureEntity(
     @PrimaryKey val id: Int,
     val name: String,
-    val category: String
+    val category: String,
+    val basePrice: Double,
+    val description: String,
+    val imageUrl: String,
+    val modelUrl: String
 )

@@ -10,14 +10,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
+import pl.sofantastica.R
 
 @Composable
 fun MoreScreen(
     onLogOut: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("More")
+    Column(modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_16))) {
         TextButton(onClick = onLogOut) {
             Icon(Icons.Default.ExitToApp, contentDescription = null)
             Text("Sign Out")

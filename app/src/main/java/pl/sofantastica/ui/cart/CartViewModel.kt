@@ -17,6 +17,9 @@ class CartViewModel @Inject constructor(
     private val getCart: GetCartUseCase,
     private val repository: CartRepository
 ) : ViewModel() {
+    companion object {
+        const val EMPTY_DATA = "Your cart is empty"
+    }
 
     var items by mutableStateOf<List<CartItemDto>>(emptyList())
         private set

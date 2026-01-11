@@ -6,7 +6,7 @@ data class FurnitureDto(
     val basePrice: Double,
     val description: String,
     val imageUrl: String,
-    val imageUrls: List<String>,
+    val imageUrls: List<String>?,
     val modelUrl: String,
     val category: String
 )

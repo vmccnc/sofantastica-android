@@ -1,10 +1,13 @@
 package pl.sofantastica.data.repository
 
+import pl.sofantastica.data.model.FurnitureCatalogModel
 import pl.sofantastica.data.model.FurnitureDto
 
 interface FavoritesRepository {
-    suspend fun getFavorites(userId: String): List<FurnitureDto>
-    suspend fun addFavorite(userId: String, furnitureId: Long)
-    suspend fun removeFavorite(userId: String, furnitureId: Long)
-    suspend fun isFavorite(userId: String, furnitureId: Long): Boolean
+    suspend fun loadFavorite(): Boolean
+    suspend fun getFavorites(): List<FurnitureCatalogModel>
+    suspend fun getFavoriteFurnitureDetail(id: Int): FurnitureDto
+    suspend fun addFavorite(furnitureId: Int): Boolean
+    suspend fun removeFavorite(furnitureId: Int): Boolean
+    suspend fun isFavorite(furnitureId: Int): Boolean
 }

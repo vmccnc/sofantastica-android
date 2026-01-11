@@ -19,8 +19,6 @@ class AuthViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase
 ) : ViewModel() {
     private companion object {
-        const val SIGN_IN_ERROR = "Incorrect User Email or Password"
-        const val SIGN_UP_ERROR = "Can't create new User. Check your Email and Internet Access"
         const val EMPTY_STRING = ""
     }
 
@@ -35,20 +33,22 @@ class AuthViewModel @Inject constructor(
 
     fun signIn() {
         viewModelScope.launch {
-            if (signInUseCase.invoke(email.value, password.value)) {
+            try {
+                signInUseCase(email.value, password.value)
                 _isSignedIn.emit(true)
-            } else {
-                _errorText.emit(SIGN_IN_ERROR)
+            } catch (e: Exception) {
+                e.message?.let { _errorText.emit(it) }
             }
         }
     }
 
     fun signUp() {
         viewModelScope.launch {
-            if (signUpUseCase.invoke(email.value, password.value)) {
-                signIn()
-            } else {
-                _errorText.emit(SIGN_UP_ERROR)
+            try {
+                signUpUseCase(email.value, password.value)
+                _isSignedIn.emit(true)
+            } catch (e: Exception) {
+                e.message?.let { _errorText.emit(it) }
             }
         }
     }

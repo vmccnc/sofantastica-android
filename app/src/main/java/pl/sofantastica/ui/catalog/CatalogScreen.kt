@@ -1,5 +1,7 @@
 package pl.sofantastica.ui.catalog
 
+import android.graphics.Point
+import android.widget.EditText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,87 +29,171 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import pl.sofantastica.R
+import pl.sofantastica.data.model.FurnitureCatalogModel
 
 @Composable
 fun CatalogRoute(
     onItemClick: (Int) -> Unit,
     viewModel: CatalogViewModel = hiltViewModel()
 ) {
+    viewModel.loadFurniture()
     CatalogScreen(
         furniture = viewModel.furniture,
         categories = viewModel.categories,
         selected = viewModel.selectedCategory,
         onSelectCategory = viewModel::selectCategory,
-        onItemClick = onItemClick
+        isRefreshing = viewModel.isRefreshing,
+        onRefresh = viewModel::refreshFurniture,
+        emptyMessage = viewModel.emptyMessage,
+        onItemClick = onItemClick,
+        onSetFavorite = viewModel::onSetFavorite,
+        minPrice = viewModel.minPrice,
+        onSetMinPrice = viewModel::onSetMinPrice,
+        maxPrice = viewModel.maxPrice,
+        onSetMaxPrice = viewModel::onSetMaxPrice
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
-    furniture: List<FurnitureDto>,
+    furniture: List<FurnitureCatalogModel>,
     categories: List<CategoryDto>,
     selected: CategoryDto?,
     onSelectCategory: (CategoryDto?) -> Unit,
-    onItemClick: (Int) -> Unit
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    emptyMessage: String,
+    onItemClick: (Int) -> Unit,
+    onSetFavorite: (Int, Boolean) -> Unit,
+    minPrice: String,
+    onSetMinPrice: (String) -> Unit,
+    maxPrice: String,
+    onSetMaxPrice: (String) -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
-        val expanded = remember { mutableStateOf(false) }
 
-        TextButton(onClick = { expanded.value = true }) {
-            Text(text = selected?.name ?: "All")
-        }
-        DropdownMenu(expanded = expanded.value, onDismissRequest = { expanded.value = false }) {
-            DropdownMenuItem(text = { Text("All") }, onClick = {
-                onSelectCategory(null)
-                expanded.value = false
-            })
-            categories.forEach { category ->
-                DropdownMenuItem(text = { Text(category.name) }, onClick = {
-                    onSelectCategory(category)
+        Row {
+            val expanded = remember { mutableStateOf(false) }
+            TextButton(onClick = { expanded.value = true }) {
+                Text(text = selected?.name ?: "All")
+            }
+            DropdownMenu(expanded = expanded.value, onDismissRequest = { expanded.value = false }) {
+                DropdownMenuItem(text = { Text("All") }, onClick = {
+                    onSelectCategory(null)
                     expanded.value = false
                 })
+                categories.forEach { category ->
+                    DropdownMenuItem(text = { Text(category.name) }, onClick = {
+                        onSelectCategory(category)
+                        expanded.value = false
+                    })
+                }
             }
+
+            TextField(value = minPrice,
+                onValueChange = onSetMinPrice,
+                label = {Text("Min Price")},
+                modifier = Modifier.padding(2.dp).weight(1f)
+            )
+            TextField(value = maxPrice,
+                onValueChange = onSetMaxPrice,
+                label = {Text("Max Price")},
+                modifier = Modifier.padding(2.dp).weight(1f)
+            )
         }
 
         val scope = rememberCoroutineScope()
-        LazyColumn {
-            items(furniture) { item ->
-                val scale = remember { Animatable(1f) }
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .graphicsLayer {
-                            scaleX = scale.value
-                            scaleY = scale.value
-                        }
-                        .clickable {
-                            scope.launch {
-                                scale.animateTo(0.95f, animationSpec = tween(100))
-                                scale.animateTo(1f, animationSpec = tween(100))
-                                onItemClick(item.id)
-                            }
-                        },
-                    shape = RoundedCornerShape(8.dp)
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh
+        ) {
+
+            if (furniture.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(modifier = Modifier.padding(8.dp)) {
-                        AsyncImage(
-                            model = item.imageUrl,
-                            contentDescription = item.name,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                text = item.description,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 2
+                    Text(CatalogViewModel.EMPTY_FILTERED_DATA, textAlign = TextAlign.Center)
+                }
+                return@PullToRefreshBox
+            }
+
+            LazyColumn {
+                items(furniture) { item ->
+                    val scale = remember { Animatable(1f) }
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .graphicsLayer {
+                                scaleX = scale.value
+                                scaleY = scale.value
+                            }
+                            .clickable {
+                                scope.launch {
+                                    scale.animateTo(0.95f, animationSpec = tween(100))
+                                    scale.animateTo(1f, animationSpec = tween(100))
+                                    onItemClick(item.id)
+                                }
+                            },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(modifier = Modifier.padding(8.dp)) {
+                            AsyncImage(
+                                model = item.imageUrl,
+                                contentDescription = item.name,
+                                error = painterResource(R.drawable.no_image),
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp))
                             )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Row {
+                                    Text(text = item.name, style = MaterialTheme.typography.titleMedium)
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Icon(
+                                        if(item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = null,
+                                        modifier = Modifier.clickable { onSetFavorite(item.id, item.isFavorite) }
+                                    )
+                                }
+                                Text(
+                                    text = item.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 2
+                                )
+                                Text(
+                                    text = stringResource(R.string.furniture_price).format(item.basePrice),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

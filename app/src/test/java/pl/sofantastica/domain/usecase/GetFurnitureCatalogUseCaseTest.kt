@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.repository.FurnitureRepository
+import pl.sofantastica.domain.usecase.furnitures.GetFurnitureCatalogUseCase
 
 class GetFurnitureCatalogUseCaseTest {
     private val repo = object : FurnitureRepository {

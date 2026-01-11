@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,4 +87,5 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.config)
     implementation(libs.coil.compose)
+
 }

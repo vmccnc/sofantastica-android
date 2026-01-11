@@ -5,18 +5,20 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
+import pl.sofantastica.background.InternetConnectionManager
+import pl.sofantastica.domain.exceptions.WrongLoginOrPasswordException
 import javax.inject.Inject
 
 class SignInUseCase @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val connectionManager: InternetConnectionManager
 ) {
-    suspend operator fun invoke(email: String, password: String): Boolean {
-        try {
-            if (email.endsWith("@gmail.com") && password.isNotEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            }
-        } catch (_: Exception) {
+    suspend operator fun invoke(email: String, password: String) {
+        connectionManager.isOnline()
+        if (!email.endsWith("@gmail.com") || password.isEmpty()) {
+            throw WrongLoginOrPasswordException()
         }
-        return firebaseAuth.currentUser != null
+        firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        firebaseAuth.currentUser ?: throw WrongLoginOrPasswordException()
     }
 }
