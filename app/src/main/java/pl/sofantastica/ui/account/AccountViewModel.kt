@@ -1,30 +1,20 @@
 package pl.sofantastica.ui.account
 
-import android.app.Activity
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pl.sofantastica.MainActivity
-import pl.sofantastica.di.FirebaseModule
 import pl.sofantastica.domain.usecase.account.GetUserDataUseCase
 import pl.sofantastica.domain.usecase.account.LogOutUseCase
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -35,7 +25,7 @@ class AccountViewModel @Inject constructor(
     private val _storage: FirebaseStorage
 ) : ViewModel() {
 
-    private var _user = _getUser()
+    private var _user: FirebaseUser? = null
 
     private var _isEditable = MutableStateFlow(false)
     val isEditable = _isEditable.asStateFlow()

@@ -53,7 +53,7 @@ class FabricRepositoryImpl @Inject constructor(
             true
         }
 
-    override suspend fun getFabric(id: Int): FabricDto =
+    override suspend fun getFabric(id: Int): FabricDto? =
         withContext(Dispatchers.IO){
             dao.getFabric(id)
         }

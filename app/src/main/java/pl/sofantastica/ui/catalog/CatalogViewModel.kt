@@ -1,6 +1,7 @@
 package pl.sofantastica.ui.catalog
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,10 +12,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import pl.sofantastica.R
 import pl.sofantastica.data.model.CategoryDto
 import pl.sofantastica.data.model.FurnitureCatalogModel
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.repository.FurnitureRepository
+import pl.sofantastica.domain.exceptions.ResIdException
 import pl.sofantastica.domain.usecase.favorite.SetFavoriteUseCase
 import pl.sofantastica.domain.usecase.furnitures.GetCategoriesUseCase
 import pl.sofantastica.domain.usecase.furnitures.GetFurnitureCatalogUseCase
@@ -27,12 +30,9 @@ class CatalogViewModel @Inject constructor(
     private val _getMaxPrice: GetMaxPriceUseCase,
     private val _getCatalog: GetFurnitureCatalogUseCase,
     private val _getCategories: GetCategoriesUseCase,
-    private val _setFavorite: SetFavoriteUseCase
+    private val _setFavorite: SetFavoriteUseCase,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
-    companion object {
-        const val EMPTY_FILTERED_DATA = "There is no matching data for the selected filters"
-        const val EMPTY_DATA = "It's empty here for now"
-    }
 
     var furniture by mutableStateOf<List<FurnitureCatalogModel>>(emptyList())
         private set
@@ -45,25 +45,34 @@ class CatalogViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
         private set
 
-    var emptyMessage by mutableStateOf(EMPTY_FILTERED_DATA)
+    var minPrice by mutableStateOf("0.00")
         private set
 
-    var minPrice by mutableStateOf("0.0")
-        private set
-
-    var maxPrice by mutableStateOf("0.0")
+    var maxPrice by mutableStateOf("0.00")
         private set
 
     init {
         viewModelScope.launch {
-            categories = _getCategories()
-            maxPrice = _getMaxPrice().toString()
+            try {
+                categories = _getCategories()
+                maxPrice = _getMaxPrice().toString()
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     fun selectCategory(category: CategoryDto?) {
-        selectedCategory = category
-        loadFurniture()
+        try {
+            selectedCategory = category
+            loadFurniture()
+        } catch (e: ResIdException) {
+            Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun refreshFurniture() {
@@ -76,28 +85,33 @@ class CatalogViewModel @Inject constructor(
 
     fun loadFurniture() {
         viewModelScope.launch {
-            val min =
-                if (minPrice.isEmpty()) 0.0
-                else minPrice.toDouble()
-            val max =
-                if (maxPrice.isEmpty()) 0.0
-                else maxPrice.toDouble()
-            val list = _getCatalog(min, max, selectedCategory?.name)
-            furniture = selectedCategory?.let { cat ->
-                list.filter { it.category == cat.name }
-            } ?: list
-            if (furniture.isEmpty() && list.isEmpty()) {
-                emptyMessage = EMPTY_FILTERED_DATA
-            } else {
-                emptyMessage = ""
+            try {
+                val min =
+                    if (minPrice.isEmpty()) 0.0
+                    else minPrice.toDouble()
+                val max =
+                    if (maxPrice.isEmpty()) 0.0
+                    else maxPrice.toDouble()
+                val list = _getCatalog(min, max, selectedCategory?.name)
+                furniture = selectedCategory?.let { cat ->
+                    list.filter { it.category == cat.name }
+                } ?: list
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     fun onSetFavorite(id: Int, isFavorite: Boolean) {
         viewModelScope.launch {
-            _setFavorite(id, isFavorite)
-            loadFurniture()
+            try {
+                _setFavorite(id, isFavorite)
+                loadFurniture()
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

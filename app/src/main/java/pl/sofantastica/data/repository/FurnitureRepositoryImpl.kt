@@ -14,6 +14,7 @@ import pl.sofantastica.data.db.entity.FurnitureImageEntity
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.CategoryDto
 import pl.sofantastica.data.model.FurnitureCatalogModel
+import pl.sofantastica.data.model.FurnitureFabricDto
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -81,30 +82,22 @@ class FurnitureRepositoryImpl @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override suspend fun getFurniture(minPrice: Double, maxPrice: Double, category: String?): List<FurnitureCatalogModel> =
         withContext(Dispatchers.IO){
-            if (category == null) {
-                furnitureDao.getAll(minPrice, maxPrice).map { furnitureEntity ->
-                    FurnitureCatalogModel(
-                        id = furnitureEntity.id,
-                        name = furnitureEntity.name,
-                        category = furnitureEntity.category,
-                        basePrice = furnitureEntity.basePrice,
-                        description = furnitureEntity.description,
-                        imageUrl = furnitureEntity.imageUrl,
-                        isFavorite = furnitureEntity.isFavorite
-                    )
+            val furnitureList =
+                if (category == null) {
+                    furnitureDao.getAll(minPrice, maxPrice)
+                } else {
+                    furnitureDao.getAll(minPrice, maxPrice, category)
                 }
-            } else {
-                furnitureDao.getAll(minPrice, maxPrice, category).map { furnitureEntity ->
-                    FurnitureCatalogModel(
-                        id = furnitureEntity.id,
-                        name = furnitureEntity.name,
-                        category = furnitureEntity.category,
-                        basePrice = furnitureEntity.basePrice,
-                        description = furnitureEntity.description,
-                        imageUrl = furnitureEntity.imageUrl,
-                        isFavorite = furnitureEntity.isFavorite
-                    )
-                }
+            furnitureList.map { furnitureEntity ->
+                FurnitureCatalogModel(
+                    id = furnitureEntity.id,
+                    name = furnitureEntity.name,
+                    category = furnitureEntity.category,
+                    basePrice = furnitureEntity.basePrice,
+                    description = furnitureEntity.description,
+                    imageUrl = furnitureEntity.imageUrl,
+                    isFavorite = furnitureEntity.isFavorite
+                )
             }
         }
 
@@ -114,19 +107,20 @@ class FurnitureRepositoryImpl @Inject constructor(
         }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override suspend fun getFurnitureDetail(id: Int): FurnitureDto =
+    override suspend fun getFurnitureDetail(id: Int): FurnitureFabricDto =
         withContext(Dispatchers.IO){
-            val furnitureEntity = furnitureDao.getFurniture(id)
-            FurnitureDto(
-                id = furnitureEntity.id,
-                name = furnitureEntity.name,
-                category = furnitureEntity.category,
-                basePrice = furnitureEntity.basePrice,
-                description = furnitureEntity.description,
-                imageUrl = furnitureEntity.imageUrl,
-                modelUrl = furnitureEntity.modelUrl,
-                imageUrls = furnitureImageDao.getFurnitureImages(id)
-            )
+//            val furnitureEntity = furnitureDao.getFurniture(id)
+//            FurnitureDto(
+//                id = furnitureEntity.id,
+//                name = furnitureEntity.name,
+//                category = furnitureEntity.category,
+//                basePrice = furnitureEntity.basePrice,
+//                description = furnitureEntity.description,
+//                imageUrl = furnitureEntity.imageUrl,
+//                modelUrl = furnitureEntity.modelUrl,
+//                imageUrls = furnitureImageDao.getFurnitureImages(id)
+//            )
+            furnitureDao.getFurniture(id)
         }
 
 }

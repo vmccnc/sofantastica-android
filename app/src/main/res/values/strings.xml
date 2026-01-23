@@ -11,4 +11,19 @@
     <string name="add_to_cart">ADD TO CART</string>
     <string name="data_is_loading">Data is loading. Please wait</string>
     <string name="go_to_catalog">Go To Catalog</string>
+    <string name="quantity">Quantity: %d</string>
+    <string name="fabric">Fabric: %s</string>
+    <string name="total">Total: %.2f Zl</string>
+    <string name="make_order">Make Order</string>
+    <string name="fabric_is_not_specified">Fabric is not specified</string>
+    <string name="quantity_is_not_specified">Quantity is not specified</string>
+    <string name="item_added_in_cart">Item added in cart</string>
+    <string name="item_deleted_from_cart">Item deleted from cart</string>
+    <string name="you_re_not_authorized">You\'re not authorized</string>
+    <string name="you_re_not_online">You\'re not online</string>
+    <string name="can_t_create_new_user">Can\'t create new User. Check your Email and Internet Access</string>
+    <string name="incorrect_user">Incorrect User Email or Password</string>
+    <string name="no_matching_data">There is no matching data for the selected filters</string>
+    <string name="cart_is_empty">Your cart is empty</string>
+    <string name="no_favorites">There are no favorite</string>
 </resources>

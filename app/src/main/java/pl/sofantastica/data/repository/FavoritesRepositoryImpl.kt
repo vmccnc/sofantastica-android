@@ -13,6 +13,7 @@ import pl.sofantastica.data.db.dao.FurnitureDao
 import pl.sofantastica.data.db.dao.FurnitureImageDao
 import pl.sofantastica.data.db.entity.FavoriteEntity
 import pl.sofantastica.data.model.FurnitureDto
+import pl.sofantastica.data.model.FurnitureFabricDto
 import pl.sofantastica.domain.exceptions.IsNotAuthorizeException
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -45,19 +46,9 @@ class FavoritesRepositoryImpl @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override suspend fun getFavoriteFurnitureDetail(id: Int): FurnitureDto =
+    override suspend fun getFavoriteFurnitureDetail(id: Int) =
         withContext(Dispatchers.IO){
-            val furnitureEntity = furnitureDao.getFurniture(id)
-            FurnitureDto(
-                id = furnitureEntity.id,
-                name = furnitureEntity.name,
-                category = furnitureEntity.category,
-                basePrice = furnitureEntity.basePrice,
-                description = furnitureEntity.description,
-                imageUrl = furnitureEntity.imageUrl,
-                modelUrl = furnitureEntity.modelUrl,
-                imageUrls = furnitureImageDao.getFurnitureImages(id)
-            )
+            furnitureDao.getFurniture(id)
         }
 
     override suspend fun addFavorite(furnitureId: Int) = withContext(Dispatchers.IO) {
@@ -67,8 +58,9 @@ class FavoritesRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             favoriteDao.insert(FavoriteEntity(furnitureId))
             true
+        } else {
+            false
         }
-        false
     }
 
     override suspend fun removeFavorite(furnitureId: Int) = withContext(Dispatchers.IO) {
@@ -78,19 +70,12 @@ class FavoritesRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             favoriteDao.delete(FavoriteEntity(furnitureId))
             true
+        } else {
+            false
         }
-        false
     }
 
     override suspend fun isFavorite(furnitureId: Int) = withContext(Dispatchers.IO) {
         favoriteDao.isFavorite(furnitureId)
-//        connectionManager.isOnline()
-//        auth.currentUser ?: throw IsNotAuthorizeException()
-//        val response = api.isFavorite(auth.currentUser!!.uid, furnitureId.toLong())
-//        if (response.isSuccessful) {
-//            response.body() ?: false
-//        }
-//        false
-
     }
 }

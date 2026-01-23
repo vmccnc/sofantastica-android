@@ -9,8 +9,25 @@ import pl.sofantastica.domain.usecase.fabrics.GetFabricsUseCase
 
 class GetFabricsUseCaseTest {
     private val repo = object : FabricRepository {
-        override suspend fun getFabrics(): List<FabricDto> = listOf(FabricDto(1, "Cotton", "A"))
-        override suspend fun getFabric(id: Int) = FabricDto(id, "Name$id", "B")
+        override suspend fun loadFabrics(): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getFabric(id: Int) = FabricDto(
+            id, "Name$id", "B",
+            fabricUrl = TODO(),
+            fabricUrlBig = TODO(),
+            price = TODO()
+        )
+
+        override suspend fun getSuppliers(): List<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getPopularFabrics(): List<FabricDto> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun getFabricsBySupplier(supplier: String) = emptyList<FabricDto>()
     }
 

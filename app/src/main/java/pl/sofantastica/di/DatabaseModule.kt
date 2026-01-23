@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import pl.sofantastica.data.db.AppDatabase
+import pl.sofantastica.data.db.dao.CartDao
 import pl.sofantastica.data.db.dao.FabricDao
 import pl.sofantastica.data.db.dao.FavoriteDao
 import pl.sofantastica.data.db.dao.FurnitureDao
@@ -28,13 +29,18 @@ object DatabaseModule {
     }
 
     @Provides
-    fun fabricDao(appDatabase: AppDatabase): FabricDao {
+    fun provideFabricDao(appDatabase: AppDatabase): FabricDao {
         return appDatabase.fabricDao()
     }
 
     @Provides
-    fun favoriteDao(appDatabase: AppDatabase): FavoriteDao {
+    fun provideFavoriteDao(appDatabase: AppDatabase): FavoriteDao {
         return appDatabase.favoriteDao()
+    }
+
+    @Provides
+    fun provideCartDao(appDatabase: AppDatabase): CartDao {
+        return appDatabase.cartDao()
     }
 
     @Provides

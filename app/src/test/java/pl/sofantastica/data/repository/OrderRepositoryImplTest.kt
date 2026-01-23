@@ -4,13 +4,15 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.sofantastica.data.api.RetrofitApiService
-import pl.sofantastica.data.model.AddCartItemResponse
-import pl.sofantastica.data.model.CartItemDto
-import pl.sofantastica.data.model.CartItemUpdateDto
+import pl.sofantastica.data.model.cart.AddCartItemResponse
+import pl.sofantastica.data.model.cart.CartItemDto
+import pl.sofantastica.data.model.cart.CartItemUpdateDto
 import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.OrderDto
 import pl.sofantastica.data.model.PriceDto
 import pl.sofantastica.data.model.SuccessResponse
+import pl.sofantastica.data.model.cart.AddCartItemRequest
+import pl.sofantastica.data.model.cart.CartDto
 import retrofit2.Response
 
 class OrderRepositoryImplTest {
@@ -51,18 +53,25 @@ class OrderRepositoryImplTest {
             TODO("Not yet implemented")
         }
 
-        override suspend fun getCart(userId: String): Response<List<CartItemDto>> {
+        override suspend fun getCart(userId: String): Response<CartDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun addCartItem(item: CartItemDto): Response<AddCartItemResponse> {
+        override suspend fun addCartItem(item: AddCartItemRequest): Response<AddCartItemResponse> {
             TODO("Not yet implemented")
         }
 
         override suspend fun updateCartItem(
             cartItemId: Int,
             item: CartItemUpdateDto
-        ): Response<SuccessResponse> {
+        ): Response<CartItemDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateCartItemQuantity(
+            cartItemId: Int,
+            item: CartItemUpdateDto
+        ): Response<CartItemDto> {
             TODO("Not yet implemented")
         }
 

@@ -3,8 +3,10 @@ package pl.sofantastica.domain.usecase.cart
 import pl.sofantastica.data.repository.CartRepository
 import javax.inject.Inject
 
-class GetCartUseCase @Inject constructor(
+class DeleteCartUseCase @Inject constructor(
     private val repository: CartRepository
 ) {
-    suspend operator fun invoke() = repository.getCart()
+    suspend operator fun invoke(id: Int) {
+        repository.deleteItem(id)
+    }
 }

@@ -26,11 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SofantasticaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MainScreen(goToLogInPage = {
-                            startActivity(Intent(this, AuthActivity::class.java))
-                            finish()
-                        }
-                    )
+                    MainScreen()
                 }
             }
         }

@@ -4,7 +4,9 @@ import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,17 +16,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +55,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -53,6 +73,7 @@ fun FurnitureDetailRoute(
     viewModel: FurnitureDetailViewModel = hiltViewModel()
 ) {
     val isDialogOpened by viewModel.isDialogOpened.collectAsState()
+    val count by viewModel.count.collectAsState()
     if (isDialogOpened) {
         FabricSelectorScreen(viewModel::closeDialog, viewModel::chooseFabric)
     } else {
@@ -64,8 +85,11 @@ fun FurnitureDetailRoute(
             is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
             is UiState.Success -> FurnitureDetailScreen(
                 item = state.data,
+                count = count,
+                onSetCount = viewModel::setCount,
                 onSelectFabric = viewModel::openDialog,
-                onToggleFavorite = viewModel::toggleFavorite
+                onToggleFavorite = viewModel::toggleFavorite,
+                addToCart = viewModel::addToCart
             )
         }
     }
@@ -73,55 +97,69 @@ fun FurnitureDetailRoute(
 
 @Composable
 fun FurnitureDetailScreen(item: FurnitureFabricDto,
+                          count: Int,
+                          onSetCount: (Int) -> Unit,
                           onSelectFabric: () -> Unit,
-                          onToggleFavorite: () -> Unit) {
+                          onToggleFavorite: () -> Unit,
+                          addToCart: () -> Unit) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
 
     if (LocalConfiguration.current.orientation == ORIENTATION_PORTRAIT) {
         val carouselHeight = (LocalConfiguration.current.screenHeightDp / 4).dp
         Column(modifier = Modifier.padding(margin_16).verticalScroll(rememberScrollState())) {
-            FurnitureDetailScreenContent(item, onSelectFabric, onToggleFavorite, Modifier.fillMaxWidth().height(carouselHeight))
+            FurnitureDetailScreenContent(item, count, onSetCount, onSelectFabric, onToggleFavorite,
+                addToCart, Modifier.fillMaxWidth().height(carouselHeight)
+            )
         }
     } else {
         val carouselWidth = (LocalConfiguration.current.screenWidthDp / 2).dp
         Row(modifier = Modifier.padding(margin_16).verticalScroll(rememberScrollState())) {
-            FurnitureDetailScreenContent(item, onSelectFabric, onToggleFavorite, Modifier.fillMaxHeight().width(carouselWidth))
+            FurnitureDetailScreenContent(item, count, onSetCount, onSelectFabric, onToggleFavorite,
+                addToCart, Modifier.fillMaxHeight().width(carouselWidth)
+            )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FurnitureDetailScreenContent(item: FurnitureFabricDto,
+                                 count: Int,
+                                 onSetCount: (Int) -> Unit,
                                  onSelectFabric: () -> Unit,
                                  onToggleFavorite: () -> Unit,
+                                 addToCart: () -> Unit,
                                  carouselModifier: Modifier) {
-
-    val pageState = rememberPagerState(pageCount = { item.imageUrls?.size ?: 0 })
     val margin_2 = dimensionResource(R.dimen.margin_2)
     val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val size_46 = dimensionResource(R.dimen.size_46)
     val size_50 = dimensionResource(R.dimen.size_50)
 
-    if (item.imageUrls != null) {
-        HorizontalPager(state = pageState, modifier = carouselModifier) { page ->
-            AsyncImage(
-                modifier = Modifier.fillMaxSize().padding(margin_2),
-                model = item.imageUrls[page],
-                contentDescription = item.imageUrls[page],
-                error = painterResource(R.drawable.no_image)
-            )
-        }
-    } else {
+    if (item.imageUrls.isNullOrEmpty()) {
         Image(painter = painterResource(R.drawable.no_image),
             contentDescription = null,
             modifier = carouselModifier
         )
+    } else {
+        HorizontalMultiBrowseCarousel(
+            state = rememberCarouselState { item.imageUrls.count() },
+            modifier = carouselModifier,
+            preferredItemWidth = LocalConfiguration.current.screenWidthDp.dp
+        ) { i ->
+            val item = item.imageUrls[i]
+            AsyncImage(
+                modifier = Modifier.fillMaxSize().padding(margin_2),
+                model = item.imageUrl,
+                contentDescription = item.imageUrl,
+                error = painterResource(R.drawable.no_image)
+            )
+        }
     }
     Column(modifier = Modifier.padding(margin_10)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = item.name, style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.weight(1f))
+            Text(text = item.name, modifier = Modifier.weight(.9f), style = MaterialTheme.typography.titleLarge)
+
             Icon(if(item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
                 modifier = Modifier.size(size_46).clickable { onToggleFavorite() }
@@ -197,17 +235,27 @@ fun FurnitureDetailScreenContent(item: FurnitureFabricDto,
         Row(modifier = Modifier.padding(top = margin_10),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { },
+            TextButton(onClick = addToCart,
+                shape = RectangleShape,
                 modifier = Modifier
                     .padding(vertical = margin_10)
                     .height(size_46)
-                    .border(margin_2, MaterialTheme.colorScheme.secondary),
-                shape = RectangleShape
+                    .border(margin_2, MaterialTheme.colorScheme.secondary)
             ) {
                 Text(text = stringResource(R.string.add_to_cart),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+
+            Icon(Icons.Default.KeyboardArrowLeft,
+                modifier = Modifier.size(size_46).clickable { onSetCount(count - 1) },
+                contentDescription = null
+            )
+            Text(count.toString())
+            Icon(Icons.Default.KeyboardArrowRight,
+                modifier = Modifier.size(size_46).clickable { onSetCount(count + 1) },
+                contentDescription = null
+            )
         }
     }
 }

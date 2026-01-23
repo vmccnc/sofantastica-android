@@ -54,18 +54,11 @@ fun FavoritesRoute(onItemClick: (Int) -> Unit,
                    goToCatalog: () -> Unit,
                    viewModel: FavoritesViewModel = hiltViewModel()
 ) {
-//    LaunchedEffect(userId) {
-//        viewModel.load()
-//    }
-//    FavoritesScreen(viewModel.favorites) { id ->
-//        viewModel.toggleFavorite(id)
-//    }
     viewModel.load()
     FavoritesScreen(
         furniture = viewModel.favorites,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = viewModel::refreshFurniture,
-        emptyMessage = viewModel.emptyMessage,
         onItemClick = onItemClick,
         onToggleFavorite = viewModel::toggleFavorite,
         goToCatalog = goToCatalog
@@ -78,7 +71,6 @@ fun FavoritesScreen(
     furniture: List<FurnitureCatalogModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    emptyMessage: String,
     onItemClick: (Int) -> Unit,
     onToggleFavorite: (Int) -> Unit,
     goToCatalog: () -> Unit
@@ -95,7 +87,7 @@ fun FavoritesScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(FavoritesViewModel.EMPTY_DATA, textAlign = TextAlign.Center)
+                Text(stringResource(R.string.no_favorites), textAlign = TextAlign.Center)
                 TextButton(onClick = goToCatalog) {
                     Text(stringResource(R.string.go_to_catalog), textAlign = TextAlign.Center)
                 }

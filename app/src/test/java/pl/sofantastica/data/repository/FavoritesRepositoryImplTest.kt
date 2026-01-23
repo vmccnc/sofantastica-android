@@ -4,12 +4,16 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.sofantastica.data.api.RetrofitApiService
-import pl.sofantastica.data.model.AddCartItemResponse
-import pl.sofantastica.data.model.CartItemDto
-import pl.sofantastica.data.model.CartItemUpdateDto
+import pl.sofantastica.data.model.cart.AddCartItemResponse
+import pl.sofantastica.data.model.cart.CartItemDto
+import pl.sofantastica.data.model.cart.CartItemUpdateDto
+import pl.sofantastica.data.model.FabricDto
 import pl.sofantastica.data.model.FurnitureDto
+import pl.sofantastica.data.model.OrderDto
 import pl.sofantastica.data.model.PriceDto
 import pl.sofantastica.data.model.SuccessResponse
+import pl.sofantastica.data.model.cart.AddCartItemRequest
+import pl.sofantastica.data.model.cart.CartDto
 import retrofit2.Response
 
 class FavoritesRepositoryImplTest {
@@ -35,27 +39,34 @@ class FavoritesRepositoryImplTest {
         override suspend fun listFurniturs(): Response<List<FurnitureDto>> = Response.success(emptyList())
         override suspend fun listCategories(): Response<List<String>> = Response.success(emptyList())
         override suspend fun getFurnitureDetail(id: Int): Response<FurnitureDto> = Response.success(favorites.first())
-        override suspend fun listFabrics(): Response<List<pl.sofantastica.data.model.FabricDto>> = throw UnsupportedOperationException()
-        override suspend fun getFabricDetail(id: Int): Response<pl.sofantastica.data.model.FabricDto> = throw UnsupportedOperationException()
+        override suspend fun listFabrics(): Response<List<FabricDto>> = throw UnsupportedOperationException()
+        override suspend fun getFabricDetail(id: Int): Response<FabricDto> = throw UnsupportedOperationException()
         override suspend fun listSuppliers(): Response<List<String>> = throw UnsupportedOperationException()
-        override suspend fun listFabricsBySupplier(supplier: String): Response<List<pl.sofantastica.data.model.FabricDto>> = throw UnsupportedOperationException()
-        override suspend fun listPopularFabrics(): Response<List<pl.sofantastica.data.model.FabricDto>> = throw UnsupportedOperationException()
+        override suspend fun listFabricsBySupplier(supplier: String): Response<List<FabricDto>> = throw UnsupportedOperationException()
+        override suspend fun listPopularFabrics(): Response<List<FabricDto>> = throw UnsupportedOperationException()
         override suspend fun getPrice(furnitureId: Int, fabricId: Int): Response<PriceDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun getCart(userId: String): Response<List<CartItemDto>> {
+        override suspend fun getCart(userId: String): Response<CartDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun addCartItem(item: CartItemDto): Response<AddCartItemResponse> {
+        override suspend fun addCartItem(item: AddCartItemRequest): Response<AddCartItemResponse> {
             TODO("Not yet implemented")
         }
 
         override suspend fun updateCartItem(
             cartItemId: Int,
             item: CartItemUpdateDto
-        ): Response<SuccessResponse> {
+        ): Response<CartItemDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateCartItemQuantity(
+            cartItemId: Int,
+            item: CartItemUpdateDto
+        ): Response<CartItemDto> {
             TODO("Not yet implemented")
         }
 
@@ -63,25 +74,32 @@ class FavoritesRepositoryImplTest {
             TODO("Not yet implemented")
         }
 
-        override suspend fun listOrders(userId: String): Response<List<pl.sofantastica.data.model.OrderDto>> = throw UnsupportedOperationException()
-        override suspend fun createOrder(order: pl.sofantastica.data.model.OrderDto): Response<pl.sofantastica.data.model.OrderDto> = throw UnsupportedOperationException()
+        override suspend fun listOrders(userId: String): Response<List<OrderDto>> = throw UnsupportedOperationException()
+        override suspend fun createOrder(order: OrderDto): Response<OrderDto> = throw UnsupportedOperationException()
     }
 
-    private val repository = FavoritesRepositoryImpl(api)
+    private val repository = FavoritesRepositoryImpl(
+        api,
+        favoriteDao = TODO(),
+        furnitureDao = TODO(),
+        furnitureImageDao = TODO(),
+        auth = TODO(),
+        connectionManager = TODO()
+    )
 
     @Test
     fun getFavorites_returnsList() = runBlocking {
-        val result = repository.getFavorites("u1")
+        val result = repository.getFavorites()
         assertEquals(2, result.size)
     }
 
     @Test
     fun addAndRemoveFavorite_modifiesList() = runBlocking {
-        repository.addFavorite("u1", 5)
-        var list = repository.getFavorites("u1")
+        repository.addFavorite(5)
+        var list = repository.getFavorites()
         assertEquals(3, list.size)
-        repository.removeFavorite("u1", 5)
-        list = repository.getFavorites("u1")
+        repository.removeFavorite(5)
+        list = repository.getFavorites()
         assertEquals(2, list.size)
     }
 }

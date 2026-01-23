@@ -1,5 +1,8 @@
 package pl.sofantastica.data.model
 
+import androidx.room.Relation
+import pl.sofantastica.data.db.entity.FurnitureImageEntity
+
 data class FurnitureFabricDto(
     val furnitureId: Int,
     val fabricId: Int,
@@ -10,7 +13,8 @@ data class FurnitureFabricDto(
     val description: String,
     val imageUrl: String,
     val fabricUrl: String,
-    val imageUrls: List<String>?,
+    @Relation(parentColumn = "furnitureId", entityColumn = "furnitureId", entity = FurnitureImageEntity::class)
+    val imageUrls: List<FurnitureImageEntity>?,
     val modelUrl: String,
     val category: String,
     val isFavorite: Boolean

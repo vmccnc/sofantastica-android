@@ -19,7 +19,7 @@ interface FabricDao {
     suspend fun getFabricsBySupplier(supplier: String): List<FabricDto>
 
     @Query("SELECT * FROM fabrics WHERE id = :id")
-    suspend fun getFabric(id: Int): FabricDto
+    suspend fun getFabric(id: Int): FabricDto?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<FabricEntity>)

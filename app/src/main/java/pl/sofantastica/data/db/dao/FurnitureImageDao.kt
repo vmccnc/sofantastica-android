@@ -9,7 +9,7 @@ import pl.sofantastica.data.db.entity.FurnitureImageEntity
 @Dao
 interface FurnitureImageDao {
     @Query("SELECT imageUrl FROM furniture_image " +
-            "WHERE id = :id")
+            "WHERE furnitureId = :id")
     suspend fun getFurnitureImages(id: Int): List<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

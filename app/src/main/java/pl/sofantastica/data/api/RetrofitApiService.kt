@@ -4,10 +4,12 @@ import pl.sofantastica.data.model.FurnitureDto
 import pl.sofantastica.data.model.FabricDto
 import pl.sofantastica.data.model.OrderDto
 import pl.sofantastica.data.model.PriceDto
-import pl.sofantastica.data.model.CartItemDto
-import pl.sofantastica.data.model.AddCartItemResponse
-import pl.sofantastica.data.model.CartItemUpdateDto
+import pl.sofantastica.data.model.cart.CartItemDto
+import pl.sofantastica.data.model.cart.AddCartItemResponse
+import pl.sofantastica.data.model.cart.CartItemUpdateDto
 import pl.sofantastica.data.model.SuccessResponse
+import pl.sofantastica.data.model.cart.AddCartItemRequest
+import pl.sofantastica.data.model.cart.CartDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -47,18 +49,24 @@ interface RetrofitApiService {
     @GET("sofantastic/cart/{userId}")
     suspend fun getCart(
         @retrofit2.http.Path("userId") userId: String
-    ): Response<List<CartItemDto>>
+    ): Response<CartDto>//Response<List<CartItemDto>>
 
     @POST("sofantastic/cart")
     suspend fun addCartItem(
-        @retrofit2.http.Body item: CartItemDto
+        @retrofit2.http.Body item: AddCartItemRequest
     ): Response<AddCartItemResponse>
 
     @retrofit2.http.PATCH("sofantastic/cart/{cartItemId}/color_and_quantity")
     suspend fun updateCartItem(
         @retrofit2.http.Path("cartItemId") cartItemId: Int,
         @retrofit2.http.Body item: CartItemUpdateDto
-    ): Response<SuccessResponse>
+    ): Response<CartItemDto>
+
+    @retrofit2.http.PATCH("sofantastic/cart/{cartItemId}/quantity")
+    suspend fun updateCartItemQuantity(
+        @retrofit2.http.Path("cartItemId") cartItemId: Int,
+        @retrofit2.http.Body item: CartItemUpdateDto
+    ): Response<CartItemDto>
 
     @DELETE("sofantastic/cart/{id}")
     suspend fun deleteCartItem(

@@ -48,10 +48,12 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
 }
 
 @Composable
-fun MainScreen(goToLogInPage: () -> Unit) {
+fun MainScreen() {
     val navController = rememberNavController()
     Scaffold(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         bottomBar = {
             val backStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = backStackEntry?.destination?.route
@@ -66,7 +68,7 @@ fun MainScreen(goToLogInPage: () -> Unit) {
                             selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    //popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -89,7 +91,9 @@ fun MainScreen(goToLogInPage: () -> Unit) {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Home.route) {
+                HomeScreen()
+            }
             composable(Screen.Favorites.route) {
                 FavoritesRoute(
                     onItemClick = { id -> navController.navigate("detail/$id") },
@@ -99,9 +103,12 @@ fun MainScreen(goToLogInPage: () -> Unit) {
             composable(Screen.Catalog.route) {
                 CatalogRoute(onItemClick = { id -> navController.navigate("detail/$id") })
             }
-            composable(Screen.Cart.route) { CartRoute("demoUser",
-                goToCatalog = { navController.navigate(Screen.Catalog.route) }) }
-            composable(Screen.Account.route) { AccountScreen(goToLogInPage) }
+            composable(Screen.Cart.route) {
+                CartRoute(goToCatalog = { navController.navigate(Screen.Catalog.route) })
+            }
+            composable(Screen.Account.route) {
+                AccountScreen({ navController.popBackStack() })
+            }
 
             composable(
                 route = "detail/{id}",

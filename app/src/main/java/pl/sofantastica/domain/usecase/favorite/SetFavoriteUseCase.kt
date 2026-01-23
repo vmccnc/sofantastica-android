@@ -7,6 +7,6 @@ class SetFavoriteUseCase @Inject constructor(
     private val favoriteRepo: FavoritesRepository
 ) {
     suspend operator fun invoke(id: Int, isFavorite: Boolean) =
-        if (isFavorite) favoriteRepo.removeFavorite(id)
-        else favoriteRepo.addFavorite(id)
+        if (isFavorite) favoriteRepo.addFavorite(id)
+        else favoriteRepo.removeFavorite(id)
 }

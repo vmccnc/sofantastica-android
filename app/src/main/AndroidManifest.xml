@@ -31,11 +31,6 @@
             android:exported="true"
             android:theme="@style/Theme.Sofantastica">
         </activity>
-        <activity
-            android:name=".AuthActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Sofantastica">
-        </activity>
     </application>
 
 </manifest>

@@ -1,7 +1,5 @@
 package pl.sofantastica.domain.exceptions
 
-class IsNotOnlineException: Exception(ERROR_MESSAGE) {
-    companion object {
-        const val ERROR_MESSAGE = "Can't load data. You're not online"
-    }
-}
+import pl.sofantastica.R
+
+class IsNotOnlineException: ResIdException(R.string.you_re_not_online)

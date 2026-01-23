@@ -28,14 +28,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import pl.sofantastica.R
+import pl.sofantastica.ui.auth.LoginScreen
 
 @Composable
 fun AccountScreen(
-    goToLogInPage: () -> Unit,
+    goBack: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel()
 ) {
+
     if (viewModel.getUserData() == null) {
-        goToLogInPage()
+        //goToLogInPage()
+        LoginScreen(goBack)
+        return
     }
 
     val galleryLauncher =
@@ -43,7 +47,7 @@ fun AccountScreen(
             uri?.let {
                 viewModel.setPhotoUrl(it)
             }
-    }
+        }
 
     val textColors = TextFieldDefaults.colors(
         disabledTextColor = Color.DarkGray,
@@ -98,7 +102,8 @@ fun AccountScreen(
         )
         TextButton(onClick = {
             viewModel.logOut()
-            goToLogInPage()
+            goBack()
+            //goBack()
         }) {
             Icon(Icons.Default.ExitToApp, contentDescription = null)
             Text("Sign Out")

@@ -1,7 +1,5 @@
 package pl.sofantastica.ui.catalog
 
-import android.graphics.Point
-import android.widget.EditText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,32 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import pl.sofantastica.data.model.CategoryDto
-import pl.sofantastica.data.model.FurnitureDto
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import pl.sofantastica.R
 import pl.sofantastica.data.model.FurnitureCatalogModel
@@ -67,7 +53,6 @@ fun CatalogRoute(
         onSelectCategory = viewModel::selectCategory,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = viewModel::refreshFurniture,
-        emptyMessage = viewModel.emptyMessage,
         onItemClick = onItemClick,
         onSetFavorite = viewModel::onSetFavorite,
         minPrice = viewModel.minPrice,
@@ -86,7 +71,6 @@ fun CatalogScreen(
     onSelectCategory: (CategoryDto?) -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    emptyMessage: String,
     onItemClick: (Int) -> Unit,
     onSetFavorite: (Int, Boolean) -> Unit,
     minPrice: String,
@@ -137,7 +121,7 @@ fun CatalogScreen(
                 Box(modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(CatalogViewModel.EMPTY_FILTERED_DATA, textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.no_matching_data), textAlign = TextAlign.Center)
                 }
                 return@PullToRefreshBox
             }
@@ -175,12 +159,11 @@ fun CatalogScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Row {
-                                    Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(text = item.name, modifier = Modifier.weight(.9f), style = MaterialTheme.typography.titleMedium)
                                     Icon(
                                         if(item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = null,
-                                        modifier = Modifier.clickable { onSetFavorite(item.id, item.isFavorite) }
+                                        modifier = Modifier.clickable { onSetFavorite(item.id, !item.isFavorite) }
                                     )
                                 }
                                 Text(

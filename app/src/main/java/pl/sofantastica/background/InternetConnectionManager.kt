@@ -7,7 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import pl.sofantastica.domain.exceptions.IsNotOnlineException
 import javax.inject.Inject
 
-class InternetConnectionManager @Inject constructor(
+open class InternetConnectionManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     fun isOnline() {
