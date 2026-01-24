@@ -57,26 +57,23 @@ fun MainScreen() {
         bottomBar = {
             val backStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = backStackEntry?.destination?.route
-            val showBottom = currentRoute?.startsWith("detail") != true
-            if (showBottom) {
-                NavigationBar {
-                    val items = listOf(Screen.Home, Screen.Favorites, Screen.Catalog, Screen.Cart, Screen.Account)
-                    items.forEach { screen ->
-                        val selected = currentRoute == screen.route
-                        val iconModifier = Modifier.size(24.dp)
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    //popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = { Box(modifier = iconModifier) { screen.icon() } },
-                            label = { Text(screen.label, style = MaterialTheme.typography.bodySmall) }
-                        )
-                    }
+            NavigationBar {
+                val items = listOf(Screen.Home, Screen.Favorites, Screen.Catalog, Screen.Cart, Screen.Account)
+                items.forEach { screen ->
+                    val selected = currentRoute == screen.route
+                    val iconModifier = Modifier.size(24.dp)
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                //popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = { Box(modifier = iconModifier) { screen.icon() } },
+                        label = { Text(screen.label, style = MaterialTheme.typography.bodySmall) }
+                    )
                 }
             }
         }
