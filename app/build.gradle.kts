@@ -8,15 +8,15 @@ plugins {
 }
 
 android {
-    namespace = "pl.sofantastica"
-    compileSdk = 35
+    namespace = "com.furniture.duet"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "pl.sofantastica"
+        applicationId = "com.furniture.duet"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 7
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:259595292946:android:8a9eb6575af1e785cb23cb",
+        "mobilesdk_app_id": "1:259595292946:android:ee11a7690169b967cb23cb",
         "android_client_info": {
-          "package_name": "pl.sofantastica"
+          "package_name": "com.furniture.duet"
         }
       },
       "oauth_client": [],
