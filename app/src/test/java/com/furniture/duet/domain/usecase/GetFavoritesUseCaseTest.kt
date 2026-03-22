@@ -6,7 +6,7 @@ import org.junit.Test
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
 import com.furniture.duet.data.model.furniture.FurnitureFabricDto
 import com.furniture.duet.data.repository.FavoritesRepository
-import com.furniture.duet.domain.usecase.GetFavoritesUseCase
+import com.furniture.duet.domain.usecase.favorite.GetFavoritesUseCase
 
 class GetFavoritesUseCaseTest {
     private val repo = object : FavoritesRepository {

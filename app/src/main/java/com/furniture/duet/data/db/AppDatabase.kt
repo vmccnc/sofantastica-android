@@ -2,20 +2,23 @@ package com.furniture.duet.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.furniture.duet.data.db.dao.CartDao
+import com.furniture.duet.data.db.dao.FabricDao
+import com.furniture.duet.data.db.dao.FavoriteDao
+import com.furniture.duet.data.db.dao.FurnitureDao
+import com.furniture.duet.data.db.dao.FurnitureImageDao
+import com.furniture.duet.data.db.dao.OrderDao
 import com.furniture.duet.data.db.entity.CartItemEntity
+import com.furniture.duet.data.db.entity.CategoryEntity
 import com.furniture.duet.data.db.entity.FabricEntity
 import com.furniture.duet.data.db.entity.FavoriteEntity
 import com.furniture.duet.data.db.entity.FurnitureEntity
-import com.furniture.duet.data.db.entity.OrderEntity
-import com.furniture.duet.data.db.dao.CartDao
-import com.furniture.duet.data.db.dao.FavoriteDao
-import com.furniture.duet.data.db.dao.FurnitureDao
-import com.furniture.duet.data.db.dao.OrderDao
-import com.furniture.duet.data.db.dao.FabricDao
-import com.furniture.duet.data.db.dao.FurnitureImageDao
-import com.furniture.duet.data.db.entity.CategoryEntity
 import com.furniture.duet.data.db.entity.FurnitureImageEntity
+import com.furniture.duet.data.db.entity.OrderEntity
 import com.furniture.duet.data.db.entity.SupplierEntity
+
 
 @Database(
     entities = [
@@ -31,5 +34,10 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun cartDao(): CartDao
     abstract fun orderDao(): OrderDao
-    abstract fun fabricDao(): FabricDao
+    abstract fun fabricDao(): FabricDaoX
 }
+
+
+
+
+

@@ -9,11 +9,10 @@ import com.furniture.duet.data.model.cart.CartItemDto
 import com.furniture.duet.data.model.cart.CartItemUpdateDto
 import com.furniture.duet.data.model.fabric.FabricDto
 import com.furniture.duet.data.model.furniture.FurnitureDto
-import com.furniture.duet.data.model.OrderDto
+import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.PriceDto
 import com.furniture.duet.data.model.cart.AddCartItemRequest
 import com.furniture.duet.data.model.cart.CartDto
-import com.furniture.duet.data.repository.FavoritesRepositoryImpl
 import retrofit2.Response
 
 class FavoritesRepositoryImplTest {

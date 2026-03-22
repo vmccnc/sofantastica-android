@@ -13,6 +13,7 @@ import com.furniture.duet.data.db.dao.FabricDao
 import com.furniture.duet.data.db.dao.FavoriteDao
 import com.furniture.duet.data.db.dao.FurnitureDao
 import com.furniture.duet.data.db.dao.FurnitureImageDao
+import com.furniture.duet.data.db.dao.OrderDao
 import javax.inject.Singleton
 
 @Module
@@ -21,7 +22,13 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "sofantastica.db").build()
+        Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "sofantastica.db"
+        )
+            .addMigrations(AppDatabase.migration1To2)
+            .build()
 
     @Provides
     fun provideFurnitureDAO(appDatabase: AppDatabase): FurnitureDao {
@@ -46,5 +53,10 @@ object DatabaseModule {
     @Provides
     fun provideFurnitureImageDAO(appDatabase: AppDatabase): FurnitureImageDao {
         return appDatabase.furnitureImageDao()
+    }
+
+    @Provides
+    fun provideOrderDAO(appDatabase: AppDatabase): OrderDao {
+        return appDatabase.orderDao()
     }
 }

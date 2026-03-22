@@ -1,7 +1,7 @@
 package com.furniture.duet.ui.cart
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,167 +11,398 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import com.furniture.duet.R
 import com.furniture.duet.data.model.cart.CartItemModel
-import com.furniture.duet.ui.ErrorUI
-import com.furniture.duet.ui.LoadingUI
+import com.furniture.duet.ui.main.ErrorUI
+import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.common.UiState
+import com.furniture.duet.ui.main.MainViewModel
+import com.furniture.duet.ui.orders.MakeOrderScreen
+import com.furniture.duet.ui.theme.EnabledBtnColor
+import com.furniture.duet.ui.theme.FabricSecondaryColor
+import com.furniture.duet.ui.theme.FurnitureDetailTextColor
+import com.furniture.duet.ui.theme.SearchBarBackgroundColor
+import com.furniture.duet.ui.theme.TitleColor
 
 @Composable
-fun CartRoute(goToCatalog: () -> Unit, viewModel: CartViewModel = hiltViewModel()) {
-    viewModel.load()
+fun CartRoute(
+    goBack: () -> Unit,
+    goToOrderHistory: () -> Unit,
+    viewModel: CartViewModel = hiltViewModel()
+) {
     when (val state = viewModel.uiState) {
         is UiState.Loading -> {
             LoadingUI()
+            viewModel.load()
         }
         is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
         is UiState.Success ->
-            CartScreen(state.data.items, state.data.total,
-                viewModel::setCount,
-                { id -> viewModel.removeItem(id) },
-                goToCatalog)
+            CartScreen(goBack, goToOrderHistory)
     }
 }
 
 @Composable
-fun CartScreen(items: List<CartItemModel>,
-               total: Double,
-               onSetCount: (Int, Int) -> Unit,
-               onDelete: (Int) -> Unit,
-               goToCatalog: () -> Unit
+fun CartScreen(
+    goBack: () -> Unit,
+    goToOrderHistory: () -> Unit,
+    viewModel: CartViewModel = hiltViewModel()
 ) {
-    val margin_2 = dimensionResource(R.dimen.margin_2)
-    val size_24 = dimensionResource(R.dimen.size_24)
+    val margin_10 = dimensionResource(R.dimen.margin_10)
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val size_48 = dimensionResource(R.dimen.size_48)
 
-    if (items.isEmpty()) {
-        Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(stringResource(R.string.cart_is_empty), textAlign = TextAlign.Center)
-            TextButton(onClick = goToCatalog) {
-                Text(stringResource(R.string.go_to_catalog), textAlign = TextAlign.Center)
-            }
-        }
-        return
+    val data = (viewModel.uiState as UiState.Success).data
+
+    ConstraintLayout(
+        modifier = Modifier
+            .padding(horizontal = margin_16)
+            .fillMaxSize()
+    ) {
+        val (goBackBtn, title, searchBtn) = createRefs()
+
+        Image(
+            modifier = Modifier
+                .clickable { goBack() }
+                .padding(horizontal = margin_20, vertical = margin_16)
+                .constrainAs(goBackBtn) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                },
+            painter = painterResource(R.drawable.i_back),
+            contentDescription = null
+        )
+        Text(
+            modifier = Modifier
+                .padding(vertical = margin_10)
+                .constrainAs(title) {
+                    top.linkTo(parent.top)
+                    start.linkTo(goBackBtn.end)
+                    end.linkTo(searchBtn.start)
+                },
+            text = stringResource(R.string.cart_title),
+            color = TitleColor,
+            style = MaterialTheme.typography.labelMedium
+        )
+        Image(
+            modifier = Modifier
+                .clickable { }
+                .constrainAs(searchBtn) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                },
+            painter = painterResource(R.drawable.i_search),
+            contentDescription = null
+        )
+//        Image(
+//            modifier = Modifier
+//                .clickable { }
+//                .constrainAs(phoneBtn) {
+//                    top.linkTo(parent.top)
+//                    end.linkTo(parent.end)
+//                },
+//            painter = painterResource(R.drawable.i_phone),
+//            contentDescription = null
+//        )
+
     }
 
-    val scope = rememberCoroutineScope()
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        LazyColumn(modifier = Modifier.fillMaxHeight(.9f)) {
-            items(items) { item ->
-                val scale = remember { Animatable(1f) }
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .graphicsLayer {
-                                scaleX = scale.value
-                                scaleY = scale.value
-                            }
-                            .clickable {
-                                scope.launch {
-                                    scale.animateTo(0.95f, animationSpec = tween(100))
-                                    scale.animateTo(1f, animationSpec = tween(100))
-                                }
-                            },
-                        shape = RoundedCornerShape(8.dp)
+    if (data.items.isEmpty()) {
+        ConstraintLayout(
+            modifier = Modifier
+                .padding(horizontal = margin_16)
+                .fillMaxSize()
+        ) {
+            val (emptyCartImage, emptyCartText) = createRefs()
+            Image(
+                modifier = Modifier
+                    .clickable { goBack() }
+                    .constrainAs(emptyCartImage) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                painter = painterResource(R.drawable.i_empty_cart),
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier
+                    .clickable { goBack() }
+                    .constrainAs(emptyCartText) {
+                        top.linkTo(emptyCartImage.bottom, margin_16)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                text = stringResource(R.string.cart_is_empty),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    } else {
+        LazyColumn(modifier = Modifier.padding(top = size_48, start = margin_16, end = margin_16)) {
+            item {
+                Text(
+                    text = stringResource(R.string.cart_products_count).format(data.items.count()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TitleColor
+                )
+            }
+            items(data.items) { item ->
+                CartItem(
+                    item,
+                    viewModel::setCount,
+                    viewModel::setFavorite,
+                    viewModel::removeItem
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = margin_16),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.cart_total),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = FurnitureDetailTextColor
+                    )
+                    Text(
+                        text = stringResource(R.string.furniture_total_price).format(data.total),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = FurnitureDetailTextColor
+                    )
+                }
+                if (viewModel.makeOrder) {
+                    MakeOrderScreen(data.total, goToOrderHistory)
+                } else {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { viewModel.makeOrder = true },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = EnabledBtnColor,
+                            contentColor = Color.White
+                        )
                     ) {
-                        Row(modifier = Modifier.padding(8.dp)) {
-                            AsyncImage(
-                                model = item.imageUrl,
-                                contentDescription = null,
-                                error = painterResource(R.drawable.no_image),
-                                modifier = Modifier
-                                    .size(80.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column(modifier = Modifier.weight(.9f)) {
-                                Text(text = item.furnitureName,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Text(
-                                    text = stringResource(R.string.fabric).format(item.fabricName),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = 2
-                                )
-                                Text(
-                                    text = stringResource(R.string.furniture_price).format(item.price),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Icon(Icons.Default.Clear,
-                                contentDescription = null,
-                                modifier = Modifier.clickable { onDelete(item.id) }
-                            )
-                        }
-                        Row {
-                            Icon(Icons.Default.KeyboardArrowLeft,
-                                modifier = Modifier.size(size_24)
-                                    .clickable { onSetCount(item.id, item.quantity - 1) },
-                                contentDescription = null
-                            )
-                            Text(item.quantity.toString())
-                            Icon(Icons.Default.KeyboardArrowRight,
-                                modifier = Modifier.size(size_24)
-                                    .clickable { onSetCount(item.id, item.quantity + 1) },
-                                contentDescription = null
-                            )
-                        }
+                        Text(
+                            text = stringResource(R.string.make_order),
+                            style = MaterialTheme.typography.labelSmall
+                        )
                     }
                 }
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(R.string.total).format(total),
-                style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = {  },
-                shape = RectangleShape,
-                modifier = Modifier.border(margin_2, MaterialTheme.colorScheme.secondary)
-            ) {
-                Text(text = stringResource(R.string.make_order),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+    }
+
+}
+
+@Composable
+fun CartItem(
+    item: CartItemModel,
+    setCount: (Int, Int) -> Unit,
+    setFavorite: (Int, Boolean) -> Unit,
+    remove: (Int) -> Unit
+) {
+    val width = LocalConfiguration.current.screenWidthDp - 240
+
+    val margin_5 = dimensionResource(R.dimen.margin_5)
+    val margin_8 = dimensionResource(R.dimen.margin_8)
+    val margin_10 = dimensionResource(R.dimen.margin_10)
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val size_24 = dimensionResource(R.dimen.size_24)
+    val size_130 = dimensionResource(R.dimen.size_130)
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = margin_8)
+            .background(Color.White, RoundedCornerShape(margin_20))
+            .padding(margin_10)
+    ) {
+        val (furnitureImage, furnitureName, fabricName, fabricImage,
+            favBtn, removeBtn, counter, price, spacer
+        ) = createRefs()
+
+        AsyncImage(
+            modifier = Modifier
+                .size(size_130)
+                .padding(end = margin_5)
+                .clip(RoundedCornerShape(margin_20))
+                .constrainAs(furnitureImage) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                },
+            model = item.furnitureUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.no_image)
+        )
+
+        Text(
+            modifier = Modifier
+                .width(width.dp)
+                .constrainAs(furnitureName) {
+                    top.linkTo(parent.top)
+                    start.linkTo(furnitureImage.end)
+                },
+            text = item.furnitureName,
+            color = FurnitureDetailTextColor,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        val favoriteIcon =
+            if(item.isFavorite) painterResource(R.drawable.i_favorite)
+            else painterResource(R.drawable.i_favorite_border)
+        Image(
+            modifier = Modifier
+                .clickable { setFavorite(item.furnitureId, !item.isFavorite) }
+                .constrainAs(favBtn) {
+                    top.linkTo(parent.top)
+                    end.linkTo(removeBtn.start)
+                },
+            painter = favoriteIcon,
+            contentDescription = null
+        )
+        Image(
+            modifier = Modifier
+                .clickable { remove(item.id) }
+                .constrainAs(removeBtn) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                },
+            painter = painterResource(R.drawable.i_trash),
+            contentDescription = null
+        )
+
+        AsyncImage(
+            modifier = Modifier
+                .size(size_24)
+                .clip(CircleShape)
+                .constrainAs(fabricImage) {
+                    top.linkTo(fabricName.top)
+                    bottom.linkTo(fabricName.bottom)
+                    start.linkTo(furnitureImage.end)
+                },
+            model = item.fabricUrl,
+            contentDescription = null,
+            error = painterResource(R.drawable.no_image)
+        )
+        Text(
+            modifier = Modifier
+                .padding(margin_8)
+                .constrainAs(fabricName) {
+                    top.linkTo(furnitureName.bottom)
+                    start.linkTo(fabricImage.end)
+                },
+            text = item.fabricName,
+            color = FabricSecondaryColor,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        Spacer(modifier = Modifier.constrainAs(spacer){
+            top.linkTo(fabricImage.bottom)
+            bottom.linkTo(counter.top, margin_16)
+        })
+
+        CartCounter(
+            item.quantity,
+            { newCount -> setCount(item.id, newCount) },
+            Modifier.constrainAs(counter) {
+                //top.linkTo(fabricImage.bottom, margin_16)
+                start.linkTo(furnitureImage.end)
+                bottom.linkTo(parent.bottom)
             }
-        }
+        )
+
+        Text(
+            modifier = Modifier
+                .constrainAs(price) {
+                    top.linkTo(counter.top)
+                    bottom.linkTo(counter.bottom)
+                    start.linkTo(counter.end, margin_16)
+                    end.linkTo(parent.end)
+                },
+            text = stringResource(R.string.furniture_total_price).format(item.price),
+            color = FurnitureDetailTextColor,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+}
+
+@Composable
+fun CartCounter(
+    count: Int,
+    setCount: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val margin_10 = dimensionResource(R.dimen.margin_10)
+    val size_40 = dimensionResource(R.dimen.size_40)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .background(Color.White, RoundedCornerShape(size_40))
+            .border(1.dp, EnabledBtnColor, RoundedCornerShape(size_40))
+    ) {
+        Image(
+            modifier = Modifier
+                .padding(horizontal = margin_10)
+                .clickable { setCount(count - 1) },
+            painter = painterResource(R.drawable.i_minus),
+            contentDescription = null
+        )
+        Text(
+            text = count.toString(),
+            style = MaterialTheme.typography.labelSmall,
+            color = FurnitureDetailTextColor
+        )
+        Image(
+            modifier = Modifier
+                .padding(horizontal = margin_10)
+                .clickable { setCount(count + 1) },
+            painter = painterResource(R.drawable.i_add),
+            contentDescription = null
+        )
     }
 }

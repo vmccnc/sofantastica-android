@@ -13,19 +13,22 @@ import com.furniture.duet.data.model.cart.CartModel
 import com.furniture.duet.domain.usecase.cart.ChangeQuantityUseCase
 import com.furniture.duet.domain.usecase.cart.DeleteCartUseCase
 import com.furniture.duet.domain.usecase.cart.GetCartUseCase
+import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.ui.common.UiState
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val _getCart: GetCartUseCase,
+    private val _setFavorite: SetFavoriteUseCase,
     private val _changeQuantity: ChangeQuantityUseCase,
-    private val _deleteCart: DeleteCartUseCase,
-    @ApplicationContext private val context: Context
+    private val _deleteCart: DeleteCartUseCase
 ) : ViewModel() {
 
     var uiState by mutableStateOf<UiState<CartModel>>(UiState.Loading)
         private set
+
+    var makeOrder by mutableStateOf(false)
 
     fun load() {
         viewModelScope.launch {
@@ -60,6 +63,17 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _deleteCart(id)
+                load()
+            } catch (e: Exception) {
+                uiState = UiState.Error(e)
+            }
+        }
+    }
+
+    fun setFavorite(id: Int, isFavorite: Boolean) {
+        viewModelScope.launch {
+            try {
+                _setFavorite(id, isFavorite)
                 load()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)

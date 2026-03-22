@@ -32,8 +32,7 @@ class FavoritesRepositoryImpl @Inject constructor(
             }
             favoriteDao.deleteAll()
             favoriteDao.insertAll(items)
-        } catch (e: IsNotAuthorizeException) {
-            favoriteDao.deleteAll()
+        } catch (_: IsNotAuthorizeException) {
         }
     }
 

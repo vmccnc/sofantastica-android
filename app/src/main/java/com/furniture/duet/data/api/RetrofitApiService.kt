@@ -2,13 +2,17 @@ package com.furniture.duet.data.api
 
 import com.furniture.duet.data.model.furniture.FurnitureDto
 import com.furniture.duet.data.model.fabric.FabricDto
-import com.furniture.duet.data.model.OrderDto
+import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.PriceDto
 import com.furniture.duet.data.model.cart.CartItemDto
 import com.furniture.duet.data.model.cart.AddCartItemResponse
 import com.furniture.duet.data.model.cart.CartItemUpdateDto
 import com.furniture.duet.data.model.cart.AddCartItemRequest
 import com.furniture.duet.data.model.cart.CartDto
+import com.furniture.duet.data.model.furniture.CategoryDto
+import com.furniture.duet.data.model.furniture.FurniturePageModel
+import com.furniture.duet.data.model.order.CreateOrderModel
+import com.furniture.duet.data.model.order.GetOrdersModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,10 +20,10 @@ import retrofit2.http.DELETE
 
 interface RetrofitApiService {
     @GET("sofantastic/furniture")
-    suspend fun listFurniturs(): Response<List<FurnitureDto>>
+    suspend fun listFurniturs(): Response<FurniturePageModel>
 
-    @GET("sofantastic/furniture/categories")
-    suspend fun listCategories(): Response<List<String>>
+    @GET("sofantastic/categories")
+    suspend fun listCategories(): List<CategoryDto>
 
     @GET("sofantastic/furniture/{id}")
     suspend fun getFurnitureDetail(@retrofit2.http.Path("id") id: Int): Response<FurnitureDto>
@@ -73,10 +77,10 @@ interface RetrofitApiService {
     ): Response<Unit>
 
     @GET("sofantastic/order/{userId}")
-    suspend fun listOrders(@retrofit2.http.Path("userId") userId: String): Response<List<OrderDto>>
+    suspend fun listOrders(@retrofit2.http.Path("userId") userId: String): Response<GetOrdersModel>
 
-    @retrofit2.http.POST("sofantastic/order")
-    suspend fun createOrder(@retrofit2.http.Body order: OrderDto): Response<OrderDto>
+    @retrofit2.http.POST("sofantastic/order/place")
+    suspend fun createOrder(@retrofit2.http.Body order: CreateOrderModel): Response<OrderDto>
 
     @GET("sofantastic/favorites/{userId}")
     suspend fun listFavorites(@retrofit2.http.Path("userId") userId: String): Response<List<FurnitureDto>>

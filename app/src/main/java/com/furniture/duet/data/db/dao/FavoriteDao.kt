@@ -13,15 +13,15 @@ interface FavoriteDao {
 //    @Query("SELECT * FROM favorites WHERE userId = :userId")
 //    suspend fun getFavorites(userId: String): List<FavoriteEntity>
     @Query("SELECT furniture.id, furniture.name, furniture.basePrice, furniture.description, " +
-            "furniture.imageUrl, furniture.category, true AS isFavorite FROM furniture " +
+            "furniture.imageUrl, furniture.category, 1 AS isFavorite FROM furniture " +
             "INNER JOIN favorites ON furniture.id = favorites.furnitureId")
     suspend fun getFavorites(): List<FurnitureCatalogModel>
 
-    @Query("SELECT CASE WHEN favorites.furnitureId IS NOT NULL THEN true " +
-            "ELSE false " +
-            "END AS isFavorite FROM furniture " +
-            "LEFT JOIN favorites ON furniture.id = favorites.furnitureId " +
-            "WHERE furniture.id = :id")
+    @Query(
+        "SELECT CASE WHEN favorites.furnitureId IS NOT NULL THEN 1 ELSE 0 END AS isFavorite " +
+        "FROM furniture " +
+        "LEFT JOIN favorites ON furniture.id = favorites.furnitureId " +
+        "WHERE furniture.id = :id")
     suspend fun isFavorite(id: Int): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

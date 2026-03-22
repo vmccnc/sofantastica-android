@@ -6,7 +6,8 @@ import com.furniture.duet.data.db.entity.FurnitureImageEntity
 data class FurnitureFabricDto(
     val furnitureId: Int,
     val fabricId: Int,
-    val name: String,
+    val furnitureName: String,
+    val fabricName: String,
     val basePrice: Double,
     val fabricPrice: Double,
     val totalPrice: Double,

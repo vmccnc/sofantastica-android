@@ -11,6 +11,5 @@ data class AddCartItemResponse(
     val fabricUrl: String,
     val priceSofaWithFabric: Int,
     val quantity: Int,
-    val checkCalculation: String,
-    val priceForQuantity: Int
+    val checkCalculation: String
 )

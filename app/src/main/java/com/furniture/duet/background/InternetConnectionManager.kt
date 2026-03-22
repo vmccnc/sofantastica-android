@@ -20,6 +20,8 @@ open class InternetConnectionManager @Inject constructor(
             connectivityManager.getNetworkCapabilities(network) ?: throw IsNotOnlineException()
 
         if(capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_SATELLITE) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
             return
         }

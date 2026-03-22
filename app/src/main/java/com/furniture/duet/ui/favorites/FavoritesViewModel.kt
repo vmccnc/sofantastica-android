@@ -12,7 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
 import com.furniture.duet.domain.exceptions.ResIdException
-import com.furniture.duet.domain.usecase.GetFavoritesUseCase
+import com.furniture.duet.domain.usecase.favorite.GetFavoritesUseCase
 import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.ui.common.UiState
 import javax.inject.Inject

@@ -18,19 +18,53 @@ interface FurnitureDao {
             "ELSE 0 " +
             "END AS isFavorite FROM furniture " +
             "LEFT JOIN favorites ON furniture.id = favorites.furnitureId " +
-            "WHERE basePrice >= :minPrice AND basePrice <= :maxPrice")
-    suspend fun getAll(minPrice: Double, maxPrice: Double): List<FurnitureCatalogModel>
+            "WHERE basePrice >= :minPrice AND basePrice <= :maxPrice AND " +
+            "name LIKE '%' || :searchQuery || '%' AND " +
+            "category LIKE '%' || :category || '%' " +
+            "ORDER BY basePrice ASC")
+    suspend fun getAllByPriceAsc(
+        minPrice: Float, maxPrice: Float,
+        searchQuery: String,
+        category: String
+    ): List<FurnitureCatalogModel>
 
     @Query("SELECT id, name, basePrice, description, imageUrl, category, " +
             "CASE WHEN favorites.furnitureId IS NOT NULL THEN 1 " +
             "ELSE 0 " +
             "END AS isFavorite FROM furniture " +
             "LEFT JOIN favorites ON furniture.id = favorites.furnitureId " +
-            "WHERE basePrice >= :minPrice AND basePrice <= :maxPrice AND category = :category")
-    suspend fun getAll(minPrice: Double, maxPrice: Double, category: String): List<FurnitureCatalogModel>
+            "WHERE basePrice >= :minPrice AND basePrice <= :maxPrice AND " +
+            "name LIKE '%' || :searchQuery || '%' AND " +
+            "category LIKE '%' || :category || '%' " +
+            "ORDER BY basePrice DESC")
+    suspend fun getAllByPriceDesc(
+        minPrice: Float, maxPrice: Float,
+        searchQuery: String,
+        category: String
+    ): List<FurnitureCatalogModel>
+
+    @Query("SELECT id, name, basePrice, description, imageUrl, category, " +
+            "CASE WHEN favorites.furnitureId IS NOT NULL THEN 1 " +
+            "ELSE 0 " +
+            "END AS isFavorite FROM furniture " +
+            "LEFT JOIN favorites ON furniture.id = favorites.furnitureId " +
+            "WHERE basePrice >= :minPrice AND basePrice <= :maxPrice AND " +
+            "name LIKE '%' || :searchQuery || '%' AND " +
+            "category LIKE '%' || :category || '%'")
+    suspend fun getAll(
+        minPrice: Float, maxPrice: Float,
+        searchQuery: String,
+        category: String
+    ): List<FurnitureCatalogModel>
+
+    @Query("SELECT id, name, basePrice, description, imageUrl, category, " +
+            "0 AS isFavorite FROM furniture " +
+            "WHERE name LIKE '%' || :searchQuery || '%'")
+    suspend fun getAll(searchQuery: String): List<FurnitureCatalogModel>
 
     @Transaction
-    @Query("SELECT furniture.id AS furnitureId, 0 AS fabricId, furniture.name, " +
+    @Query("SELECT furniture.id AS furnitureId, 0 AS fabricId, " +
+            "furniture.name AS furnitureName, \"\" AS fabricName, " +
             "furniture.basePrice, 0 AS fabricPrice, " +
             "furniture.basePrice AS totalPrice, furniture.description, " +
             "furniture.imageUrl, \"\" AS fabricUrl, furniture.modelUrl, furniture.category, " +
@@ -48,8 +82,8 @@ interface FurnitureDao {
     @Query("DELETE FROM furniture")
     suspend fun deleteAllFurniture()
 
-    @Query("SELECT DISTINCT name FROM categories")
-    suspend fun getCategories(): List<CategoryDto>
+//    @Query("SELECT DISTINCT name FROM categories")
+//    suspend fun getCategories(): List<CategoryDto>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllCategories(items: List<CategoryEntity>)
@@ -59,4 +93,7 @@ interface FurnitureDao {
 
     @Query("SELECT DISTINCT MAX(basePrice) FROM furniture")
     suspend fun getMax(): Double
+
+    @Query("SELECT DISTINCT MIN(basePrice) FROM furniture")
+    suspend fun getMin(): Double
 }

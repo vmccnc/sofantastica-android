@@ -9,18 +9,24 @@ import com.furniture.duet.data.model.cart.CartItemModel
 
 @Dao
 interface CartDao {
-    @Query("SELECT cart.id, cart.furnitureId, cart.fabricId, cart.quantity, furniture.imageUrl, " +
+    @Query("SELECT cart.id, cart.furnitureId, cart.fabricId, cart.quantity, " +
+            "furniture.imageUrl AS furnitureUrl, fabrics.fabricUrl AS fabricUrl, " +
             "furniture.name AS furnitureName, fabrics.name AS fabricName, " +
-            "(furniture.basePrice + fabrics.price)*cart.quantity AS price " +
+            "(furniture.basePrice + fabrics.price)*cart.quantity AS price, " +
+            "CASE WHEN favorites.furnitureId IS NOT NULL THEN 1 ELSE 0 END AS isFavorite " +
             "FROM cart " +
             "INNER JOIN furniture ON cart.furnitureId = furniture.id " +
-            "INNER JOIN fabrics ON cart.fabricId = fabrics.id")
+            "INNER JOIN fabrics ON cart.fabricId = fabrics.id " +
+            "LEFT JOIN favorites ON furniture.id = favorites.furnitureId ")
     suspend fun getCart(): List<CartItemModel>
 
     @Query("SELECT * FROM cart " +
             "WHERE furnitureId = :furnitureId AND fabricId = :fabricId"
     )
     suspend fun getCartItem(furnitureId: Int, fabricId: Int): CartItemEntity?
+
+    @Query("SELECT COUNT(*) FROM cart")
+    fun getCartCount(): Int
 
     @Query("SELECT * FROM cart WHERE id = :id")
     suspend fun getCartItem(id: Int): CartItemEntity?

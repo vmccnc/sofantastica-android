@@ -8,62 +8,77 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.furniture.duet.R
 
-val BellezaFontFamily = FontFamily(Font(R.font.belleza_regular, FontWeight.W500))
-val RobotoFontFamily = FontFamily(Font(R.font.roboto_regular, FontWeight.Normal))
+val MarcellusFontFamily = FontFamily(Font(R.font.marcellus_sc, FontWeight.Normal))
+val MonsieurLaDoulaise = FontFamily(Font(R.font.monsieur_la_doulaise, FontWeight.Normal))
+val MondaFontFamily = FontFamily(Font(R.font.monda, FontWeight.Normal))
 
 // Set of Material typography styles to start with
 val Typography = Typography(
+    //H1 Heading
+    labelMedium = TextStyle(
+        fontFamily = MarcellusFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        color = FurnitureDetailTextColor,
+        letterSpacing = 0.5.sp
+    ),
+    //Button
+    labelSmall = TextStyle(
+        fontFamily = MondaFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    //Home Page
+    titleLarge = TextStyle(
+        fontFamily = MonsieurLaDoulaise,
+        fontWeight = FontWeight.Normal,
+        fontSize = 64.sp,
+        color = TitleColor,
+        letterSpacing = 0.5.sp
+    ),
+    //H2 Heading
+    titleMedium = TextStyle(
+        fontFamily = MarcellusFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+        lineHeight = 28.sp,
+        color = FurnitureDetailTextColor,
+        letterSpacing = 0.5.sp
+    ),
+    //H3 Heading
+    titleSmall = TextStyle(
+        fontFamily = MondaFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.5.sp,
+        color = TitleColor
+    ),
+    //Price (Option)
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = MondaFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    //Text
+    bodyMedium = TextStyle(
+        fontFamily = MondaFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
-    labelMedium = TextStyle(
-        fontFamily = RobotoFontFamily,
-        fontSize = 13.sp,
-        lineHeight = 21.sp,
-        letterSpacing = 6.sp
-    ),
-    bodyMedium = TextStyle(
-        fontFamily = RobotoFontFamily,
-        fontSize = 16.sp,
-        lineHeight = 21.sp,
-        letterSpacing = 0.5.sp
-    ),
+    //Price (the price on the cards)
     bodySmall = TextStyle(
-        fontFamily = RobotoFontFamily,
-        fontSize = 13.sp,
-        lineHeight = 21.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = BellezaFontFamily,
-        fontSize = 56.sp,
-        letterSpacing = 0.5.sp,
-
-    ),
-    titleMedium = TextStyle(
-        fontFamily = BellezaFontFamily,
-        fontSize = 24.sp,
-        letterSpacing = 0.5.sp,
-
-        )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = MondaFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
+        fontSize = 14.sp,
         lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     )
-    */
 )

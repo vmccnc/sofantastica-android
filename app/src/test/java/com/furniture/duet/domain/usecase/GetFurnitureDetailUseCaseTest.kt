@@ -7,7 +7,7 @@ import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
 import com.furniture.duet.data.model.furniture.FurnitureFabricDto
 import com.furniture.duet.data.repository.FurnitureRepository
-import com.furniture.duet.domain.usecase.GetFurnitureDetailUseCase
+import com.furniture.duet.domain.usecase.furnitures.GetFurnitureDetailUseCase
 
 class GetFurnitureDetailUseCaseTest {
     private val repo = object : FurnitureRepository {

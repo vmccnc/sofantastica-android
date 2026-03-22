@@ -10,9 +10,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.furniture.duet.data.db.AppDatabase
 import com.furniture.duet.ui.theme.SofantasticaTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.furniture.duet.ui.MainScreen
+import com.furniture.duet.ui.main.MainScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

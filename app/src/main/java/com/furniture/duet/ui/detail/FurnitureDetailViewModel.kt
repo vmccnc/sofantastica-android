@@ -3,6 +3,7 @@ package com.furniture.duet.ui.detail
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
@@ -11,16 +12,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.furniture.duet.R
 import com.furniture.duet.data.model.fabric.FabricDto
 import com.furniture.duet.data.model.furniture.FurnitureFabricDto
 import com.furniture.duet.domain.exceptions.ResIdException
-import com.furniture.duet.domain.usecase.GetFurnitureDetailUseCase
+import com.furniture.duet.domain.usecase.furnitures.GetFurnitureDetailUseCase
 import com.furniture.duet.domain.usecase.cart.AddToCartUseCase
+import com.furniture.duet.domain.usecase.cart.DeleteCartUseCase
 import com.furniture.duet.domain.usecase.cart.GetQuantityInCartUseCase
 import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.ui.common.UiState
@@ -31,6 +30,7 @@ class FurnitureDetailViewModel @Inject constructor(
     private val _getDetail: GetFurnitureDetailUseCase,
     private val _setFavorite: SetFavoriteUseCase,
     private val _addToCart: AddToCartUseCase,
+    private val _deleteFromCart: DeleteCartUseCase,
     private val _getQuantityInCart: GetQuantityInCartUseCase,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context
@@ -39,11 +39,17 @@ class FurnitureDetailViewModel @Inject constructor(
     var uiState by mutableStateOf<UiState<FurnitureFabricDto>>(UiState.Loading)
         private set
 
-    private var _isDialogOpened = MutableStateFlow(false)
-    val isDialogOpened = _isDialogOpened.asStateFlow()
+    var isDialogOpened by mutableStateOf(false)
+        private set
 
-    private var _count = MutableStateFlow(0)
-    val count = _count.asStateFlow()
+    var isDescriptionOpened by mutableStateOf(false)
+        private set
+
+    var isDimensionsOpened by mutableStateOf(false)
+        private set
+
+    var count by mutableIntStateOf(0)
+        private set
 
     init {
         val furnitureId = savedStateHandle.get<Int>("furnitureId")
@@ -54,20 +60,20 @@ class FurnitureDetailViewModel @Inject constructor(
 
     fun load(furnitureId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _count.update { 0 }
+            count = 0
             uiState = UiState.Success(_getDetail(furnitureId))
         }
     }
 
     fun openDialog() {
         viewModelScope.launch {
-            _isDialogOpened.update { true }
+            isDialogOpened = true
         }
     }
 
     fun closeDialog() {
         viewModelScope.launch {
-            _isDialogOpened.update { false }
+            isDialogOpened = false
         }
     }
 
@@ -76,12 +82,13 @@ class FurnitureDetailViewModel @Inject constructor(
             try {
                 if (uiState is UiState.Success) {
                     val furniture = (uiState as UiState.Success).data
-                    _count.update { _getQuantityInCart(furniture.furnitureId, fabric.id) }
+                    count = _getQuantityInCart(furniture.furnitureId, fabric.id)
                     uiState = UiState.Success(
                         FurnitureFabricDto(
                         furnitureId = furniture.furnitureId,
                         fabricId = fabric.id,
-                        name = furniture.name,
+                        furnitureName = furniture.furnitureName,
+                        fabricName = fabric.name,
                         basePrice = furniture.basePrice,
                         fabricPrice = fabric.price,
                         totalPrice = furniture.basePrice + fabric.price,
@@ -93,7 +100,7 @@ class FurnitureDetailViewModel @Inject constructor(
                         category = furniture.category,
                         isFavorite = furniture.isFavorite
                     ))
-                    _isDialogOpened.update { false }
+                    isDialogOpened = false
                 }
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
@@ -111,7 +118,8 @@ class FurnitureDetailViewModel @Inject constructor(
                     FurnitureFabricDto(
                         furnitureId = furniture.furnitureId,
                         fabricId = furniture.fabricId,
-                        name = furniture.name,
+                        furnitureName = furniture.furnitureName,
+                        fabricName = furniture.fabricName,
                         basePrice = furniture.basePrice,
                         fabricPrice = furniture.fabricPrice,
                         totalPrice = furniture.totalPrice,
@@ -132,9 +140,30 @@ class FurnitureDetailViewModel @Inject constructor(
         }
     }
 
-    fun setCount(newCount: Int) {
+    fun isFavorite(): Boolean {
+        val furniture = (uiState as UiState.Success).data
+        return furniture.isFavorite
+    }
+
+    fun setCountInCart(newCount: Int) {
         if(newCount >= 0) {
-            _count.update { newCount }
+            viewModelScope.launch {
+                val furniture = (uiState as UiState.Success).data
+                count = newCount
+                if (count > 0) {
+                    _addToCart(
+                        furnitureId = furniture.furnitureId,
+                        fabricId = furniture.fabricId,
+                        quantity = count
+                    )
+                } else {
+                    _deleteFromCart(
+                        furnitureId = furniture.furnitureId,
+                        fabricId = furniture.fabricId
+                    )
+                    Toast.makeText(context, R.string.item_deleted_from_cart, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -142,21 +171,30 @@ class FurnitureDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val furniture = (uiState as UiState.Success).data
             try {
+                count = 1
                 _addToCart(
                     furnitureId = furniture.furnitureId,
                     fabricId = furniture.fabricId,
-                    quantity = count.value
+                    quantity = count
                 )
-                if (count.value > 0) {
-                    Toast.makeText(context, R.string.item_added_in_cart, Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, R.string.item_deleted_from_cart, Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(context, R.string.item_added_in_cart, Toast.LENGTH_SHORT).show()
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
+        }
+    }
+
+    fun toggleDescription() {
+        viewModelScope.launch {
+            isDescriptionOpened = !isDescriptionOpened
+        }
+    }
+
+    fun toggleDimensions() {
+        viewModelScope.launch {
+            isDimensionsOpened = !isDimensionsOpened
         }
     }
 }

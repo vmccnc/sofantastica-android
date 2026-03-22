@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "https://flato.q11.jvmhost.net/api/"
+    private const val BASE_URL = "https://q11.jvmhost.net/api/"
 
 
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()

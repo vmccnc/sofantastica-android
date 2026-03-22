@@ -1,5 +1,7 @@
 package com.furniture.duet.data.model.furniture
 
+import java.time.LocalDateTime
+
 data class FurnitureDto(
     val id: Int,
     val name: String,
@@ -8,5 +10,8 @@ data class FurnitureDto(
     val imageUrl: String,
     val imageUrls: List<String>?,
     val modelUrl: String,
-    val category: String
+    val category: CategoryDto,
+    val createdAt: String,
+    val updatedAt: String,
+    val urls36: List<String>
 )

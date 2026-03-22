@@ -1,6 +1,5 @@
 package com.furniture.duet.data.repository
 
-import com.furniture.duet.data.repository.FurnitureRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -11,7 +10,7 @@ import com.furniture.duet.data.model.cart.CartItemUpdateDto
 import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.fabric.FabricDto
 import com.furniture.duet.data.model.furniture.FurnitureDto
-import com.furniture.duet.data.model.OrderDto
+import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.PriceDto
 import com.furniture.duet.data.model.cart.AddCartItemRequest
 import com.furniture.duet.data.model.cart.CartDto

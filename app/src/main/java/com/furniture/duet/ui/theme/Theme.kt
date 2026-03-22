@@ -46,7 +46,6 @@ fun SofantasticaTheme(
 //        darkTheme -> DarkColorScheme
 //        else -> LightColorScheme
 //    }
-
     MaterialTheme(
         colorScheme = LightColorScheme,
         typography = Typography,

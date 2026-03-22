@@ -7,6 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.furniture.duet.data.model.SortOption
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import com.furniture.duet.data.model.furniture.CategoryDto
@@ -15,11 +17,13 @@ import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.domain.usecase.furnitures.GetCategoriesUseCase
 import com.furniture.duet.domain.usecase.furnitures.GetFurnitureCatalogUseCase
 import com.furniture.duet.domain.usecase.furnitures.GetMaxPriceUseCase
+import com.furniture.duet.domain.usecase.furnitures.GetMinPriceUseCase
 import com.furniture.duet.ui.common.UiState
 import javax.inject.Inject
 
 @HiltViewModel
 class CatalogViewModel @Inject constructor(
+    private val _getMinPrice: GetMinPriceUseCase,
     private val _getMaxPrice: GetMaxPriceUseCase,
     private val _getCatalog: GetFurnitureCatalogUseCase,
     private val _getCategories: GetCategoriesUseCase,
@@ -33,59 +37,64 @@ class CatalogViewModel @Inject constructor(
     var categories by mutableStateOf<List<CategoryDto>>(emptyList())
         private set
 
-    var selectedCategory by mutableStateOf<CategoryDto?>(null)
+    var selectedCategory by mutableStateOf<String?>(null)
 
     var isRefreshing by mutableStateOf(false)
         private set
 
-    var minPrice by mutableStateOf("0.00")
+    var isChoosePriceRangeDialogOpened by mutableStateOf(false)
         private set
 
-    var maxPrice by mutableStateOf("0.00")
+    var currentMinPrice by mutableStateOf(0f)
+        private set
+
+    var currentMaxPrice by mutableStateOf(0f)
+        private set
+
+    var minPrice by mutableStateOf(0f)
+        private set
+
+    var maxPrice by mutableStateOf(0f)
+        private set
+
+    var searchQuery by mutableStateOf("")
+        private set
+
+    var isSortDialogOpened by mutableStateOf(false)
+        private set
+
+    var selectedSort by mutableStateOf(SortOption.SORT_POPULAR)
         private set
 
     init {
         viewModelScope.launch {
             try {
                 categories = _getCategories()
-                maxPrice = _getMaxPrice().toString()
+                maxPrice = _getMaxPrice()
+                currentMaxPrice = maxPrice
+                minPrice = _getMinPrice()
+                currentMinPrice = minPrice
+                onSearch()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
         }
     }
 
-    fun selectCategory(category: CategoryDto?) {
-        selectedCategory = category
-        loadFurniture()
+    fun selectCategory(category: String?) {
+        if (category == selectedCategory) {
+            selectedCategory = null
+        } else {
+            selectedCategory = category
+        }
+        onSearch()
     }
 
     fun refreshFurniture() {
         viewModelScope.launch {
             isRefreshing = true
-            loadFurniture()
+            onSearch()
             isRefreshing = false
-        }
-    }
-
-    fun loadFurniture() {
-        viewModelScope.launch {
-            try {
-                val min =
-                    if (minPrice.isEmpty()) 0.0
-                    else minPrice.toDouble()
-                val max =
-                    if (maxPrice.isEmpty()) 0.0
-                    else maxPrice.toDouble()
-                val list = _getCatalog(min, max, selectedCategory?.name)
-                uiState = UiState.Success(
-                    selectedCategory?.let { cat ->
-                        list.filter { it.category == cat.name }
-                    } ?: list
-                )
-            } catch (e: Exception) {
-                uiState = UiState.Error(e)
-            }
         }
     }
 
@@ -93,27 +102,51 @@ class CatalogViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _setFavorite(id, isFavorite)
-                loadFurniture()
+                onSearch()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
         }
     }
 
-    fun onSetMinPrice(newPriceStr: String) {
-        val newPrice = newPriceStr.toDoubleOrNull() ?: -1.0
-        if (newPriceStr.isEmpty() || newPrice >= 0.0) {
-            minPrice = newPriceStr
-        }
-        loadFurniture()
+    fun openPriceRangeDialog() {
+        isChoosePriceRangeDialogOpened = true
     }
 
-    fun onSetMaxPrice(newPriceStr: String) {
-        val newPrice = newPriceStr.toDoubleOrNull() ?: -1.0
-        if (newPriceStr.isEmpty() || newPrice >= 0.0) {
-            maxPrice = newPriceStr
+    fun onSetPriceRange(min: Float, max: Float) {
+        currentMinPrice = min
+        currentMaxPrice = max
+        isChoosePriceRangeDialogOpened = false
+        onSearch()
+    }
+
+    fun onSearch() {
+        viewModelScope.launch {
+            isRefreshing = true
+            uiState = UiState.Success(_getCatalog(
+                currentMinPrice,
+                currentMaxPrice,
+                searchQuery,
+                selectedCategory ?: "",
+                selectedSort
+            ))
+            isRefreshing = false
         }
-        loadFurniture()
+    }
+
+    fun onSetSearchQuery(newSearchQuery: String) {
+        searchQuery = newSearchQuery
+    }
+
+    fun openSortDialog() {
+        isSortDialogOpened = true
+    }
+
+    fun onSetSortOption(newSortOption: SortOption) {
+        if (newSortOption != selectedSort) {
+            selectedSort = newSortOption
+        }
+        isSortDialogOpened = false
+        onSearch()
     }
 }
-

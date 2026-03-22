@@ -3,9 +3,9 @@ package com.furniture.duet.domain.usecase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import com.furniture.duet.data.model.OrderDto
+import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.repository.OrderRepository
-import com.furniture.duet.domain.usecase.GetOrdersUseCase
+import com.furniture.duet.domain.usecase.order.GetOrdersUseCase
 
 class GetOrdersUseCaseTest {
     private val repo = object : OrderRepository {

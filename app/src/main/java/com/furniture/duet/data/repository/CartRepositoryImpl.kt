@@ -37,8 +37,7 @@ class CartRepositoryImpl @Inject constructor(
                 cartDao.deleteAll()
                 cartDao.insertAll(items)
             }
-        } catch (e: IsNotAuthorizeException) {
-            cartDao.deleteAll()
+        } catch (_: IsNotAuthorizeException) {
         }
     }
 
@@ -51,6 +50,11 @@ class CartRepositoryImpl @Inject constructor(
         } else {
             cartDao.setQuantity(id, newCount)
         }
+    }
+
+    override suspend fun getCartCount() = withContext(Dispatchers.IO) {
+        connectionManager.isOnline()
+        cartDao.getCartCount()
     }
 
     override suspend fun getCartItem(furnitureId: Int, fabricId: Int) = withContext(Dispatchers.IO) {

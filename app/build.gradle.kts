@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.google.gms.google.services)
+    id("androidx.room")
 }
 
 android {
@@ -15,10 +16,14 @@ android {
         applicationId = "com.furniture.duet"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "2.0"
+        versionCode = 9
+        versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        room {
+            schemaDirectory(path = "$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -43,7 +48,6 @@ android {
 }
 
 dependencies {
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -88,5 +92,16 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.config)
     implementation(libs.coil.compose)
+
+    implementation(libs.androidx.constraintlayout.compose)
+    // Preferences DataStore (SharedPreferences like APIs)
+    implementation(libs.androidx.datastore.preferences)
+// Alternatively - without an Android dependency.
+    implementation(libs.androidx.datastore.preferences.core)
+
+    // Typed DataStore for custom data objects (for example, using Proto or JSON).
+    implementation(libs.androidx.datastore)
+// Alternatively - without an Android dependency.
+    implementation(libs.androidx.datastore.core)
 
 }
