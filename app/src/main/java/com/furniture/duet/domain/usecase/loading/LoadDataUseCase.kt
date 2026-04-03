@@ -7,15 +7,11 @@ import com.furniture.duet.data.repository.FurnitureRepository
 import javax.inject.Inject
 
 class LoadDataUseCase @Inject constructor(
-    private val furnitureRepo: FurnitureRepository,
-    private val fabricRepo: FabricRepository,
     private val cartRepository: CartRepository,
     private val favoritesRepository: FavoritesRepository
 ) {
     suspend operator fun invoke() {
-        furnitureRepo.loadFurniture()
-        fabricRepo.loadFabrics()
-        cartRepository.loadCart()
         favoritesRepository.loadFavorites()
+        cartRepository.loadCart()
     }
 }

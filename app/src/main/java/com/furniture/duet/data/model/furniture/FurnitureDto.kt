@@ -5,10 +5,10 @@ import java.time.LocalDateTime
 data class FurnitureDto(
     val id: Int,
     val name: String,
-    val basePrice: Double,
+    val basePrice: Int,
     val description: String,
     val imageUrl: String,
-    val imageUrls: List<String>?,
+    val imageUrls: List<String>,
     val modelUrl: String,
     val category: CategoryDto,
     val createdAt: String,

@@ -8,6 +8,6 @@ data class OrderItemDto(
     val fabricId: Int,
     val fabricName: String,
     val fabricUrl: String,
-    val finalPrice: Double,
+    val finalPrice: Int,
     val order: String = ""
 )

@@ -17,9 +17,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.furniture.duet.background.InternetConnectionManager
+import com.furniture.duet.data.model.account.AccountModel
 import com.furniture.duet.domain.usecase.account.GetUserDataUseCase
 import com.furniture.duet.domain.usecase.account.LogOutUseCase
+import com.furniture.duet.domain.usecase.account.UpdateUserUseCase
 import com.furniture.duet.ui.common.UiState
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -27,88 +30,76 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val connectionManager: InternetConnectionManager,
     private val _getUser: GetUserDataUseCase,
-    private val _logOut: LogOutUseCase,
-    private val _storage: FirebaseStorage
+    private val _updateUser: UpdateUserUseCase,
+    private val _logOut: LogOutUseCase
 ) : ViewModel() {
 
-    private var _user: FirebaseUser? = null
+    var isEditable by mutableStateOf(false)
+        private set
 
-    private var _isEditable = MutableStateFlow(false)
-    val isEditable = _isEditable.asStateFlow()
-
-    private var _isUserNameChanged = false
-    private var _userName = MutableStateFlow("")
-    val userName = _userName.asStateFlow()
-    private var _userEmail = MutableStateFlow("")
-    val userEmail = _userEmail.asStateFlow()
-    private var _isUserPhotoUriChanged = false
-    private var _userPhotoUri = MutableStateFlow(Uri.EMPTY)
-    val userPhotoUri = _userPhotoUri.asStateFlow()
+    var email by mutableStateOf("")
+        private set
+    var fullName by mutableStateOf("")
+    var phone by mutableStateOf("")
+    var address by mutableStateOf("")
+    var country by mutableStateOf("")
+    var city by mutableStateOf("")
+    var postCode by mutableStateOf("")
 
     var uiState by mutableStateOf<UiState<Unit>>(UiState.Success(Unit))
         private set
 
-    fun getUserData(): FirebaseUser? {
+    init {
+        getUserData()
+    }
+
+    fun getUserData() {
         try {
             connectionManager.isOnline()
+            viewModelScope.launch {
+                _getUser()?.let {
+                    email = it.email
+                    fullName = it.firstAndLastName
+                    address = it.address
+                    country = it.country
+                    city = it.city
+                    postCode = it.postCode
+                }
+            }
         } catch (e: Exception) {
             uiState = UiState.Error(e)
         }
-        _user = _getUser()
-        viewModelScope.launch {
-            _userName.update { _user?.displayName ?: "" }
-            _userEmail.update { _user?.email ?: "" }
-            _userPhotoUri.update { _user?.photoUrl ?: Uri.EMPTY }
-        }
-        return _user
     }
 
     fun editProfile() {
-        _isEditable.update { true }
+        isEditable = true
     }
 
     fun saveProfile() {
-        try {
-            connectionManager.isOnline()
-        } catch (e: Exception) {
-            uiState = UiState.Error(e)
+        isEditable = false
+        viewModelScope.launch {
+            _updateUser(
+                customerType = "",
+                firstAndLastName = fullName,
+                companyName = "",
+                unn = "",
+                phone = phone,
+                email = email,
+                address = address,
+                city = city,
+                country = country,
+                postCode = postCode
+            )
         }
+    }
 
-        val profileChangeRequestBuilder = UserProfileChangeRequest.Builder()
-
-        if (_isUserNameChanged) {
-            profileChangeRequestBuilder.setDisplayName(_userName.value)
-        }
-
-        if (_isUserPhotoUriChanged) {
-            val ref = _storage.reference.child("users/${_user?.uid}/profile.jpg")
-            ref.putFile(_userPhotoUri.value).addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener {
-                    val request = profileChangeRequestBuilder.setPhotoUri(it).build()
-                    Firebase.auth.currentUser?.updateProfile(request)
-                    _userPhotoUri.update { it }
-                }
+    fun setNewPhone(newPhone: String) {
+        viewModelScope.launch {
+            if (Pattern.compile("\\p{Sm}?\\d*").matcher(newPhone).matches()) {
+                phone = newPhone
             }
-        } else {
-            val request = profileChangeRequestBuilder.build()
-            Firebase.auth.currentUser?.updateProfile(request)
         }
-
-        _isUserNameChanged = false
-        _isUserPhotoUriChanged = false
-        _isEditable.update { false }
     }
-
-    fun setName(name: String) {
-        _isUserNameChanged = true
-        _userName.update { name }
-    }
-
-    fun setPhotoUrl(photoUrl: Uri) {
-        _isUserPhotoUriChanged = true
-        _userPhotoUri.update { photoUrl }
-    }
-
 
     fun logOut() {
         try {

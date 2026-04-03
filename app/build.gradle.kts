@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.google.gms.google.services)
-    id("androidx.room")
 }
 
 android {
@@ -21,9 +20,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        room {
-            schemaDirectory(path = "$projectDir/schemas")
-        }
     }
 
     buildTypes {
@@ -48,6 +44,8 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.androidx.paging.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

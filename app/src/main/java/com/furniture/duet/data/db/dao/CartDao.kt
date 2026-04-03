@@ -10,20 +10,23 @@ import com.furniture.duet.data.model.cart.CartItemModel
 @Dao
 interface CartDao {
     @Query("SELECT cart.id, cart.furnitureId, cart.fabricId, cart.quantity, " +
-            "furniture.imageUrl AS furnitureUrl, fabrics.fabricUrl AS fabricUrl, " +
-            "furniture.name AS furnitureName, fabrics.name AS fabricName, " +
-            "(furniture.basePrice + fabrics.price)*cart.quantity AS price, " +
-            "CASE WHEN favorites.furnitureId IS NOT NULL THEN 1 ELSE 0 END AS isFavorite " +
+            "cart.furnitureUrl AS furnitureUrl, cart.fabricUrl AS fabricUrl, " +
+            "cart.furnitureName AS furnitureName, cart.fabricName AS fabricName, " +
+            "(cart.basePrice + cart.fabricPrice)*cart.quantity AS totalPrice, " +
+            "favorites.id IS NOT NULL AS isFavorite " +
             "FROM cart " +
-            "INNER JOIN furniture ON cart.furnitureId = furniture.id " +
-            "INNER JOIN fabrics ON cart.fabricId = fabrics.id " +
-            "LEFT JOIN favorites ON furniture.id = favorites.furnitureId ")
+            "LEFT JOIN favorites ON cart.furnitureId = favorites.id ")
     suspend fun getCart(): List<CartItemModel>
 
+    @Query("SELECT * FROM cart")
+    suspend fun getLocalCart(): List<CartItemEntity>
+
     @Query("SELECT * FROM cart " +
-            "WHERE furnitureId = :furnitureId AND fabricId = :fabricId"
-    )
+            "WHERE furnitureId = :furnitureId AND fabricId = :fabricId")
     suspend fun getCartItem(furnitureId: Int, fabricId: Int): CartItemEntity?
+
+    @Query("SELECT MAX(id) FROM cart")
+    suspend fun getLastId(): Int?
 
     @Query("SELECT COUNT(*) FROM cart")
     fun getCartCount(): Int
@@ -36,6 +39,10 @@ interface CartDao {
 
     @Query("UPDATE cart SET quantity = :quantity WHERE id = :id")
     suspend fun setQuantity(id: Int, quantity: Int): Int
+
+    @Query("UPDATE cart SET quantity = :quantity " +
+            "WHERE furnitureId = :furnitureId AND fabricId = :fabricId")
+    suspend fun setQuantity(furnitureId: Int, fabricId: Int, quantity: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<CartItemEntity>)

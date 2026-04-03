@@ -4,11 +4,13 @@ import com.furniture.duet.data.model.furniture.FurnitureDto
 import com.furniture.duet.data.model.fabric.FabricDto
 import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.PriceDto
+import com.furniture.duet.data.model.account.AccountModel
 import com.furniture.duet.data.model.cart.CartItemDto
 import com.furniture.duet.data.model.cart.AddCartItemResponse
 import com.furniture.duet.data.model.cart.CartItemUpdateDto
 import com.furniture.duet.data.model.cart.AddCartItemRequest
 import com.furniture.duet.data.model.cart.CartDto
+import com.furniture.duet.data.model.cart.CartItemUpdateResponse
 import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurniturePageModel
 import com.furniture.duet.data.model.order.CreateOrderModel
@@ -17,10 +19,30 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.DELETE
+import retrofit2.http.PUT
 
 interface RetrofitApiService {
     @GET("sofantastic/furniture")
-    suspend fun listFurniturs(): Response<FurniturePageModel>
+    suspend fun listFurniture(
+        @retrofit2.http.Query("categoryId") category: Int,
+        @retrofit2.http.Query("minPrice") min: Int,
+        @retrofit2.http.Query("maxPrice") max: Int,
+        @retrofit2.http.Query("sortBy") sortBy: String,
+        @retrofit2.http.Query("sortOrder") sortOrder: String,
+        @retrofit2.http.Query("keyword") keyword: String,
+        @retrofit2.http.Query("page") page: Int,
+        @retrofit2.http.Query("size") size: Int
+    ): Response<FurniturePageModel>
+    @GET("sofantastic/furniture")
+    suspend fun listFurniture(
+        @retrofit2.http.Query("minPrice") min: Int,
+        @retrofit2.http.Query("maxPrice") max: Int,
+        @retrofit2.http.Query("sortBy") sortBy: String,
+        @retrofit2.http.Query("sortOrder") sortOrder: String,
+        @retrofit2.http.Query("keyword") keyword: String,
+        @retrofit2.http.Query("page") page: Int,
+        @retrofit2.http.Query("size") size: Int
+    ): Response<FurniturePageModel>
 
     @GET("sofantastic/categories")
     suspend fun listCategories(): List<CategoryDto>
@@ -49,6 +71,9 @@ interface RetrofitApiService {
         @retrofit2.http.Query("fabricId") fabricId: Int
     ): Response<PriceDto>
 
+    @GET("sofantastic/furniture/maxPrice")
+    suspend fun getMaxPrice(): Response<Int>
+
     @GET("sofantastic/cart/{userId}")
     suspend fun getCart(
         @retrofit2.http.Path("userId") userId: String
@@ -69,7 +94,7 @@ interface RetrofitApiService {
     suspend fun updateCartItemQuantity(
         @retrofit2.http.Path("cartItemId") cartItemId: Int,
         @retrofit2.http.Body item: CartItemUpdateDto
-    ): Response<CartItemDto>
+    ): Response<CartItemUpdateResponse>
 
     @DELETE("sofantastic/cart/{id}")
     suspend fun deleteCartItem(
@@ -102,4 +127,19 @@ interface RetrofitApiService {
         @retrofit2.http.Path("userId") userId: String,
         @retrofit2.http.Path("furnitureId") furnitureId: Long
     ): Response<Unit>
+
+    @GET("sofantastic/user/{userId}")
+    suspend fun getUser(@retrofit2.http.Path("userId") userId: String): Response<AccountModel>
+
+    @POST("sofantastic/user")
+    suspend fun createUser(
+        @retrofit2.http.Body user: AccountModel
+    ): Response<AccountModel>
+
+    @PUT("sofantastic/user/{id}")
+    suspend fun updateUser(
+        @retrofit2.http.Path("id") id: String,
+        @retrofit2.http.Body user: AccountModel
+    ): Response<AccountModel>
+
 }

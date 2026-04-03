@@ -32,5 +32,3 @@ val AboutUsTextColor = Color(0xA6FFFFFF)
 
 val InactiveSliderColor = Color(0xFFCDB8A3)
 val ActiveSliderColor = Color(0xFF92755E)
-
-val LoginBtnColor = Color(0xFFB59175)

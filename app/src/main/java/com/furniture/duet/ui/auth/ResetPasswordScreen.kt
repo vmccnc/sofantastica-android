@@ -1,6 +1,7 @@
 package com.furniture.duet.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -27,51 +29,65 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furniture.duet.R
-import com.furniture.duet.ui.theme.LoginBtnColor
+import com.furniture.duet.ui.theme.EnabledBtnColor
+import com.furniture.duet.ui.theme.LightBackground
 
 @Composable
 fun ResetPasswordScreen(viewModel: AuthViewModel = hiltViewModel()) {
-    val size_2 = dimensionResource(R.dimen.margin_2)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
-    val roundedShape = RoundedCornerShape(size_2)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = margin_16),
-        verticalArrangement = Arrangement.SpaceAround
+    val roundedShape = RoundedCornerShape(margin_20)
+    Dialog(
+        onDismissRequest = { viewModel.isForgotPassword = false }
     ) {
+        Column(
+            modifier = Modifier
+                .background(LightBackground, roundedShape)
+                .padding(margin_16)
+        ) {
 
-        TextField(value = viewModel.email,
-            onValueChange = viewModel::setNewEmail,
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = roundedShape,
-            label = { Text(stringResource(R.string.email_placeholder)) },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                focusedLabelColor = Color.Black
+            TextField(value = viewModel.email,
+                onValueChange = viewModel::setNewEmail,
+                modifier = Modifier.fillMaxWidth().padding(bottom = margin_16),
+                singleLine = true,
+                shape = roundedShape,
+                label = {
+                    Text(
+                        text = stringResource(R.string.email_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
+                )
             )
-        )
 
-        TextButton(
-            onClick = viewModel::resetPassword,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = LoginBtnColor,
-                contentColor = Color.White
-            ),
-            shape = roundedShape,
-            contentPadding = PaddingValues(vertical = margin_16)
-        ) { Text(stringResource(R.string.reset_password)) }
-
+            TextButton(
+                onClick = viewModel::resetPassword,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = EnabledBtnColor,
+                    contentColor = Color.White
+                ),
+                shape = roundedShape,
+                contentPadding = PaddingValues(vertical = margin_16)
+            ) {
+                Text(
+                    text = stringResource(R.string.reset_password),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
     }
 }

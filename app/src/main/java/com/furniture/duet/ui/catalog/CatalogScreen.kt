@@ -1,5 +1,8 @@
 package com.furniture.duet.ui.catalog
 
+import android.annotation.SuppressLint
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
@@ -12,9 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.furniture.duet.data.model.furniture.CategoryDto
 import coil.compose.AsyncImage
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.hoverable
@@ -24,28 +25,26 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.SliderDefaults.TickSize
-import androidx.compose.material3.SliderDefaults.TrackStopIndicatorSize
 import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,37 +53,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.paging.PagingData
 import com.furniture.duet.R
 import com.furniture.duet.data.model.SortOption
-import com.furniture.duet.data.model.furniture.CategoryModel
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
 import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.common.UiState
-import com.furniture.duet.ui.theme.AboutUsTextColor
 import com.furniture.duet.ui.theme.ActiveSliderColor
 import com.furniture.duet.ui.theme.EnabledBtnColor
 import com.furniture.duet.ui.theme.FurnitureCardBackgroundColor
 import com.furniture.duet.ui.theme.InactiveSliderColor
-import com.furniture.duet.ui.theme.LoginBtnColor
-import com.furniture.duet.ui.theme.MondaFontFamily
 import com.furniture.duet.ui.theme.SearchBarBackgroundColor
 import com.furniture.duet.ui.theme.SelectedPageColor
 
@@ -103,7 +89,6 @@ fun CatalogRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
     onItemClick: (Int) -> Unit,
@@ -179,7 +164,7 @@ fun CatalogScreen(
         ) {
             items(viewModel.categories) { item ->
                 val backgroundColor =
-                    if (item.title == viewModel.selectedCategory) SelectedPageColor
+                    if (item.id == viewModel.selectedCategory) SelectedPageColor
                     else Color.White
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -192,7 +177,7 @@ fun CatalogScreen(
                             .background(Color.White, CircleShape)
                             .size(size_75)
                             .padding(margin_12)
-                            .clickable { viewModel.selectCategory(item.title) }
+                            .clickable { viewModel.selectCategory(item.id) }
                     )
                     Text(
                         item.title,
@@ -239,31 +224,35 @@ fun CatalogScreen(
                 Text(
                     style = MaterialTheme.typography.titleSmall,
                     color = Color.Black,
-                    text = stringResource(R.string.price_range).format(viewModel.currentMinPrice, viewModel.currentMaxPrice)
+                    text = stringResource(R.string.price_range)
+                        .format(viewModel.currentMinPrice.toInt(), viewModel.currentMaxPrice.toInt())
                 )
             }
         }
 
-        PullToRefreshBox(
-            isRefreshing = viewModel.isRefreshing,
-            onRefresh = viewModel::refreshFurniture
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(margin_16),
+            horizontalArrangement = Arrangement.spacedBy(margin_16)
         ) {
-            if ((viewModel.uiState as UiState.Success).data.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.no_matching_data), textAlign = TextAlign.Center)
-                }
-                return@PullToRefreshBox
+            val data = (viewModel.uiState as UiState.Success).data
+            items(data.list) { item ->
+                FurnitureCard(item, onItemClick, viewModel::onToggleFavorite)
             }
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(margin_16),
-                horizontalArrangement = Arrangement.spacedBy(margin_16)
-            ) {
-                items((viewModel.uiState as UiState.Success).data) { item ->
-                    FurnitureCard(item, onItemClick, viewModel::onSetFavorite)
+            item(span = { GridItemSpan(2) }) {
+                if (data.isLast) return@item
+                TextButton(
+                    onClick = viewModel::loadNextPage,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = EnabledBtnColor
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.load_more),
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
@@ -274,7 +263,7 @@ fun CatalogScreen(
 fun FurnitureCard(
     item: FurnitureCatalogModel,
     onItemClick: (Int) -> Unit,
-    onSetFavorite: (Int, Boolean) -> Unit,
+    onSetFavorite: (FurnitureCatalogModel) -> Unit,
 ) {
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_20 = dimensionResource(R.dimen.margin_20)
@@ -297,8 +286,10 @@ fun FurnitureCard(
             error = painterResource(R.drawable.no_image)
         )
 
+        var isFavorite by remember { mutableStateOf(item.isFavorite) }
+
         val favoriteIcon =
-            if(item.isFavorite) painterResource(R.drawable.i_favorite)
+            if(isFavorite) painterResource(R.drawable.i_favorite)
             else painterResource(R.drawable.i_favorite_border)
 
         Icon(
@@ -307,7 +298,9 @@ fun FurnitureCard(
             modifier = Modifier
                 .clip(CircleShape)
                 .background(Color.White)
-                .clickable { onSetFavorite(item.id, !item.isFavorite) }
+                .clickable {
+                    onSetFavorite(item)
+                }
                 .constrainAs(favBtn) {
                     top.linkTo(parent.top, margin = margin_10)
                     end.linkTo(parent.end, margin = margin_10)
@@ -348,9 +341,9 @@ fun ChoosePriceRangeDialog(
 ) {
     val size_5 = dimensionResource(R.dimen.margin_5)
     val margin_10 = dimensionResource(R.dimen.margin_10)
-    val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
-    var sliderPosition by remember { mutableStateOf(minPrice..maxPrice) }
+    var sliderPosition by remember { mutableStateOf(currentMinPrice..currentMaxPrice) }
+
     val startInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val endInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val sliderColors = colors(
@@ -369,19 +362,21 @@ fun ChoosePriceRangeDialog(
             .padding(margin_10)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = margin_10),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = margin_10),
                 Arrangement.SpaceBetween
             ) {
                 Text(
                     text = stringResource(R.string.filter_price)
-                        .format(sliderPosition.start),
+                        .format(sliderPosition.start.toInt()),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall,
                     color = EnabledBtnColor
                 )
                 Text(
                     text = stringResource(R.string.filter_price)
-                        .format(sliderPosition.endInclusive),
+                        .format(sliderPosition.endInclusive.toInt()),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall,
                     color = EnabledBtnColor
@@ -432,7 +427,6 @@ fun ChoosePriceRangeDialog(
 
 @Composable
 fun PriceRangeThumb(
-    //currentPrice: Float,
     interactionSource: MutableInteractionSource
 ) {
     val interactions = remember { mutableStateListOf<Interaction>() }
@@ -448,24 +442,12 @@ fun PriceRangeThumb(
             }
         }
     }
-//    Column(
-//        modifier = Modifier.widthIn(min = size_75),
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Text(
-//            text = stringResource(R.string.filter_price).format(currentPrice),
-//            textAlign = TextAlign.Center,
-//            style = MaterialTheme.typography.titleSmall,
-//            color = EnabledBtnColor,
-//            modifier = Modifier.padding(bottom = margin_5)
-//        )
-        Spacer(
-            Modifier
-                .size(30.dp)
-                .hoverable(interactionSource = interactionSource)
-                .background(ActiveSliderColor, CircleShape)
-        )
-//    }
+    Spacer(
+        Modifier
+            .size(30.dp)
+            .hoverable(interactionSource = interactionSource)
+            .background(ActiveSliderColor, CircleShape)
+    )
 }
 
 @Composable

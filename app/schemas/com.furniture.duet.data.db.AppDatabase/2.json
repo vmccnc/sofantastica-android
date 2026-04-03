@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "d9d7616a3a915d67f52556d8b6e84885",
+    "identityHash": "cc13d03e1b68af3661ea3659deb8d3f6",
     "entities": [
       {
-        "tableName": "furniture",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `category` TEXT NOT NULL, `basePrice` REAL NOT NULL, `description` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `modelUrl` TEXT NOT NULL, `createdAt` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`id`))",
+        "tableName": "favorites",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`furnitureId` INTEGER NOT NULL, `name` TEXT NOT NULL, `basePrice` INTEGER NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY(`furnitureId`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "furnitureId",
+            "columnName": "furnitureId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -21,59 +21,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "category",
-            "columnName": "category",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "basePrice",
             "columnName": "basePrice",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "description",
-            "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "imageUrl",
-            "columnName": "imageUrl",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "modelUrl",
-            "columnName": "modelUrl",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "createdAt",
-            "columnName": "createdAt",
-            "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "''"
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "furniture_image",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`furnitureId` INTEGER NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY(`furnitureId`, `imageUrl`))",
-        "fields": [
-          {
-            "fieldPath": "furnitureId",
-            "columnName": "furnitureId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -81,27 +30,6 @@
             "fieldPath": "imageUrl",
             "columnName": "imageUrl",
             "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "furnitureId",
-            "imageUrl"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "favorites",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`furnitureId` INTEGER NOT NULL, PRIMARY KEY(`furnitureId`))",
-        "fields": [
-          {
-            "fieldPath": "furnitureId",
-            "columnName": "furnitureId",
-            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -116,7 +44,7 @@
       },
       {
         "tableName": "cart",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `furnitureId` INTEGER NOT NULL, `fabricId` INTEGER NOT NULL, `quantity` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `furnitureId` INTEGER NOT NULL, `furnitureName` TEXT NOT NULL, `furnitureUrl` TEXT NOT NULL, `fabricId` INTEGER NOT NULL, `fabricName` TEXT NOT NULL, `fabricUrl` TEXT NOT NULL, `basePrice` INTEGER NOT NULL, `totalPrice` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -131,8 +59,44 @@
             "notNull": true
           },
           {
+            "fieldPath": "furnitureName",
+            "columnName": "furnitureName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "furnitureUrl",
+            "columnName": "furnitureUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "fabricId",
             "columnName": "fabricId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fabricName",
+            "columnName": "fabricName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fabricUrl",
+            "columnName": "fabricUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "basePrice",
+            "columnName": "basePrice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalPrice",
+            "columnName": "totalPrice",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -144,131 +108,9 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "orders",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userId` TEXT NOT NULL, `total` REAL NOT NULL, PRIMARY KEY(`id`))",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "userId",
-            "columnName": "userId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "total",
-            "columnName": "total",
-            "affinity": "REAL",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
             "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "fabrics",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `supplier` TEXT NOT NULL, `fabricUrl` TEXT NOT NULL, `fabricUrlBig` TEXT NOT NULL, `price` REAL NOT NULL, PRIMARY KEY(`id`))",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "supplier",
-            "columnName": "supplier",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "fabricUrl",
-            "columnName": "fabricUrl",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "fabricUrlBig",
-            "columnName": "fabricUrlBig",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "price",
-            "columnName": "price",
-            "affinity": "REAL",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "supplier",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "name"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "name"
           ]
         },
         "indices": [],
@@ -278,7 +120,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd9d7616a3a915d67f52556d8b6e84885')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc13d03e1b68af3661ea3659deb8d3f6')"
     ]
   }
 }

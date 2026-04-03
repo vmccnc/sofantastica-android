@@ -1,8 +1,6 @@
 package com.furniture.duet.data.model.cart
 
-import com.furniture.duet.data.model.furniture.CategoryDto
-
-data class CartItemDto(
+data class CartItemUpdateResponse(
     val id: Int,
     val userId: String,
     val furnitureId: Int,
@@ -14,5 +12,5 @@ data class CartItemDto(
     val priceSofaWithFabric: Int,
     val quantity: Int,
     val checkCalculation: String,
-    val category: CategoryDto
+    val priceForQuantity: Int
 )

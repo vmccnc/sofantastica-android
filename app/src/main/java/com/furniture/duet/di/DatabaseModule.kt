@@ -9,11 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import com.furniture.duet.data.db.AppDatabase
 import com.furniture.duet.data.db.dao.CartDao
-import com.furniture.duet.data.db.dao.FabricDao
 import com.furniture.duet.data.db.dao.FavoriteDao
-import com.furniture.duet.data.db.dao.FurnitureDao
-import com.furniture.duet.data.db.dao.FurnitureImageDao
-import com.furniture.duet.data.db.dao.OrderDao
 import javax.inject.Singleton
 
 @Module
@@ -31,16 +27,6 @@ object DatabaseModule {
             .build()
 
     @Provides
-    fun provideFurnitureDAO(appDatabase: AppDatabase): FurnitureDao {
-        return appDatabase.furnitureDao()
-    }
-
-    @Provides
-    fun provideFabricDao(appDatabase: AppDatabase): FabricDao {
-        return appDatabase.fabricDao()
-    }
-
-    @Provides
     fun provideFavoriteDao(appDatabase: AppDatabase): FavoriteDao {
         return appDatabase.favoriteDao()
     }
@@ -48,15 +34,5 @@ object DatabaseModule {
     @Provides
     fun provideCartDao(appDatabase: AppDatabase): CartDao {
         return appDatabase.cartDao()
-    }
-
-    @Provides
-    fun provideFurnitureImageDAO(appDatabase: AppDatabase): FurnitureImageDao {
-        return appDatabase.furnitureImageDao()
-    }
-
-    @Provides
-    fun provideOrderDAO(appDatabase: AppDatabase): OrderDao {
-        return appDatabase.orderDao()
     }
 }

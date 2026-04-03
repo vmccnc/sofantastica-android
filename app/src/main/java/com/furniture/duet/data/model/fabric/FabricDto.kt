@@ -6,5 +6,5 @@ data class FabricDto(
     val supplier: String,
     val fabricUrl: String,
     val fabricUrlBig: String,
-    val price: Double
+    val price: Int
 )

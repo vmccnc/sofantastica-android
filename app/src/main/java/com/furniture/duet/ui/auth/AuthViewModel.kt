@@ -1,6 +1,8 @@
 package com.furniture.duet.ui.auth
 
 import android.content.Context
+import android.widget.Toast
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -42,7 +44,9 @@ class AuthViewModel @Inject constructor(
     var isPasswordHidden by mutableStateOf(true)
         private set
 
-    var authPageMode by mutableStateOf(0)
+    var isLogin by mutableStateOf(true)
+    var isForgotPassword by mutableStateOf(false)
+
     var isPrivacyPolicyChecked by mutableStateOf(false)
 
     fun signIn() {
@@ -65,11 +69,11 @@ class AuthViewModel @Inject constructor(
                     phoneNumber.isNotEmpty() &&
                     fullName.isNotEmpty() &&
                     phoneNumber.isNotEmpty() &&
-                    Pattern.compile("\\p{Sm}\\d{8,10}").matcher(phoneNumber).matches() &&
+                    Pattern.compile("\\p{Sm}\\d{10,12}").matcher(phoneNumber).matches() &&
                     password.length >= 8 &&
-                    Pattern.compile("[A-Z]+").matcher(password).matches() &&
-                    Pattern.compile("[^A-Za-z0-9]+").matcher(password).matches() &&
-                    Pattern.compile("\\d+").matcher(password).matches()
+                    Pattern.compile(".*[A-Z]+.*").matcher(password).matches() &&
+                    Pattern.compile(".*[^A-Za-z0-9]+.*").matcher(password).matches() &&
+                    Pattern.compile(".*\\d+.*").matcher(password).matches()
                 ) {
                     _signUpUseCase(
                         fullName,
@@ -79,7 +83,7 @@ class AuthViewModel @Inject constructor(
                     )
                     uiState = UiState.Success(Unit)
                 } else {
-
+                    Toast.makeText(context, "Check your data", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 uiState = UiState.Error(e)

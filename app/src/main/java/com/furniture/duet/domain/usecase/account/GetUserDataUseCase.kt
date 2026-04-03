@@ -1,10 +1,11 @@
 package com.furniture.duet.domain.usecase.account
 
+import com.furniture.duet.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 class GetUserDataUseCase @Inject constructor(
-    private val auth: FirebaseAuth
+    private val repository: UserRepository
 ) {
-    operator fun invoke() = auth.currentUser
+    suspend operator fun invoke() = repository.getAccountInfo()
 }

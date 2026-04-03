@@ -125,9 +125,9 @@ class OrderViewModel @Inject constructor(
     }
 
     val deliveryOptionList = listOf(
-        DeliveryOptionModel(context.getString(R.string.delivery_without_deposit), 100.0),
-        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit), 150.0),
-        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit_at_the_selected_time), 180.0)
+        DeliveryOptionModel(context.getString(R.string.delivery_without_deposit), 100),
+        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit), 150),
+        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit_at_the_selected_time), 180)
     )
 
     var selectedDeliveryOption by mutableStateOf<DeliveryOptionModel?>(null)

@@ -12,15 +12,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import com.furniture.duet.data.model.fabric.FabricSelectorModel
 import com.furniture.duet.domain.exceptions.ResIdException
-import com.furniture.duet.domain.usecase.fabrics.GetFabricSuppliersUseCase
-import com.furniture.duet.domain.usecase.fabrics.GetFabricsBySupplierUseCase
+import com.furniture.duet.domain.usecase.fabrics.GetFabricsUseCase
 import com.furniture.duet.ui.common.UiState
 import javax.inject.Inject
 
 @HiltViewModel
 class FabricSelectorViewModel @Inject constructor(
-    private val getSuppliers: GetFabricSuppliersUseCase,
-    private val getFabricsBySupplier: GetFabricsBySupplierUseCase,
+    private val getFabrics: GetFabricsUseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -30,16 +28,7 @@ class FabricSelectorViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             try {
-                val fabricSuppliers = getSuppliers()
-                uiState = UiState.Success(
-                    FabricSelectorModel(
-                        fabricSuppliers = fabricSuppliers,
-                        fabricsBySuppliers = fabricSuppliers.map{ supplier ->
-                            getFabricsBySupplier(supplier)
-                        }
-                    )
-                )
-
+                uiState = UiState.Success(getFabrics())
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {

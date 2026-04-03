@@ -23,7 +23,6 @@ class DeleteCartUseCase @Inject constructor(
         val cartItem = cartRepo.getCartItem(furnitureId, fabricId)
         if (cartItem != null) {
             cartRepo.deleteItem(cartItem.id)
-            CountStorage.decreaseCartCount(context)
         }
     }
 }

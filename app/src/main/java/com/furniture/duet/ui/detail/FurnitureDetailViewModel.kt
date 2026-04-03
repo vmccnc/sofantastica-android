@@ -19,8 +19,9 @@ import com.furniture.duet.data.model.furniture.FurnitureFabricDto
 import com.furniture.duet.domain.exceptions.ResIdException
 import com.furniture.duet.domain.usecase.furnitures.GetFurnitureDetailUseCase
 import com.furniture.duet.domain.usecase.cart.AddToCartUseCase
+import com.furniture.duet.domain.usecase.cart.ChangeQuantityUseCase
 import com.furniture.duet.domain.usecase.cart.DeleteCartUseCase
-import com.furniture.duet.domain.usecase.cart.GetQuantityInCartUseCase
+import com.furniture.duet.domain.usecase.cart.GetCartItemUseCase
 import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.ui.common.UiState
 import javax.inject.Inject
@@ -30,8 +31,9 @@ class FurnitureDetailViewModel @Inject constructor(
     private val _getDetail: GetFurnitureDetailUseCase,
     private val _setFavorite: SetFavoriteUseCase,
     private val _addToCart: AddToCartUseCase,
+    private val _changeQuantity: ChangeQuantityUseCase,
     private val _deleteFromCart: DeleteCartUseCase,
-    private val _getQuantityInCart: GetQuantityInCartUseCase,
+    private val _getCartItem: GetCartItemUseCase,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -46,6 +48,9 @@ class FurnitureDetailViewModel @Inject constructor(
         private set
 
     var isDimensionsOpened by mutableStateOf(false)
+        private set
+
+    var cartId by mutableIntStateOf(0)
         private set
 
     var count by mutableIntStateOf(0)
@@ -82,24 +87,27 @@ class FurnitureDetailViewModel @Inject constructor(
             try {
                 if (uiState is UiState.Success) {
                     val furniture = (uiState as UiState.Success).data
-                    count = _getQuantityInCart(furniture.furnitureId, fabric.id)
+                    val cartItem = _getCartItem(furniture.furnitureId, fabric.id)
                     uiState = UiState.Success(
                         FurnitureFabricDto(
-                        furnitureId = furniture.furnitureId,
-                        fabricId = fabric.id,
-                        furnitureName = furniture.furnitureName,
-                        fabricName = fabric.name,
-                        basePrice = furniture.basePrice,
-                        fabricPrice = fabric.price,
-                        totalPrice = furniture.basePrice + fabric.price,
-                        description = furniture.description,
-                        imageUrl = furniture.imageUrl,
-                        fabricUrl = fabric.fabricUrl,
-                        imageUrls = furniture.imageUrls,
-                        modelUrl = furniture.modelUrl,
-                        category = furniture.category,
-                        isFavorite = furniture.isFavorite
-                    ))
+                            furnitureId = furniture.furnitureId,
+                            fabricId = fabric.id,
+                            furnitureName = furniture.furnitureName,
+                            furnitureUrl = furniture.furnitureUrl,
+                            fabricName = fabric.name,
+                            basePrice = furniture.basePrice,
+                            fabricPrice = fabric.price,
+                            totalPrice = furniture.basePrice + fabric.price,
+                            description = furniture.description,
+                            imageUrl = furniture.imageUrl,
+                            fabricUrl = fabric.fabricUrl,
+                            imageUrls = furniture.imageUrls,
+                            modelUrl = furniture.modelUrl,
+                            category = furniture.category,
+                            isFavorite = furniture.isFavorite)
+                    )
+                    cartId = cartItem?.id ?: 0
+                    count = cartItem?.quantity ?: 0
                     isDialogOpened = false
                 }
             } catch (e: Exception) {
@@ -113,12 +121,13 @@ class FurnitureDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val furniture = (uiState as UiState.Success).data
-                _setFavorite(furniture.furnitureId, !furniture.isFavorite)
+                _setFavorite(furniture, !furniture.isFavorite)
                 uiState = UiState.Success(
                     FurnitureFabricDto(
                         furnitureId = furniture.furnitureId,
                         fabricId = furniture.fabricId,
                         furnitureName = furniture.furnitureName,
+                        furnitureUrl = furniture.furnitureUrl,
                         fabricName = furniture.fabricName,
                         basePrice = furniture.basePrice,
                         fabricPrice = furniture.fabricPrice,
@@ -146,24 +155,19 @@ class FurnitureDetailViewModel @Inject constructor(
     }
 
     fun setCountInCart(newCount: Int) {
-        if(newCount >= 0) {
-            viewModelScope.launch {
-                val furniture = (uiState as UiState.Success).data
-                count = newCount
-                if (count > 0) {
-                    _addToCart(
-                        furnitureId = furniture.furnitureId,
-                        fabricId = furniture.fabricId,
-                        quantity = count
-                    )
-                } else {
-                    _deleteFromCart(
-                        furnitureId = furniture.furnitureId,
-                        fabricId = furniture.fabricId
-                    )
-                    Toast.makeText(context, R.string.item_deleted_from_cart, Toast.LENGTH_SHORT).show()
-                }
+        viewModelScope.launch {
+            if (cartId == 0) return@launch
+            if (newCount > 0) {
+                _changeQuantity(
+                    id = cartId,
+                    quantity = newCount
+                )
+            } else {
+                _deleteFromCart(cartId)
+                Toast.makeText(context, R.string.item_deleted_from_cart, Toast.LENGTH_SHORT).show()
+                cartId = 0
             }
+            count = newCount
         }
     }
 
@@ -172,9 +176,8 @@ class FurnitureDetailViewModel @Inject constructor(
             val furniture = (uiState as UiState.Success).data
             try {
                 count = 1
-                _addToCart(
-                    furnitureId = furniture.furnitureId,
-                    fabricId = furniture.fabricId,
+                cartId = _addToCart(
+                    furnitureDetail = furniture,
                     quantity = count
                 )
                 Toast.makeText(context, R.string.item_added_in_cart, Toast.LENGTH_SHORT).show()

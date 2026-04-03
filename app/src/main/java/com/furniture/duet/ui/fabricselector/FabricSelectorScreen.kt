@@ -99,7 +99,7 @@ fun FabricSelectorScreen(
                 divider = {},
                 containerColor = MaterialTheme.colorScheme.background
             ) {
-                data.fabricSuppliers.forEachIndexed { index, title ->
+                data.suppliers.forEachIndexed { index, title ->
                     var tabModifier: Modifier = Modifier
                     var textColor: Color = FabricPrimaryColor
                     if (pagerState.currentPage == index) {

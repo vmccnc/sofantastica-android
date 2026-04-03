@@ -7,9 +7,6 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import com.furniture.duet.background.InternetConnectionManager
 import com.furniture.duet.data.api.RetrofitApiService
-import com.furniture.duet.data.db.dao.FabricDao
-import com.furniture.duet.data.db.entity.FabricEntity
-import com.furniture.duet.data.db.entity.SupplierEntity
 import com.furniture.duet.data.model.cart.AddCartItemResponse
 import com.furniture.duet.data.model.cart.CartItemDto
 import com.furniture.duet.data.model.cart.CartItemUpdateDto

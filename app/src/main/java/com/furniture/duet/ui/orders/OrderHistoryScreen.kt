@@ -47,10 +47,11 @@ import com.furniture.duet.ui.cart.CartScreen
 import com.furniture.duet.ui.common.UiState
 import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.main.LoadingUI
+import com.furniture.duet.ui.theme.EnabledBtnColor
 import com.furniture.duet.ui.theme.FabricSecondaryColor
 import com.furniture.duet.ui.theme.FurnitureDetailTextColor
+import com.furniture.duet.ui.theme.InactiveSliderColor
 import com.furniture.duet.ui.theme.LightBackground
-import com.furniture.duet.ui.theme.LoginBtnColor
 
 @Composable
 fun OrderHistoryScreen(
@@ -100,7 +101,7 @@ fun OrderContent(order: OrderDto) {
                 text = order.status,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
-                    .background(LoginBtnColor.copy(.2f), RoundedCornerShape(radius_64))
+                    .background(InactiveSliderColor, RoundedCornerShape(radius_64))
                     .padding(vertical = size_8, horizontal = margin_16)
             )
             Row(
@@ -173,8 +174,6 @@ fun OrderContent(order: OrderDto) {
 fun OrderItemContent(item: OrderItemDto) {
     val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_8 = dimensionResource(R.dimen.margin_8)
-    val margin_10 = dimensionResource(R.dimen.margin_10)
-    val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
     val margin_32 = dimensionResource(R.dimen.margin_32)
     val size_24 = dimensionResource(R.dimen.size_24)

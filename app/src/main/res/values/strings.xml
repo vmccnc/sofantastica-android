@@ -4,10 +4,10 @@
     <string name="base_price_label">BASE PRICE: </string>
     <string name="fabric_price_label">FABRIC PRICE: </string>
     <string name="total_price_label">TOTAL PRICE: </string>
-    <string name="fabric_price">+%.2f</string>
-    <string name="furniture_price">%.2f Zl</string>
-    <string name="furniture_total_price">%.2f, PLN</string>
-    <string name="selected_fabric_price">+%.2f, PLN</string>
+    <string name="fabric_price">+%d</string>
+    <string name="furniture_price">%d Zl</string>
+    <string name="furniture_total_price">%d, PLN</string>
+    <string name="selected_fabric_price">+%d, PLN</string>
     <string name="select_fabric">Select Fabric</string>
     <string name="change_fabric">Change Fabric</string>
     <string name="fabric_label">Fabric</string>
@@ -54,7 +54,7 @@
     <string name="delivery_without_deposit">Delivery without Deposit</string>
     <string name="delivery_with_deposit">Delivery with deposit</string>
     <string name="delivery_with_deposit_at_the_selected_time">Delivery with deposit at the selected time</string>
-    <string name="delivery_price">From %.2f, PLN</string>
+    <string name="delivery_price">From %d, PLN</string>
     <string name="delivery_title">Delivery</string>
     <string name="payment_title">Payment</string>
     <string name="payment_card">Payment card</string>
@@ -92,10 +92,10 @@
     <string name="sort_price_desc">Price: from highest</string>
     <string name="sort_new">New</string>
     <string name="sort_popular">Popular</string>
-    <string name="filter_price">%.2f</string>
+    <string name="filter_price">%d</string>
     <string name="sort_label">Sorting: </string>
     <string name="price_range_label">Price: </string>
-    <string name="price_range">%.2f - %.2f, PLN</string>
+    <string name="price_range">%d - %d, PLN</string>
     <string name="i_don_t_have_an_account">I don’t have an account</string>
     <string name="i_have_an_account">I have an account</string>
     <string name="login">Login</string>
@@ -113,4 +113,20 @@
     <string name="view_the_order">View the order</string>
     <string name="your_account">Your account</string>
     <string name="shopping">Shopping</string>
+    <string name="is_not_founded">Furniture is not founded</string>
+    <string name="load_more">Load More</string>
+    <string name="favorites_label">Favorites</string>
+    <string name="you_need_to_authorized">You need to authorized</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="post_code_label">Post Code</string>
+    <string name="city_label">City</string>
+    <string name="country_label">Country</string>
+    <string name="address_label">Address</string>
+    <string name="phone_number_label">Phone Number</string>
+    <string name="full_name_label">Full Name</string>
+    <string name="email_label">Email</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="cart_label">Cart</string>
+    <string name="account_label">Account</string>
 </resources>

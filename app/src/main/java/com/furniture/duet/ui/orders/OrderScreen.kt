@@ -49,7 +49,7 @@ import com.furniture.duet.ui.theme.TitleColor
 
 @Composable
 fun MakeOrderScreen(
-    cartTotal: Double,
+    cartTotal: Int,
     goToOrderHistory: () -> Unit,
     viewModel: OrderViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
@@ -167,7 +167,7 @@ fun MakeOrderScreen(
                 color = FurnitureDetailTextColor
             )
 
-            val total = cartTotal + (viewModel.selectedDeliveryOption?.minPrice ?: 0.0)
+            val total = cartTotal + (viewModel.selectedDeliveryOption?.minPrice ?: 0)
 
             Text(
                 text = stringResource(R.string.furniture_total_price).format(total),

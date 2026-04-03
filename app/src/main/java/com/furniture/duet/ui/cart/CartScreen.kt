@@ -84,65 +84,11 @@ fun CartScreen(
     goToOrderHistory: () -> Unit,
     viewModel: CartViewModel = hiltViewModel()
 ) {
-    val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
-    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val margin_5 = dimensionResource(R.dimen.margin_5)
     val size_48 = dimensionResource(R.dimen.size_48)
 
     val data = (viewModel.uiState as UiState.Success).data
-
-    ConstraintLayout(
-        modifier = Modifier
-            .padding(horizontal = margin_16)
-            .fillMaxSize()
-    ) {
-        val (goBackBtn, title, searchBtn) = createRefs()
-
-        Image(
-            modifier = Modifier
-                .clickable { goBack() }
-                .padding(horizontal = margin_20, vertical = margin_16)
-                .constrainAs(goBackBtn) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                },
-            painter = painterResource(R.drawable.i_back),
-            contentDescription = null
-        )
-        Text(
-            modifier = Modifier
-                .padding(vertical = margin_10)
-                .constrainAs(title) {
-                    top.linkTo(parent.top)
-                    start.linkTo(goBackBtn.end)
-                    end.linkTo(searchBtn.start)
-                },
-            text = stringResource(R.string.cart_title),
-            color = TitleColor,
-            style = MaterialTheme.typography.labelMedium
-        )
-        Image(
-            modifier = Modifier
-                .clickable { }
-                .constrainAs(searchBtn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                },
-            painter = painterResource(R.drawable.i_search),
-            contentDescription = null
-        )
-//        Image(
-//            modifier = Modifier
-//                .clickable { }
-//                .constrainAs(phoneBtn) {
-//                    top.linkTo(parent.top)
-//                    end.linkTo(parent.end)
-//                },
-//            painter = painterResource(R.drawable.i_phone),
-//            contentDescription = null
-//        )
-
-    }
 
     if (data.items.isEmpty()) {
         ConstraintLayout(
@@ -178,13 +124,22 @@ fun CartScreen(
             )
         }
     } else {
-        LazyColumn(modifier = Modifier.padding(top = size_48, start = margin_16, end = margin_16)) {
+        LazyColumn(modifier = Modifier.padding(horizontal = margin_16)) {
             item {
-                Text(
-                    text = stringResource(R.string.cart_products_count).format(data.items.count()),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TitleColor
-                )
+                Column {
+                    Text(text = stringResource(R.string.cart_label),
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = margin_5)
+                    )
+                    Text(
+                        text = stringResource(R.string.cart_products_count).format(data.items.count()),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TitleColor
+                    )
+                }
             }
             items(data.items) { item ->
                 CartItem(
@@ -219,7 +174,7 @@ fun CartScreen(
                 } else {
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { viewModel.makeOrder = true },
+                        onClick = { viewModel.makeOrder() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = EnabledBtnColor,
                             contentColor = Color.White
@@ -241,7 +196,7 @@ fun CartScreen(
 fun CartItem(
     item: CartItemModel,
     setCount: (Int, Int) -> Unit,
-    setFavorite: (Int, Boolean) -> Unit,
+    setFavorite: (CartItemModel) -> Unit,
     remove: (Int) -> Unit
 ) {
     val width = LocalConfiguration.current.screenWidthDp - 240
@@ -297,7 +252,7 @@ fun CartItem(
             else painterResource(R.drawable.i_favorite_border)
         Image(
             modifier = Modifier
-                .clickable { setFavorite(item.furnitureId, !item.isFavorite) }
+                .clickable { setFavorite(item) }
                 .constrainAs(favBtn) {
                     top.linkTo(parent.top)
                     end.linkTo(removeBtn.start)
@@ -364,7 +319,7 @@ fun CartItem(
                     start.linkTo(counter.end, margin_16)
                     end.linkTo(parent.end)
                 },
-            text = stringResource(R.string.furniture_total_price).format(item.price),
+            text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
             color = FurnitureDetailTextColor,
             style = MaterialTheme.typography.titleSmall
         )

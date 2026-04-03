@@ -88,60 +88,25 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
     val size_48 = dimensionResource(R.dimen.size_48)
 
     ConstraintLayout(modifier = Modifier.padding(horizontal = margin_16)) {
-        val (goBackBtn, searchBtn, phoneBtn,carouselLayout, dotIndicator,
+        val (carouselLayout, dotIndicator,
             view3DBtn, nameTxt, priceTxt, fabricLayout, favBtn,
             selectFabricBtn, addToCartBtn, descriptionLayout, dimensionsLayout) = createRefs()
 
-
-
-        Image(
-            modifier = Modifier
-                .clickable { goBack() }
-                .padding(horizontal = margin_20, vertical = margin_16)
-                .constrainAs(goBackBtn) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                },
-            painter = painterResource(R.drawable.i_back),
-            contentDescription = null
-        )
-
-        Image(
-            modifier = Modifier
-                .clickable { }
-                .constrainAs(searchBtn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(phoneBtn.start)
-                },
-            painter = painterResource(R.drawable.i_search),
-            contentDescription = null
-        )
-        Image(
-            modifier = Modifier
-                .clickable { }
-                .constrainAs(phoneBtn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                },
-            painter = painterResource(R.drawable.i_phone),
-            contentDescription = null
-        )
-
-        item.imageUrls?.let { imageUrls ->
+        item.imageUrls.let { imageUrls ->
             val pagerState = rememberPagerState(pageCount = { imageUrls.size })
             HorizontalPager(
                 modifier = Modifier
                     .fillMaxHeight(.3f)
                     .fillMaxWidth()
                     .constrainAs(carouselLayout) {
-                        top.linkTo(goBackBtn.bottom)
+                        top.linkTo(parent.top)
                     },
                 state = pagerState
             ) { page ->
                 AsyncImage(
                     modifier = Modifier.fillMaxWidth(),
-                    model = imageUrls[page].imageUrl,
-                    contentDescription = imageUrls[page].imageUrl,
+                    model = imageUrls[page],
+                    contentDescription = imageUrls[page],
                     contentScale = ContentScale.Crop,
                     error = painterResource(R.drawable.no_image)
                 )
@@ -349,7 +314,7 @@ fun NotInitialFabricSelectionText(
     modifier: Modifier,
     fabricName: String,
     fabricUrl: String,
-    fabricPrice: Double
+    fabricPrice: Int
 ) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
 

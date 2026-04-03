@@ -1,22 +1,22 @@
 package com.furniture.duet.data.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.ui.util.fastCbrt
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.furniture.duet.background.InternetConnectionManager
 import com.furniture.duet.data.api.RetrofitApiService
+import com.furniture.duet.data.db.dao.CartDao
 import com.furniture.duet.data.db.dao.FavoriteDao
-import com.furniture.duet.data.db.dao.FurnitureDao
 import com.furniture.duet.data.db.entity.FavoriteEntity
+import com.furniture.duet.data.model.furniture.FurnitureFabricDto
 import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
+import com.furniture.duet.domain.exceptions.IsNotFoundedException
 import javax.inject.Inject
 
 class FavoritesRepositoryImpl @Inject constructor(
     private val api: RetrofitApiService,
     private val favoriteDao: FavoriteDao,
-    private val furnitureDao: FurnitureDao,
     private val auth: FirebaseAuth,
     private val connectionManager: InternetConnectionManager
 ) : FavoritesRepository {
@@ -26,7 +26,14 @@ class FavoritesRepositoryImpl @Inject constructor(
             val user = auth.currentUser ?: throw IsNotAuthorizeException()
             val response = api.listFavorites(user.uid)
             val items = if (response.isSuccessful) {
-                response.body()?.map { favoriteItem -> FavoriteEntity(favoriteItem.id) } ?: emptyList()
+                response.body()?.map { favoriteItem ->
+                    FavoriteEntity(
+                        id = favoriteItem.id,
+                        name = favoriteItem.name,
+                        price = favoriteItem.basePrice,
+                        imageUrl = favoriteItem.imageUrl
+                    )
+                } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -41,21 +48,26 @@ class FavoritesRepositoryImpl @Inject constructor(
         favoriteDao.getFavorites()
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override suspend fun getFavoriteFurnitureDetail(id: Int) = withContext(Dispatchers.IO){
-        connectionManager.isOnline()
-        furnitureDao.getFurniture(id)
-    }
-
-    override suspend fun addFavorite(furnitureId: Int): Unit = withContext(Dispatchers.IO) {
+    override suspend fun addFavorite(
+        id: Int,
+        name: String,
+        basePrice: Int,
+        imageUrl: String
+    ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
         val user = auth.currentUser
 
         if (user != null) {
-            val response = api.addFavorite(user.uid, furnitureId.toLong())
-            if(!response.isSuccessful) return@withContext
+            val response = api.addFavorite(user.uid, id.toLong())
+            if(!response.isSuccessful) throw IsNotFoundedException()
         }
-        favoriteDao.insert(FavoriteEntity(furnitureId))
+
+        favoriteDao.insert(FavoriteEntity(
+            id = id,
+            name = name,
+            price = basePrice,
+            imageUrl = imageUrl
+        ))
     }
 
     override suspend fun removeFavorite(furnitureId: Int): Unit = withContext(Dispatchers.IO) {
@@ -66,7 +78,7 @@ class FavoritesRepositoryImpl @Inject constructor(
             val response = api.removeFavorite(user.uid, furnitureId.toLong())
             if(!response.isSuccessful) return@withContext
         }
-        favoriteDao.delete(FavoriteEntity(furnitureId))
+        favoriteDao.delete(furnitureId)
     }
 
     override suspend fun isFavorite(furnitureId: Int) = withContext(Dispatchers.IO) {

@@ -13,7 +13,6 @@ class GetCartUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): List<CartItemModel> {
         val cartItem = cartRepo.getCart()
-        CountStorage.setCartCount(context, cartItem.size)
         return cartItem
     }
 }

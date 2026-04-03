@@ -36,6 +36,9 @@ import androidx.navigation.NavType
 import com.furniture.duet.R
 import com.furniture.duet.ui.account.AccountRoute
 import com.furniture.duet.ui.auth.LoginRoute
+import com.furniture.duet.ui.auth.LoginScreen
+import com.furniture.duet.ui.auth.RegisterScreen
+import com.furniture.duet.ui.auth.ResetPasswordScreen
 import com.furniture.duet.ui.catalog.CatalogRoute
 import com.furniture.duet.ui.home.HomeScreen
 import com.furniture.duet.ui.favorites.FavoritesRoute
@@ -147,9 +150,6 @@ fun MainScreen() {
                     { navController.popBackStack() }
                 )
             }
-//            composable("login") {
-//                LoginRoute({ navController.popBackStack() })
-//            }
             composable(
                 route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })

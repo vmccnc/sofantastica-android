@@ -4,19 +4,18 @@ import com.furniture.duet.data.model.SortOption
 import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
 import com.furniture.duet.data.model.furniture.FurnitureFabricDto
+import com.furniture.duet.data.model.furniture.FurniturePageModel
 
 interface FurnitureRepository {
-    suspend fun getMinPrice(): Float
-    suspend fun getMaxPrice(): Float
-    suspend fun loadFurniture(): Boolean
+    suspend fun getMaxPrice(): Int
     suspend fun getFurniture(
-        minPrice: Float,
-        maxPrice: Float,
+        minPrice: Int,
+        maxPrice: Int,
         searchQuery: String = "",
-        category: String = "",
-        sortOption: SortOption = SortOption.SORT_POPULAR
-    ): List<FurnitureCatalogModel>
-    suspend fun getFurniture(searchQuery: String): List<FurnitureCatalogModel>
+        category: Int = 0,
+        sortOption: SortOption = SortOption.SORT_POPULAR,
+        page: Int
+    ): FurniturePageModel?
     suspend fun getCategories(): List<CategoryDto>
     suspend fun getFurnitureDetail(id: Int): FurnitureFabricDto
 }

@@ -15,15 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val _getCatalog: GetFurnitureCatalogUseCase,
     private val _getCartCount: GetCartCountUseCase
 ) : ViewModel() {
     var cartCount by mutableStateOf(0)
-        private set
-
-    var searchQuery by mutableStateOf("")
-
-    var searchResultList by mutableStateOf(emptyList<FurnitureCatalogModel>())
         private set
 
     fun getCartCount() {
@@ -31,12 +25,6 @@ class MainViewModel @Inject constructor(
             _getCartCount().collect {
                 cartCount = it
             }
-        }
-    }
-
-    fun onSearch() {
-        viewModelScope.launch {
-            searchResultList = _getCatalog(searchQuery)
         }
     }
 

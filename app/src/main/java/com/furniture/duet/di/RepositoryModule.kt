@@ -14,11 +14,19 @@ import com.furniture.duet.data.repository.FavoritesRepository
 import com.furniture.duet.data.repository.FavoritesRepositoryImpl
 import com.furniture.duet.data.repository.CartRepository
 import com.furniture.duet.data.repository.CartRepositoryImpl
+import com.furniture.duet.data.repository.UserRepository
+import com.furniture.duet.data.repository.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
+
     @Binds
     @Singleton
     abstract fun bindFurnitureRepository(

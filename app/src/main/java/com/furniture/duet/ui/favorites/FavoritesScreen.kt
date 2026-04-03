@@ -3,17 +3,21 @@ package com.furniture.duet.ui.favorites
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,8 +43,6 @@ fun FavoritesRoute(onItemClick: (Int) -> Unit,
         is UiState.Success ->
             FavoritesScreen(
                 furniture = state.data,
-                isRefreshing = viewModel.isRefreshing,
-                onRefresh = viewModel::refreshFurniture,
                 onItemClick = onItemClick,
                 onToggleFavorite = viewModel::toggleFavorite,
                 goToCatalog = goToCatalog
@@ -48,95 +50,45 @@ fun FavoritesRoute(onItemClick: (Int) -> Unit,
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     furniture: List<FurnitureCatalogModel>,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
     onItemClick: (Int) -> Unit,
-    onToggleFavorite: (Int) -> Unit,
+    onToggleFavorite: (FurnitureCatalogModel) -> Unit,
     goToCatalog: () -> Unit
 ) {
-
-    PullToRefreshBox(
-        modifier = Modifier.padding(16.dp),
-        isRefreshing = isRefreshing,
-        onRefresh = onRefresh
-    ) {
-
-        if (furniture.isEmpty()) {
-            Column(modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(stringResource(R.string.no_favorites), textAlign = TextAlign.Center)
-                TextButton(onClick = goToCatalog) {
-                    Text(stringResource(R.string.go_to_catalog), textAlign = TextAlign.Center)
-                }
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    val margin_5 = dimensionResource(R.dimen.margin_5)
+    if (furniture.isEmpty()) {
+        Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(stringResource(R.string.no_favorites), textAlign = TextAlign.Center)
+            TextButton(onClick = goToCatalog) {
+                Text(stringResource(R.string.go_to_catalog), textAlign = TextAlign.Center)
             }
-            return@PullToRefreshBox
         }
+        return
+    }
+
+    Column(Modifier.padding(margin_16)) {
+        Text(text = stringResource(R.string.favorites_label),
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = margin_5)
+        )
 
         LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
             columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(margin_16),
+            horizontalArrangement = Arrangement.spacedBy(margin_16)
         ) {
             items(furniture) { item ->
-                FurnitureCard(item, onItemClick, { id, _ -> onToggleFavorite(id) })
-//                val scale = remember { Animatable(1f) }
-//
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 4.dp)
-//                        .graphicsLayer {
-//                            scaleX = scale.value
-//                            scaleY = scale.value
-//                        }
-//                        .clickable {
-//                            scope.launch {
-//                                scale.animateTo(0.95f, animationSpec = tween(100))
-//                                scale.animateTo(1f, animationSpec = tween(100))
-//                                onItemClick(item.id)
-//                            }
-//                        },
-//                    shape = RoundedCornerShape(8.dp)
-//                ) {
-//                    Row(modifier = Modifier.padding(8.dp)) {
-//                        AsyncImage(
-//                            model = item.imageUrl,
-//                            contentDescription = item.name,
-//                            error = painterResource(R.drawable.no_image),
-//                            modifier = Modifier
-//                                .size(80.dp)
-//                                .clip(RoundedCornerShape(8.dp))
-//                        )
-//                        Spacer(modifier = Modifier.width(8.dp))
-//                        Column(modifier = Modifier.fillMaxWidth()) {
-//                            Row {
-//                                Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-//                                Spacer(modifier = Modifier.weight(1f))
-//                                Icon(
-//                                    Icons.Default.Favorite,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.clickable { onToggleFavorite(item.id) }
-//                                )
-//                            }
-//                            Text(
-//                                text = item.description,
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                maxLines = 2
-//                            )
-//                            Text(
-//                                text = stringResource(R.string.furniture_price).format(item.basePrice),
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                color = MaterialTheme.colorScheme.primary
-//                            )
-//                        }
-//                    }
-//                }
+                FurnitureCard(item, onItemClick, { onToggleFavorite(item) })
             }
         }
     }

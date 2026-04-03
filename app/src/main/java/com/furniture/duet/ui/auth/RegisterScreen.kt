@@ -1,6 +1,7 @@
 package com.furniture.duet.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -41,195 +43,215 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furniture.duet.R
 import com.furniture.duet.ui.common.UiState
-import com.furniture.duet.ui.theme.LoginBtnColor
+import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
 fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
     val tipColor = Color.Black.copy(.45f)
 
     val size_2 = dimensionResource(R.dimen.margin_2)
-    val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
 
-    val roundedShape = RoundedCornerShape(size_2)
+    val roundedShape = RoundedCornerShape(margin_20)
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = margin_16)
+            .fillMaxSize()
+            .padding(margin_16)
             .verticalScroll(state = rememberScrollState()),
         verticalArrangement = Arrangement.SpaceAround
     ) {
 
         Row(
             modifier = Modifier
-                .border(size_2, shape = roundedShape, color = LoginBtnColor.copy(alpha = .25f))
+                .background(Color.White, roundedShape)
                 .fillMaxWidth()
         ) {
             TextButton(
-                onClick = { viewModel.authPageMode = 0 },
+                onClick = { viewModel.isLogin = true },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Black.copy(alpha = 0.45f)
+                    containerColor = Color.White,
+                    contentColor = EnabledBtnColor
                 ),
                 shape = roundedShape,
                 contentPadding = PaddingValues(vertical = margin_16)
-            ) { Text(stringResource(R.string.i_have_an_account)) }
+            ) {
+                Text(
+                    text = stringResource(R.string.i_have_an_account)
+                )
+            }
 
             TextButton(
                 onClick = {},
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = LoginBtnColor.copy(alpha = .25f),
-                    contentColor = Color.Black
+                    containerColor = EnabledBtnColor,
+                    contentColor = Color.White
                 ),
                 shape = roundedShape,
                 contentPadding = PaddingValues(vertical = margin_16)
-            ) { Text(stringResource(R.string.i_don_t_have_an_account)) }
+            ) {
+                Text(
+                    text = stringResource(R.string.i_don_t_have_an_account)
+                )
+            }
 
         }
 
-        TextField(
-            value = viewModel.fullName,
-            onValueChange = viewModel::setNewFullName,
-            modifier = Modifier.fillMaxWidth().padding(top = margin_20),
-            singleLine = true,
-            shape = roundedShape,
-            label = { Text(stringResource(R.string.full_name_placeholder)) },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                focusedLabelColor = Color.Black
-            )
-        )
-        TextField(
-            value = viewModel.phoneNumber,
-            onValueChange = viewModel::setNewPhoneNumber,
-            modifier = Modifier.fillMaxWidth().padding(top = margin_20),
-            singleLine = true,
-            shape = roundedShape,
-            label = { Text(stringResource(R.string.phone_placeholder)) },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                focusedLabelColor = Color.Black
-            )
-        )
-        TextField(
-            value = viewModel.email,
-            onValueChange = viewModel::setNewEmail,
-            modifier = Modifier.fillMaxWidth().padding(top = margin_20),
-            singleLine = true,
-            shape = roundedShape,
-            label = { Text(stringResource(R.string.email_placeholder)) },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                focusedLabelColor = Color.Black
-            )
-        )
-        TextField(
-            value = viewModel.password,
-            onValueChange = viewModel::setNewPassword,
-            visualTransformation =
-                if (viewModel.isPasswordHidden) PasswordVisualTransformation()
-                else VisualTransformation.None,
-            shape = roundedShape,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_20),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black,
-                unfocusedLabelColor = Color.Black,
-                focusedLabelColor = Color.Black
-            ),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.i_show_password),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(margin_20)
-                        .clickable {
-                            viewModel.togglePasswordHidden()
-                        }
+        Column {
+            TextField(
+                value = viewModel.fullName,
+                onValueChange = viewModel::setNewFullName,
+                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
+                singleLine = true,
+                shape = roundedShape,
+                label = {
+                    Text(
+                        text = stringResource(R.string.full_name_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
                 )
-            },
-            singleLine = true,
-            label = { Text(stringResource(R.string.password_placeholder)) },
-        )
-
-        Text(
-            text = "•\t\tat least 8 characters",
-            color = tipColor,
-            modifier = Modifier.fillMaxWidth().padding(start = margin_5)
-        )
-        Text(
-            text = "•\t\tat least one uppercase letter",
-            color = tipColor,
-            modifier = Modifier.fillMaxWidth().padding(start = margin_5)
-        )
-        Text(
-            text = "•\t\tat least one number",
-            color = tipColor,
-            modifier = Modifier.fillMaxWidth().padding(start = margin_5)
-        )
-        Text(
-            text = "•\t\tat least one special characters",
-            color = tipColor,
-            modifier = Modifier.fillMaxWidth().padding(start = margin_5)
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
+            )
+            TextField(
+                value = viewModel.phoneNumber,
+                onValueChange = viewModel::setNewPhoneNumber,
+                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
+                singleLine = true,
+                shape = roundedShape,
+                label = {
+                    Text(
+                        text = stringResource(R.string.phone_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
+                )
+            )
+            TextField(
+                value = viewModel.email,
+                onValueChange = viewModel::setNewEmail,
+                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
+                singleLine = true,
+                shape = roundedShape,
+                label = {
+                    Text(
+                        text = stringResource(R.string.email_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
+                )
+            )
+            TextField(
+                value = viewModel.password,
+                onValueChange = viewModel::setNewPassword,
+                visualTransformation =
+                    if (viewModel.isPasswordHidden) PasswordVisualTransformation()
+                    else VisualTransformation.None,
+                shape = roundedShape,
                 modifier = Modifier
-                    .padding(horizontal = size_2, vertical = margin_16)
-                    .size(margin_16),
-                checked = viewModel.isPrivacyPolicyChecked,
-                onCheckedChange = { viewModel.isPrivacyPolicyChecked = it },
-                colors = CheckboxDefaults.colors(
-                    checkmarkColor = tipColor,
-                    uncheckedColor = tipColor,
-                    checkedColor = tipColor,
+                    .fillMaxWidth()
+                    .padding(vertical = margin_20),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
+                ),
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.i_show_password),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(margin_20)
+                            .clickable {
+                                viewModel.togglePasswordHidden()
+                            }
+                    )
+                },
+                singleLine = true,
+                label = {
+                    Text(
+                        text = stringResource(R.string.password_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    modifier = Modifier
+                        .padding(horizontal = size_2, vertical = margin_16)
+                        .size(margin_16),
+                    checked = viewModel.isPrivacyPolicyChecked,
+                    onCheckedChange = { viewModel.isPrivacyPolicyChecked = it },
+                    colors = CheckboxDefaults.colors(
+                        checkmarkColor = tipColor,
+                        uncheckedColor = tipColor,
+                        checkedColor = tipColor,
+                    )
                 )
-            )
-            Text(
-                text = "\tI agree to Privacy Policy",
-                color = tipColor,
-                modifier = Modifier.fillMaxWidth()
-            )
+                Text(
+                    text = "\tI agree to Privacy Policy",
+                    color = tipColor,
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
         }
 
         TextButton(
             onClick = viewModel::signUp,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = LoginBtnColor,
+                containerColor = EnabledBtnColor,
                 contentColor = Color.White
             ),
             shape = roundedShape,
             contentPadding = PaddingValues(vertical = margin_16)
-        ) { Text(stringResource(R.string.register)) }
+        ) {
+            Text(
+                text = stringResource(R.string.register),
+                color = Color.White,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     }
 
 }

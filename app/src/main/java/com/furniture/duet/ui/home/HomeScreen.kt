@@ -100,28 +100,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 textAlign = TextAlign.Center
             )
 
-            TextField(
-                value = "",
-                onValueChange = { },
-                leadingIcon = { Icon(painterResource(R.drawable.i_search), contentDescription = null) },
-                textStyle = MaterialTheme.typography.bodyMedium,
-                placeholder = {
-                    Text(text = stringResource(R.string.search_placeholder),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = SearchBarBackgroundColor,
-                    unfocusedContainerColor = SearchBarBackgroundColor,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(size_40))
-            )
-
             Text(
                 text = stringResource(R.string.comfort_style_for_your_home),
                 style = MaterialTheme.typography.titleMedium,

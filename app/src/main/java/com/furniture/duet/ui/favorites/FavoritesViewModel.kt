@@ -27,9 +27,6 @@ class FavoritesViewModel @Inject constructor(
     var uiState by mutableStateOf<UiState<List<FurnitureCatalogModel>>>(UiState.Loading)
         private set
 
-    var isRefreshing by mutableStateOf(false)
-        private set
-
     fun load() {
         viewModelScope.launch {
             try {
@@ -42,18 +39,10 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 
-    fun refreshFurniture() {
-        viewModelScope.launch {
-            isRefreshing = true
-            load()
-            isRefreshing = false
-        }
-    }
-
-    fun toggleFavorite(id: Int) {
+    fun toggleFavorite(item: FurnitureCatalogModel) {
         viewModelScope.launch {
             try {
-                _setFavorite(id, false)
+                _setFavorite(item, false)
                 uiState = UiState.Success(_getFavorites())
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()

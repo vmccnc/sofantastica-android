@@ -20,6 +20,7 @@ hilt = "2.51"
 material = "1.10.0"
 material3 = "1.4.0"
 materialIconsCore = "1.7.8"
+pagingCompose = "3.4.2"
 retrofit = "2.9.0"
 okhttpLogging = "4.11.0"
 gson = "2.10.1"
@@ -55,6 +56,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsCore" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 firebase-ui-auth = { module = "com.firebaseui:firebase-ui-auth", version.ref = "firebaseUiAuth" }
