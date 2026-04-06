@@ -1,5 +1,6 @@
 package com.furniture.duet.ui.home
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.DecayAnimationSpec
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -49,8 +51,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.decodeToImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,10 +68,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.LocalImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.furniture.duet.R
 import com.furniture.duet.data.model.InfoModel
 import com.furniture.duet.di.FirebaseModule
+import com.furniture.duet.ui.common.UiState
+import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.theme.AboutUsBackgroundColor
 import com.furniture.duet.ui.theme.AboutUsTextColor
 import com.furniture.duet.ui.theme.FurnitureDetailTextColor
@@ -77,6 +91,7 @@ import com.furniture.duet.ui.theme.TitleColor
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.InputStream
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -85,10 +100,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
-    val size_40 = dimensionResource(R.dimen.size_40)
     val size_170 = dimensionResource(R.dimen.size_170)
 
     val  state = rememberScrollState()
+
     Column(modifier = Modifier.verticalScroll(state), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Column(modifier = Modifier.padding(margin_16), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -179,7 +194,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 }
             }
 
-            Sofa360Screen(viewModel.sofa360Link)
+            Sofa360Screen(viewModel.images)
         }
 
         Text(
@@ -196,12 +211,16 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun Sofa360Screen(sofa360Link: String) {
+fun Sofa360Screen(images: List<Int>) {
     val margin_20 = dimensionResource(R.dimen.margin_20)
     val pageCount = 36
-    Box(contentAlignment = Alignment.BottomCenter) {
+
+    Box(
+        contentAlignment = Alignment.BottomCenter
+    ) {
         val pagerState = rememberPagerState(pageCount = { pageCount })
         val coroutineScope = rememberCoroutineScope()
+
         HorizontalPager(
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,17 +243,16 @@ fun Sofa360Screen(sofa360Link: String) {
             ),
             beyondViewportPageCount = pageCount,
             state = pagerState,
-            userScrollEnabled = false
+            userScrollEnabled = false,
         ) { page ->
-            AsyncImage(
+
+            Image(
+                painter = painterResource(images[page]),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(margin_20)),
-                model = "$sofa360Link$page.png?alt=media",
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.no_image),
-                error = painterResource(R.drawable.no_image)
+                contentScale = ContentScale.Crop
             )
         }
         Image(

@@ -1,37 +1,23 @@
 package com.furniture.duet.ui.account
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,96 +26,90 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.furniture.duet.R
 import com.furniture.duet.ui.auth.LoginRoute
-import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.auth.LoginScreen
+import com.furniture.duet.ui.auth.RegisterScreen
+import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.common.UiState
+import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.orders.OrderHistoryScreen
-import com.furniture.duet.ui.orders.StyledTextField
 import com.furniture.duet.ui.theme.EnabledBtnColor
-import com.furniture.duet.ui.theme.SearchBarBackgroundColor
 
 @Composable
 fun AccountRoute(
-    goBack: () -> Unit,
-    //goToLogin: () -> Unit,
+    logOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel()
 ) {
-    if (viewModel.email.isEmpty()) {
-        LoginRoute(goBack)
-        return
-        //goToLogin()
-    }
     val state = viewModel.uiState
-    if (state is UiState.Error) {
-        ErrorUI("Error: ${state.throwable.message}")
-    } else {
-        var accountMode by remember{ mutableStateOf(false) }
-        val margin_16 = dimensionResource(R.dimen.margin_16)
-        val margin_5 = dimensionResource(R.dimen.margin_5)
-        val margin_20 = dimensionResource(R.dimen.margin_20)
-        Column {
-            Text(text = stringResource(R.string.account_label),
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = margin_5)
-            )
+    when(state) {
+        is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
+        is UiState.Loading -> LoadingUI()
+        else -> {
+            var accountMode by remember { mutableStateOf(false) }
+            val margin_16 = dimensionResource(R.dimen.margin_16)
+            val margin_5 = dimensionResource(R.dimen.margin_5)
+            val margin_20 = dimensionResource(R.dimen.margin_20)
+            Column {
+                Text(
+                    text = stringResource(R.string.account_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = margin_5)
+                )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                var textColorAcc = EnabledBtnColor
-                var backgroundColorAcc = Color.White
-                var textColorShop = Color.White
-                var backgroundColorShop = EnabledBtnColor
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    var textColorAcc = EnabledBtnColor
+                    var backgroundColorAcc = Color.White
+                    var textColorShop = Color.White
+                    var backgroundColorShop = EnabledBtnColor
 
-                if (accountMode) {
-                    textColorAcc = Color.White
-                    backgroundColorAcc = EnabledBtnColor
-                    textColorShop = EnabledBtnColor
-                    backgroundColorShop = Color.White
+                    if (accountMode) {
+                        textColorAcc = Color.White
+                        backgroundColorAcc = EnabledBtnColor
+                        textColorShop = EnabledBtnColor
+                        backgroundColorShop = Color.White
+                    }
+
+                    Text(
+                        text = stringResource(R.string.your_account),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = textColorAcc,
+                        modifier = Modifier
+                            .background(backgroundColorAcc, RoundedCornerShape(margin_20))
+                            .padding(vertical = margin_16, horizontal = margin_20)
+                            .clickable { accountMode = true }
+                    )
+                    Text(
+                        text = stringResource(R.string.shopping),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = textColorShop,
+                        modifier = Modifier
+                            .background(backgroundColorShop, RoundedCornerShape(margin_20))
+                            .padding(vertical = margin_16, horizontal = margin_20)
+                            .clickable { accountMode = false }
+                    )
                 }
-
-                Text(
-                    text = stringResource(R.string.your_account),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = textColorAcc,
-                    modifier = Modifier
-                        .background(backgroundColorAcc, RoundedCornerShape(margin_20))
-                        .padding(vertical = margin_16, horizontal = margin_20)
-                        .clickable { accountMode = true }
-                )
-                Text(
-                    text = stringResource(R.string.shopping),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = textColorShop,
-                    modifier = Modifier
-                        .background(backgroundColorShop, RoundedCornerShape(margin_20))
-                        .padding(vertical = margin_16, horizontal = margin_20)
-                        .clickable { accountMode = false }
-                )
+                if (accountMode)
+                    AccountScreen(logOut)
+                else
+                    OrderHistoryScreen()
             }
-            if(accountMode)
-                AccountScreen(goBack)
-            else
-                OrderHistoryScreen()
         }
     }
 }
 
 @Composable
 fun AccountScreen(
-    goBack: () -> Unit,
+    logOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val margin_5 = dimensionResource(R.dimen.margin_5)
@@ -264,7 +244,7 @@ fun AccountScreen(
             modifier = Modifier
                 .padding(vertical = margin_5)
                 .fillMaxWidth(),
-            onClick = { viewModel.logOut() },
+            onClick = { logOut() },
             colors = ButtonDefaults.buttonColors(
                 containerColor = EnabledBtnColor,
                 contentColor = Color.White

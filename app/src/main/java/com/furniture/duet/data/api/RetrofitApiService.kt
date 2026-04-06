@@ -15,6 +15,7 @@ import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurniturePageModel
 import com.furniture.duet.data.model.order.CreateOrderModel
 import com.furniture.duet.data.model.order.GetOrdersModel
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST

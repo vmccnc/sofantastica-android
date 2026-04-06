@@ -1,6 +1,7 @@
 package com.furniture.duet.ui.catalog
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurnitureCatalogModel
+import com.furniture.duet.domain.exceptions.ResIdException
 import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.domain.usecase.furnitures.GetCategoriesUseCase
 import com.furniture.duet.domain.usecase.furnitures.GetFurnitureCatalogUseCase
@@ -72,6 +74,8 @@ class CatalogViewModel @Inject constructor(
                 minPrice = 0f
                 currentMinPrice = minPrice
                 onSearch()
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
@@ -111,6 +115,8 @@ class CatalogViewModel @Inject constructor(
                     isLast = data.isLast
                 ))
 
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }

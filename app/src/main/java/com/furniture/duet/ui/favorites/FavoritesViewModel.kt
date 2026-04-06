@@ -34,7 +34,8 @@ class FavoritesViewModel @Inject constructor(
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                uiState = UiState.Error(e)
+                //uiState = UiState.Error(e)
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -47,7 +48,8 @@ class FavoritesViewModel @Inject constructor(
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                uiState = UiState.Error(e)
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                //uiState = UiState.Error(e)
             }
         }
     }

@@ -1,17 +1,24 @@
 package com.furniture.duet.ui.home
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.furniture.duet.R
 import com.furniture.duet.data.model.InfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
+import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-) : ViewModel() {
+class HomeViewModel @Inject constructor() : ViewModel() {
 
     val bestChoiseList = listOf(
         InfoModel(R.drawable.i_healtcare, R.string.ultimate_comfort),
@@ -26,6 +33,19 @@ class HomeViewModel @Inject constructor(
         InfoModel(R.drawable.i_cup, R.string.take_a_coffee_break),
         InfoModel(R.drawable.i_smile, R.string.wait_for_your_furniture_with_a_smile)
     )
-    val sofa360Link =
-        "https://firebasestorage.googleapis.com/v0/b/furniture-dm.firebasestorage.app/o/360%2F"
+    val images = listOf(
+        R.drawable.sofa0, R.drawable.sofa1, R.drawable.sofa2,
+        R.drawable.sofa3, R.drawable.sofa4, R.drawable.sofa5,
+        R.drawable.sofa6, R.drawable.sofa7, R.drawable.sofa8,
+        R.drawable.sofa9, R.drawable.sofa10, R.drawable.sofa11,
+        R.drawable.sofa12, R.drawable.sofa13, R.drawable.sofa14,
+        R.drawable.sofa15, R.drawable.sofa16, R.drawable.sofa17,
+        R.drawable.sofa18, R.drawable.sofa19, R.drawable.sofa20,
+        R.drawable.sofa21, R.drawable.sofa22, R.drawable.sofa23,
+        R.drawable.sofa24, R.drawable.sofa25, R.drawable.sofa26,
+        R.drawable.sofa27, R.drawable.sofa28, R.drawable.sofa29,
+        R.drawable.sofa30, R.drawable.sofa31, R.drawable.sofa32,
+        R.drawable.sofa33, R.drawable.sofa34, R.drawable.sofa35
+    )
+
 }

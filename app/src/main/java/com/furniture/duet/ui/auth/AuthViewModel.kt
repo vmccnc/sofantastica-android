@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furniture.duet.domain.exceptions.ResIdException
+import com.furniture.duet.domain.usecase.account.LogOutUseCase
 import com.furniture.duet.domain.usecase.account.ResetPasswordUesCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val _signInUseCase: SignInUseCase,
     private val _signUpUseCase: SignUpUseCase,
+    private val _logOut: LogOutUseCase,
     private val resetPasswordUseCase: ResetPasswordUesCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -54,6 +57,8 @@ class AuthViewModel @Inject constructor(
             try {
                 _signInUseCase(email, password)
                 uiState = UiState.Success(Unit)
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
@@ -85,8 +90,21 @@ class AuthViewModel @Inject constructor(
                 } else {
                     Toast.makeText(context, "Check your data", Toast.LENGTH_SHORT).show()
                 }
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
+            }
+        }
+    }
+
+    fun logOut() {
+        viewModelScope.launch {
+            uiState = try {
+                _logOut()
+                UiState.Loading
+            } catch (e: Exception) {
+                UiState.Error(e)
             }
         }
     }

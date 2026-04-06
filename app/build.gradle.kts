@@ -15,8 +15,8 @@ android {
         applicationId = "com.furniture.duet"
         minSdk = 24
         targetSdk = 35
-        versionCode = 9
-        versionName = "2.0.2"
+        versionCode = 11
+        versionName = "2.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

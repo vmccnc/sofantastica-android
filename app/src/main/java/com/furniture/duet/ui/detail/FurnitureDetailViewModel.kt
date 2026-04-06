@@ -111,7 +111,8 @@ class FurnitureDetailViewModel @Inject constructor(
                     isDialogOpened = false
                 }
             } catch (e: Exception) {
-                uiState = UiState.Error(e)
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                //uiState = UiState.Error(e)
             }
 
         }
@@ -144,7 +145,7 @@ class FurnitureDetailViewModel @Inject constructor(
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                uiState = UiState.Error(e)
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -184,7 +185,8 @@ class FurnitureDetailViewModel @Inject constructor(
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                uiState = UiState.Error(e)
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                //uiState = UiState.Error(e)
             }
         }
     }

@@ -13,6 +13,7 @@ import com.furniture.duet.data.model.order.DeliveryOptionModel
 import com.furniture.duet.data.model.order.PaymentOptionModel
 import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
 import com.furniture.duet.domain.exceptions.ResIdException
+import com.furniture.duet.domain.usecase.account.GetUserDataUseCase
 import com.furniture.duet.domain.usecase.order.CreateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderViewModel @Inject constructor(
     private val _createOrder: CreateOrderUseCase,
+    private val _getUser: GetUserDataUseCase,
     @ApplicationContext private val context: Context
 ): ViewModel() {
     var isOrderSent by mutableStateOf(false)

@@ -141,14 +141,11 @@ fun MainScreen() {
             }
             composable(Screen.Cart.route) {
                 CartRoute(
-                    goBack = { navController.popBackStack() },
                     goToOrderHistory = { navController.navigate(Screen.Account.route) }
                 )
             }
             composable(Screen.Account.route) {
-                AccountRoute(
-                    { navController.popBackStack() }
-                )
+                LoginRoute()
             }
             composable(
                 route = "detail/{id}",

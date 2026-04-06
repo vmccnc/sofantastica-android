@@ -63,7 +63,6 @@ import com.furniture.duet.ui.theme.TitleColor
 
 @Composable
 fun CartRoute(
-    goBack: () -> Unit,
     goToOrderHistory: () -> Unit,
     viewModel: CartViewModel = hiltViewModel()
 ) {
@@ -74,13 +73,12 @@ fun CartRoute(
         }
         is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
         is UiState.Success ->
-            CartScreen(goBack, goToOrderHistory)
+            CartScreen(goToOrderHistory)
     }
 }
 
 @Composable
 fun CartScreen(
-    goBack: () -> Unit,
     goToOrderHistory: () -> Unit,
     viewModel: CartViewModel = hiltViewModel()
 ) {
@@ -99,7 +97,6 @@ fun CartScreen(
             val (emptyCartImage, emptyCartText) = createRefs()
             Image(
                 modifier = Modifier
-                    .clickable { goBack() }
                     .constrainAs(emptyCartImage) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
@@ -112,7 +109,6 @@ fun CartScreen(
             )
             Text(
                 modifier = Modifier
-                    .clickable { goBack() }
                     .constrainAs(emptyCartText) {
                         top.linkTo(emptyCartImage.bottom, margin_16)
                         start.linkTo(parent.start)

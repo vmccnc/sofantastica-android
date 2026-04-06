@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import com.furniture.duet.data.model.cart.CartModel
+import com.furniture.duet.domain.exceptions.ResIdException
 import com.furniture.duet.domain.usecase.account.GetUserDataUseCase
 import com.furniture.duet.domain.usecase.cart.ChangeQuantityUseCase
 import com.furniture.duet.domain.usecase.cart.DeleteCartUseCase
@@ -47,6 +48,8 @@ class CartViewModel @Inject constructor(
                         total = items.sumOf { it.totalPrice }
                     )
                 )
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
@@ -60,6 +63,8 @@ class CartViewModel @Inject constructor(
                     _changeQuantity(id, newCount)
                     load()
                 }
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
@@ -71,6 +76,8 @@ class CartViewModel @Inject constructor(
             try {
                 _deleteCart(id)
                 load()
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
@@ -82,6 +89,8 @@ class CartViewModel @Inject constructor(
             try {
                 _setFavorite(item, !item.isFavorite)
                 load()
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }

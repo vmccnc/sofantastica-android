@@ -32,13 +32,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furniture.duet.R
+import com.furniture.duet.ui.account.AccountRoute
+import com.furniture.duet.ui.account.AccountScreen
 import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.common.UiState
 import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
 fun LoginRoute(
-    goBack: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState
@@ -51,7 +52,7 @@ fun LoginRoute(
                 RegisterScreen()
             }
         }
-        else -> goBack()
+        else -> AccountRoute(viewModel::logOut)
     }
 }
 
