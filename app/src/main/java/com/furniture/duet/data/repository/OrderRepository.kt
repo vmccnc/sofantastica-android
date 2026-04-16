@@ -1,6 +1,7 @@
 package com.furniture.duet.data.repository
 
 import com.furniture.duet.data.model.order.OrderDto
+import com.furniture.duet.data.model.order.OrderHistoryModel
 
 interface OrderRepository {
     suspend fun createOrder(
@@ -17,5 +18,5 @@ interface OrderRepository {
         typeOfDelivery: String,
         typeOfPayment: String
     ): Boolean
-    suspend fun getOrders(): List<OrderDto>
+    suspend fun getOrders(page: Int): OrderHistoryModel
 }

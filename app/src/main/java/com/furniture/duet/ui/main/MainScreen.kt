@@ -3,12 +3,17 @@ package com.furniture.duet.ui.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
@@ -87,9 +92,11 @@ fun MainScreen() {
         Screen.Cart,
         Screen.Account
     )
+    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
+            .padding(bottom = navigationBarPadding)
             .background(MaterialTheme.colorScheme.background),
         bottomBar = {
             val backStackEntry by navController.currentBackStackEntryAsState()
@@ -152,7 +159,7 @@ fun MainScreen() {
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
                 it.arguments?.getInt("id")?.let {
-                    FurnitureDetailRoute(it, { navController.popBackStack() })
+                    FurnitureDetailRoute(it)
                 }
             }
         }

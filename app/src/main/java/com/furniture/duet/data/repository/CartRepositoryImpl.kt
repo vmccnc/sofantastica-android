@@ -30,7 +30,7 @@ class CartRepositoryImpl @Inject constructor(
         try {
             val user = auth.currentUser ?: throw IsNotAuthorizeException()
             val response = api.getCart(user.uid)
-            if (response.isSuccessful || response.body() == null) return@withContext
+            if (!response.isSuccessful || response.body() == null) return@withContext
             val cartDto = response.body()!!
 
             val cartList = mutableListOf<CartItemEntity>()
@@ -46,8 +46,8 @@ class CartRepositoryImpl @Inject constructor(
                     fabricName = it.fabricName,
                     fabricUrl = it.fabricUrl,
                     quantity = it.quantity,
-                    basePrice = priceList[0].toInt(),
-                    fabricPrice = priceList[2].toInt()
+                    basePrice = priceList[0].toDouble().toInt(),
+                    fabricPrice = priceList[2].toDouble().toInt()
                 ))
             }
 

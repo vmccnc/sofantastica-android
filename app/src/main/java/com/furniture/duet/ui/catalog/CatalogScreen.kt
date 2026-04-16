@@ -31,9 +31,11 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
@@ -53,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -114,146 +117,149 @@ fun CatalogScreen(
             viewModel::onSetPriceRange
         )
     }
+    var columnsCount = LocalConfiguration.current.screenWidthDp / 170
+    if (columnsCount > 4) columnsCount = 4
 
-    Column(modifier = Modifier.padding(margin_16)) {
-
-        Text(text = stringResource(R.string.catalog_label),
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-        )
-
-        TextField(
-            value = viewModel.searchQuery,
-            onValueChange = viewModel::onSetSearchQuery,
-            leadingIcon = {
-                Icon(
-                    painterResource(R.drawable.i_search),
-                    contentDescription = null
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columnsCount),
+        modifier = Modifier.padding(margin_16),
+        verticalArrangement = Arrangement.spacedBy(margin_16),
+        horizontalArrangement = Arrangement.spacedBy(margin_16)
+    ) {
+        val data = (viewModel.uiState as UiState.Success).data
+        item(span = { GridItemSpan(columnsCount) }) {
+            Column {
+                Text(text = stringResource(R.string.catalog_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = margin_5)
                 )
-            },
-            textStyle = MaterialTheme.typography.bodyMedium,
-            placeholder = {
-                Text(text = stringResource(R.string.search_placeholder),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = SearchBarBackgroundColor,
-                unfocusedContainerColor = SearchBarBackgroundColor,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { viewModel.onSearch() }
-            ),
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(margin_20))
-        )
 
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(margin_12),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(margin_16, alignment = Alignment.CenterHorizontally)
-        ) {
-            items(viewModel.categories) { item ->
-                val backgroundColor =
-                    if (item.id == viewModel.selectedCategory) SelectedPageColor
-                    else Color.White
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                TextField(
+                    value = viewModel.searchQuery,
+                    onValueChange = viewModel::onSetSearchQuery,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(R.drawable.i_search),
+                            contentDescription = null
+                        )
+                    },
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    placeholder = {
+                        Text(text = stringResource(R.string.search_placeholder),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = SearchBarBackgroundColor,
+                        unfocusedContainerColor = SearchBarBackgroundColor,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { viewModel.onSearch() }
+                    ),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(margin_20))
+                )
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(margin_12),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(margin_16, alignment = Alignment.CenterHorizontally)
                 ) {
-                    AsyncImage(
-                        model = item.imageUrl,
-                        contentDescription = item.title,
+                    items(viewModel.categories) { item ->
+                        val backgroundColor =
+                            if (item.id == viewModel.selectedCategory) SelectedPageColor
+                            else Color.White
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AsyncImage(
+                                model = item.imageUrl,
+                                contentDescription = item.title,
+                                modifier = Modifier
+                                    .border(2.dp, backgroundColor, CircleShape)
+                                    .background(Color.White, CircleShape)
+                                    .size(size_75)
+                                    .padding(margin_12)
+                                    .clickable { viewModel.selectCategory(item.id) }
+                            )
+                            Text(
+                                item.title,
+                                modifier = Modifier.padding(top = margin_12),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
-                            .border(2.dp, backgroundColor, CircleShape)
-                            .background(Color.White, CircleShape)
-                            .size(size_75)
-                            .padding(margin_12)
-                            .clickable { viewModel.selectCategory(item.id) }
-                    )
-                    Text(
-                        item.title,
-                        modifier = Modifier.padding(top = margin_12),
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                            .weight(1f)
+                            .clickable { viewModel.openSortDialog() }
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(end = margin_10),
+                            style = MaterialTheme.typography.titleSmall,
+                            text = stringResource(R.string.sort_label)
+                        )
+                        Text(
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.Black,
+                            text = stringResource(viewModel.selectedSort.textId)
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { viewModel.openPriceRangeDialog() }
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(end = margin_10),
+                            style = MaterialTheme.typography.titleSmall,
+                            text = stringResource(R.string.price_range_label)
+                        )
+                        Text(
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.Black,
+                            text = stringResource(R.string.price_range)
+                                .format(viewModel.currentMinPrice.toInt(), viewModel.currentMaxPrice.toInt())
+                        )
+                    }
                 }
             }
         }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { viewModel.openSortDialog() }
-            ) {
-                Text(
-                    modifier = Modifier.padding(end = margin_10),
-                    style = MaterialTheme.typography.titleSmall,
-                    text = stringResource(R.string.sort_label)
-                )
-                Text(
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black,
-                    text = stringResource(viewModel.selectedSort.textId)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { viewModel.openPriceRangeDialog() }
-            ) {
-                Text(
-                    modifier = Modifier.padding(end = margin_10),
-                    style = MaterialTheme.typography.titleSmall,
-                    text = stringResource(R.string.price_range_label)
-                )
-                Text(
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black,
-                    text = stringResource(R.string.price_range)
-                        .format(viewModel.currentMinPrice.toInt(), viewModel.currentMaxPrice.toInt())
-                )
-            }
+        items(data.list) { item ->
+            FurnitureCard(item, onItemClick, viewModel::onToggleFavorite)
         }
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(margin_16),
-            horizontalArrangement = Arrangement.spacedBy(margin_16)
-        ) {
-            val data = (viewModel.uiState as UiState.Success).data
-            items(data.list) { item ->
-                FurnitureCard(item, onItemClick, viewModel::onToggleFavorite)
-            }
-            item(span = { GridItemSpan(2) }) {
-                if (data.isLast) return@item
-                TextButton(
-                    onClick = viewModel::loadNextPage,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = EnabledBtnColor
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.load_more),
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Center
-                    )
-                }
+        item(span = { GridItemSpan(columnsCount) }) {
+            if (data.isLast) return@item
+            TextButton(
+                onClick = viewModel::loadNextPage,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = EnabledBtnColor
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.load_more),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
@@ -286,10 +292,10 @@ fun FurnitureCard(
             error = painterResource(R.drawable.no_image)
         )
 
-        var isFavorite by remember { mutableStateOf(item.isFavorite) }
+        //var isFavorite by remember { mutableStateOf(item.isFavorite) }
 
         val favoriteIcon =
-            if(isFavorite) painterResource(R.drawable.i_favorite)
+            if(item.isFavorite) painterResource(R.drawable.i_favorite)
             else painterResource(R.drawable.i_favorite_border)
 
         Icon(

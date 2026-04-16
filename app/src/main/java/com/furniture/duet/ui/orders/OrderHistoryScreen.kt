@@ -2,6 +2,7 @@ package com.furniture.duet.ui.orders
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,10 +34,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCbrt
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.furniture.duet.R
 import com.furniture.duet.data.model.order.OrderDto
+import com.furniture.duet.data.model.order.OrderHistoryModel
 import com.furniture.duet.data.model.order.OrderItemDto
 import com.furniture.duet.ui.cart.CartCounter
 import com.furniture.duet.ui.cart.CartScreen
@@ -60,25 +70,42 @@ fun OrderHistoryScreen(
     when (val state = viewModel.uiState) {
         is UiState.Loading -> {
             LoadingUI()
-            viewModel.load()
         }
         is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
-        is UiState.Success<List<OrderDto>> -> OrderHistoryContent(state.data)
+        is UiState.Success<OrderHistoryModel> -> OrderHistoryContent(state.data, viewModel::loadNextPage)
     }
 }
 
 @Composable
 fun OrderHistoryContent(
-   orders: List<OrderDto>
+   data: OrderHistoryModel,
+   loadNextPage: () -> Unit
 ) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
     Text(
         text = stringResource(R.string.my_orders),
         modifier = Modifier.padding(top = margin_16, start = margin_16)
     )
-    LazyColumn(modifier = Modifier.fillMaxWidth().padding(horizontal = margin_16)) {
-        items(orders) { order ->
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = margin_16)) {
+        for (order in data.orders) {
             OrderContent(order)
+        }
+        if (data.isLast) return
+        TextButton(
+            onClick = loadNextPage,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = EnabledBtnColor
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.load_more),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -178,6 +205,7 @@ fun OrderItemContent(item: OrderItemDto) {
     val margin_32 = dimensionResource(R.dimen.margin_32)
     val size_24 = dimensionResource(R.dimen.size_24)
     val size_130 = dimensionResource(R.dimen.size_130)
+    val titleSize = LocalConfiguration.current.screenWidthDp - 200
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,11 +231,23 @@ fun OrderItemContent(item: OrderItemDto) {
 
         Text(
             modifier = Modifier
+                .width(titleSize.dp)
                 .constrainAs(furnitureName) {
                     top.linkTo(parent.top)
                     start.linkTo(furnitureImage.end, size_24)
                 },
             text = item.furnitureName,
+            color = FurnitureDetailTextColor,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        Text(
+            modifier = Modifier
+                .constrainAs(price) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                },
+            text = stringResource(R.string.furniture_total_price).format(item.finalPrice),
             color = FurnitureDetailTextColor,
             style = MaterialTheme.typography.titleSmall
         )
@@ -234,17 +274,6 @@ fun OrderItemContent(item: OrderItemDto) {
                 },
             text = item.fabricName,
             color = FabricSecondaryColor,
-            style = MaterialTheme.typography.titleSmall
-        )
-
-        Text(
-            modifier = Modifier
-                .constrainAs(price) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                },
-            text = stringResource(R.string.furniture_total_price).format(item.finalPrice),
-            color = FurnitureDetailTextColor,
             style = MaterialTheme.typography.titleSmall
         )
     }

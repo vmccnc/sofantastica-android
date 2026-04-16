@@ -312,7 +312,6 @@ fun CartItem(
                 .constrainAs(price) {
                     top.linkTo(counter.top)
                     bottom.linkTo(counter.bottom)
-                    start.linkTo(counter.end, margin_16)
                     end.linkTo(parent.end)
                 },
             text = stringResource(R.string.furniture_total_price).format(item.totalPrice),

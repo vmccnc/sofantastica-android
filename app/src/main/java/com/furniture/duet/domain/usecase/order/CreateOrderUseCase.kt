@@ -1,6 +1,9 @@
 package com.furniture.duet.domain.usecase.order
 
 import com.furniture.duet.data.repository.OrderRepository
+import com.furniture.duet.domain.exceptions.EmptyFieldException
+import com.furniture.duet.domain.exceptions.WrongEmailFormatException
+import com.furniture.duet.domain.exceptions.WrongPhoneNumberException
 import javax.inject.Inject
 
 class CreateOrderUseCase @Inject constructor(
@@ -20,13 +23,19 @@ class CreateOrderUseCase @Inject constructor(
         typeOfDelivery: String,
         typeOfPayment: String
     ): Boolean {
+
         if (
             firstAndLastName.isEmpty() ||
             (companyName.isEmpty() || unn.isEmpty()) && isBusiness ||
             email.isEmpty() || phone.isEmpty() || address.isEmpty() ||
             city.isEmpty() || postCode.isEmpty() || country.isEmpty() ||
             typeOfDelivery.isEmpty() || typeOfPayment.isEmpty()
-        ) throw  IllegalArgumentException()
+        ) throw EmptyFieldException()
+
+        if (!email.matches(Regex.fromLiteral(".+@.+\\..+")))
+            throw WrongEmailFormatException()
+        if (!phone.matches(Regex.fromLiteral("[\\+8]\\d{10,12}")))
+            throw WrongPhoneNumberException()
 
         val customerType =
             if (isBusiness) "business"

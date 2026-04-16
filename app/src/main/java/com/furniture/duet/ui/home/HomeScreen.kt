@@ -97,6 +97,7 @@ import kotlin.math.sign
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+    val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
@@ -135,6 +136,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 Image(
                     modifier = Modifier
                         .weight(.5f)
+                        .padding(end = margin_5)
                         .fillMaxHeight()
                         .clip(shape = RoundedCornerShape(margin_20)),
                     painter = painterResource(R.drawable.home_image_1),
@@ -143,6 +145,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 Image(
                     modifier = Modifier
                         .weight(.5f)
+                        .padding(start = margin_5)
                         .fillMaxHeight()
                         .clip(shape = RoundedCornerShape(margin_20)),
                     painter = painterResource(R.drawable.home_image_2),

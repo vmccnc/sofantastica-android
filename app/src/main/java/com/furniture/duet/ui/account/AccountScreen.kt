@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +55,7 @@ fun AccountRoute(
             val margin_16 = dimensionResource(R.dimen.margin_16)
             val margin_5 = dimensionResource(R.dimen.margin_5)
             val margin_20 = dimensionResource(R.dimen.margin_20)
-            Column {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     text = stringResource(R.string.account_label),
                     style = MaterialTheme.typography.labelMedium,
@@ -113,99 +115,51 @@ fun AccountScreen(
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val margin_5 = dimensionResource(R.dimen.margin_5)
-    val margin_20 = dimensionResource(R.dimen.margin_20)
-    val roundedShape = RoundedCornerShape(margin_20)
-
-    val textColors = TextFieldDefaults.colors(
-        focusedContainerColor = Color.White,
-        unfocusedContainerColor = Color.White,
-        disabledContainerColor = Color.White,
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent,
-        disabledTextColor = EnabledBtnColor
-    )
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(dimensionResource(R.dimen.margin_16))
-        .verticalScroll(rememberScrollState())) {
-        TextField(value = viewModel.email,
-            onValueChange = {},
-            label = {Text(stringResource(R.string.email_label))},
-            enabled = false,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        .padding(dimensionResource(R.dimen.margin_16))) {
+        StyledAccountTextField(
+            value = viewModel.email,
+            changeValue = { },
+            placeholder = stringResource(R.string.email_label),
+            isEditable = false
         )
-        TextField(value = viewModel.fullName,
-            onValueChange = { viewModel.fullName = it },
-            label = {Text(stringResource(R.string.full_name_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.fullName,
+            changeValue = viewModel::setNewFullName,
+            placeholder = stringResource(R.string.full_name_label),
+            isEditable = viewModel.isEditable
         )
-        TextField(value = viewModel.phone,
-            onValueChange = viewModel::setNewPhone,
-            label = {Text(stringResource(R.string.phone_number_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.phone,
+            changeValue = viewModel::setNewPhone,
+            placeholder = stringResource(R.string.phone_number_label),
+            isEditable = viewModel.isEditable
         )
-        TextField(value = viewModel.address,
-            onValueChange = { viewModel.address = it },
-            label = {Text(stringResource(R.string.address_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.address,
+            changeValue = viewModel::setNewAddress,
+            placeholder = stringResource(R.string.address_label),
+            isEditable = viewModel.isEditable
         )
-        TextField(value = viewModel.country,
-            onValueChange = { viewModel.country = it },
-            label = {Text(stringResource(R.string.country_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.country,
+            changeValue = viewModel::setNewCountry,
+            placeholder = stringResource(R.string.country_label),
+            isEditable = viewModel.isEditable
         )
-        TextField(value = viewModel.city,
-            onValueChange = { viewModel.city = it },
-            label = {Text(stringResource(R.string.city_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.city,
+            changeValue = viewModel::setNewCity,
+            placeholder = stringResource(R.string.city_label),
+            isEditable = viewModel.isEditable
         )
-        TextField(value = viewModel.postCode,
-            onValueChange = { viewModel.postCode = it },
-            label = {Text(stringResource(R.string.post_code_label))},
-            enabled = viewModel.isEditable,
-            singleLine = true,
-            colors = textColors,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-                .clip(roundedShape)
+        StyledAccountTextField(
+            value = viewModel.postCode,
+            changeValue = viewModel::setNewPostalCode,
+            placeholder = stringResource(R.string.post_code_label),
+            isEditable = viewModel.isEditable
         )
         if (viewModel.isEditable) {
             Button(
@@ -256,4 +210,38 @@ fun AccountScreen(
             )
         }
     }
+}
+
+@Composable
+fun StyledAccountTextField(
+    value: String,
+    changeValue: (String) -> Unit,
+    placeholder: String,
+    isEditable: Boolean
+) {
+    val margin_5 = dimensionResource(R.dimen.margin_5)
+    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val roundedShape = RoundedCornerShape(margin_20)
+
+    val textColors = TextFieldDefaults.colors(
+        focusedContainerColor = Color.White,
+        unfocusedContainerColor = Color.White,
+        disabledContainerColor = Color.White,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        disabledTextColor = EnabledBtnColor
+    )
+
+    TextField(value = value,
+        onValueChange = changeValue,
+        label = {Text(placeholder)},
+        enabled = isEditable,
+        singleLine = true,
+        colors = textColors,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = margin_5)
+            .clip(roundedShape)
+    )
 }

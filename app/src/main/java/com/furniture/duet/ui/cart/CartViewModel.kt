@@ -20,11 +20,13 @@ import com.furniture.duet.domain.usecase.cart.DeleteCartUseCase
 import com.furniture.duet.domain.usecase.cart.GetCartUseCase
 import com.furniture.duet.domain.usecase.favorite.SetFavoriteUseCase
 import com.furniture.duet.ui.common.UiState
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val _getUserData: GetUserDataUseCase,
+    private val firebaseAuth: FirebaseAuth,
     private val _getCart: GetCartUseCase,
     private val _setFavorite: SetFavoriteUseCase,
     private val _changeQuantity: ChangeQuantityUseCase,
@@ -99,8 +101,7 @@ class CartViewModel @Inject constructor(
 
     fun makeOrder() {
         viewModelScope.launch {
-            val userInfo = _getUserData()
-            if (userInfo == null) {
+            if (firebaseAuth.currentUser == null) {
                 Toast.makeText(context,
                     context.getString(R.string.you_need_to_authorized), Toast.LENGTH_SHORT).show()
             } else {

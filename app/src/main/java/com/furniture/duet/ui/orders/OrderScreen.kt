@@ -112,10 +112,8 @@ fun MakeOrderScreen(
             stringResource(R.string.country_placeholder))
         StyledTextField(viewModel.city, viewModel::setNewCity,
             stringResource(R.string.city_placeholder))
-        StyledTextField(viewModel.street, viewModel::setNewStreet,
-            stringResource(R.string.street_placeholder))
-        StyledTextField(viewModel.house, viewModel::setNewHouse,
-            stringResource(R.string.house_placeholder))
+        StyledTextField(viewModel.address, viewModel::setNewAddress,
+            stringResource(R.string.address_placeholder))
         StyledTextField(viewModel.postalCode, viewModel::setNewPostalCode,
             stringResource(R.string.postal_code_placeholder))
         StyledTextField(viewModel.email, viewModel::setNewEmail,

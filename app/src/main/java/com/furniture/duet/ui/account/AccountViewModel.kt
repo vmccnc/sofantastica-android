@@ -42,13 +42,18 @@ class AccountViewModel @Inject constructor(
         private set
 
     var email by mutableStateOf("")
-        private set
     var fullName by mutableStateOf("")
+        private set
     var phone by mutableStateOf("")
+        private set
     var address by mutableStateOf("")
+        private set
     var country by mutableStateOf("")
+        private set
     var city by mutableStateOf("")
+        private set
     var postCode by mutableStateOf("")
+        private set
 
     var uiState by mutableStateOf<UiState<Unit>>(UiState.Loading)
         private set
@@ -100,10 +105,50 @@ class AccountViewModel @Inject constructor(
         }
     }
 
+    fun setNewFullName(newFullName: String) {
+        viewModelScope.launch {
+            if (newFullName.matches("[\\w\\s-]{0,256}".toRegex())) {
+                fullName = newFullName
+            }
+        }
+    }
+
     fun setNewPhone(newPhone: String) {
         viewModelScope.launch {
-            if (Pattern.compile("\\p{Sm}?\\d*").matcher(newPhone).matches()) {
+            if (newPhone.isEmpty() || newPhone.matches("[\\p{Sm}8]\\d*".toRegex())) {
                 phone = newPhone
+            }
+        }
+    }
+
+    fun setNewPostalCode(newPostalCode: String) {
+        viewModelScope.launch {
+            if (newPostalCode.matches("\\d*".toRegex())) {
+                postCode = newPostalCode
+            }
+        }
+    }
+
+    fun setNewCity(newCity: String) {
+        viewModelScope.launch {
+            if (newCity.matches("[\\w\\s-]{0,256}".toRegex())) {
+                city = newCity
+            }
+        }
+    }
+
+    fun setNewCountry(newCountry: String) {
+        viewModelScope.launch {
+            if (newCountry.matches("[\\w\\s-]{0,256}".toRegex())) {
+                country = newCountry
+            }
+        }
+    }
+
+    fun setNewAddress(newAddress: String) {
+        viewModelScope.launch {
+            if (newAddress.matches("[\\w\\s-,.]{0,256}".toRegex())) {
+                address = newAddress
             }
         }
     }

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Sofantastica</string>
-    <string name="category_label">CATEGORY:</string>
-    <string name="base_price_label">BASE PRICE: </string>
-    <string name="fabric_price_label">FABRIC PRICE: </string>
-    <string name="total_price_label">TOTAL PRICE: </string>
     <string name="fabric_price">+%d</string>
     <string name="furniture_price">%d Zl</string>
     <string name="furniture_total_price">%d, PLN</string>
@@ -25,6 +21,10 @@
     <string name="you_re_not_online">You\'re not online</string>
     <string name="can_t_create_new_user">Can\'t create new User. Check your Email and Internet Access</string>
     <string name="incorrect_user">Incorrect User Email or Password</string>
+    <string name="incorrect_phone">Incorrect Phone Number</string>
+    <string name="empty_field">One or More Fields Are Empty</string>
+    <string name="incorrect_email_format">Incorrect Email Format</string>
+    <string name="incorrect_password_format">Password must contain at least 8 symbols, 1 digit, 1 сapital letter and 1 special character</string>
     <string name="no_matching_data">There is no matching data for the selected filters</string>
     <string name="cart_is_empty">Your cart is empty, please add items to your cart</string>
     <string name="no_favorites">There are no favorite</string>
@@ -45,8 +45,7 @@
     <string name="full_name_placeholder">Full Name</string>
     <string name="country_placeholder">Country</string>
     <string name="city_placeholder">City</string>
-    <string name="street_placeholder">Street</string>
-    <string name="house_placeholder">House no. / place no.</string>
+    <string name="address_placeholder">Street, House no. / place no.</string>
     <string name="postal_code_placeholder">Postal code</string>
     <string name="email_placeholder">Email</string>
     <string name="password_placeholder">Password</string>
@@ -129,4 +128,6 @@
     <string name="save_profile">Save Profile</string>
     <string name="cart_label">Cart</string>
     <string name="account_label">Account</string>
+    <string name="check_you_re_data">Check you\'re data</string>
+    <string name="privacy_policy_not_checked">Please Accept Privacy Policy</string>
 </resources>

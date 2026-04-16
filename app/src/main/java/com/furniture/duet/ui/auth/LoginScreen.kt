@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +65,10 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
     val roundedShape = RoundedCornerShape(margin_20)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(margin_16),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(margin_16)
+            .verticalScroll(state = rememberScrollState()),
         verticalArrangement = Arrangement.SpaceAround
     ) {
 
@@ -98,7 +103,7 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
         Column {
             TextField(value = viewModel.email,
                 onValueChange = viewModel::setNewEmail,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
                 singleLine = true,
                 shape = roundedShape,
                 label = {
@@ -127,7 +132,7 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 shape = roundedShape,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = margin_20),
+                    .padding(vertical = margin_20),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White,

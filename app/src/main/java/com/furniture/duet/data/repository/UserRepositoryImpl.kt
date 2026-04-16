@@ -4,7 +4,9 @@ import com.furniture.duet.background.InternetConnectionManager
 import com.furniture.duet.data.api.RetrofitApiService
 import com.furniture.duet.data.model.account.AccountModel
 import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
+import com.furniture.duet.domain.exceptions.SignUpException
 import com.furniture.duet.domain.exceptions.WrongLoginOrPasswordException
+import com.furniture.duet.domain.usecase.account.SignUpUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.Dispatchers
@@ -32,11 +34,11 @@ class UserRepositoryImpl @Inject constructor(
         password: String
     ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
-        if (!email.endsWith("@gmail.com")) {
-            throw WrongLoginOrPasswordException()
+        try {
+            auth.createUserWithEmailAndPassword(email, password).await()
+        } catch (_: Exception) {
+            throw SignUpException()
         }
-        auth.createUserWithEmailAndPassword(email, password).await()
-        auth.currentUser ?: throw WrongLoginOrPasswordException()
 
         api.createUser(
             AccountModel(
@@ -48,12 +50,38 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateAccount(accountModel: AccountModel): Unit = withContext(Dispatchers.IO) {
+    override suspend fun updateAccount(
+        customerType: String,
+        firstAndLastName: String,
+        companyName: String,
+        unn: String,
+        phone: String,
+        email: String,
+        address: String,
+        city: String,
+        country: String,
+        postCode: String
+    ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
-        auth.currentUser ?: IsNotAuthorizeException()
+        auth.currentUser ?: throw IsNotAuthorizeException()
+
+        val userId = auth.currentUser?.uid ?: ""
+
         api.updateUser(
-            auth.currentUser?.uid ?: "",
-            accountModel
+            userId,
+            AccountModel(
+                userId = userId,
+                customerType = customerType,
+                firstAndLastName = firstAndLastName,
+                companyName = companyName,
+                unn = unn,
+                phone = phone,
+                email = email,
+                address = address,
+                city = city,
+                country = country,
+                postCode = postCode
+            )
         )
     }
 }

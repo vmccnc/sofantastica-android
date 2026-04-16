@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderViewModel @Inject constructor(
     private val _createOrder: CreateOrderUseCase,
-    private val _getUser: GetUserDataUseCase,
+    private val _getUserInfo: GetUserDataUseCase,
     @ApplicationContext private val context: Context
 ): ViewModel() {
     var isOrderSent by mutableStateOf(false)
@@ -34,97 +34,22 @@ class OrderViewModel @Inject constructor(
 
     var unn by mutableStateOf("")
         private set
-
-    fun setNewUNN(newUNN: String) {
-        viewModelScope.launch {
-            unn = newUNN
-        }
-    }
-
     var fullName by mutableStateOf("")
         private set
-
-    fun setNewFullName(newFullName: String) {
-        viewModelScope.launch {
-            fullName = newFullName
-        }
-    }
-
     var city by mutableStateOf("")
         private set
-
-    fun setNewCity(newCity: String) {
-        viewModelScope.launch {
-            city = newCity
-        }
-    }
-
-    var street by mutableStateOf("")
+    var address by mutableStateOf("")
         private set
-
-    fun setNewStreet(newStreet: String) {
-        viewModelScope.launch {
-            street = newStreet
-        }
-    }
-
-    var house by mutableStateOf("")
-        private set
-
-    fun setNewHouse(newHouse: String) {
-        viewModelScope.launch {
-            if(Pattern.compile("\\d*").matcher(newHouse).matches()) {
-                house = newHouse
-            }
-        }
-    }
-
     var postalCode by mutableStateOf("")
         private set
-
-    fun setNewPostalCode(newPostalCode: String) {
-        viewModelScope.launch {
-            postalCode = newPostalCode
-        }
-    }
-
     var email by mutableStateOf("")
         private set
-
-    fun setNewEmail(newEmail: String) {
-        viewModelScope.launch {
-            email = newEmail
-        }
-    }
-
     var phone by mutableStateOf("")
         private set
-
-    fun setNewPhone(newPhone: String) {
-        viewModelScope.launch {
-            if (newPhone.isEmpty() || Pattern.compile("\\p{Sm}?\\d{0,12}").matcher(newPhone).matches()) {
-                phone = newPhone
-            }
-        }
-    }
-
     var country by mutableStateOf("")
         private set
-
-    fun setNewCountry(newCountry: String) {
-        viewModelScope.launch {
-            country = newCountry
-        }
-    }
-
     var companyName by mutableStateOf("")
         private set
-
-    fun setNewCompanyName(newCompanyName: String) {
-        viewModelScope.launch {
-            companyName = newCompanyName
-        }
-    }
 
     val deliveryOptionList = listOf(
         DeliveryOptionModel(context.getString(R.string.delivery_without_deposit), 100),
@@ -163,20 +88,104 @@ class OrderViewModel @Inject constructor(
         selectedPaymentOption = newSelectedPaymentOption
     }
 
+    init {
+        viewModelScope.launch {
+            _getUserInfo()?.let {
+                email = it.email
+                fullName = it.firstAndLastName
+                companyName = it.companyName
+                unn = it.unn
+                phone = it.phone
+                address = it.address
+                country = it.country
+                city = it.city
+                postalCode = it.postCode
+                isBusiness = unn.isNotEmpty()
+            }
+        }
+    }
     fun createOrder() {
         viewModelScope.launch {
             try {
-                if(_createOrder(isBusiness, fullName,
+                isOrderSent = _createOrder(isBusiness, fullName,
                     companyName, unn, email, phone,
-                    "$street $house", city, postalCode, country,
+                    address, city, postalCode, country,
                     selectedDeliveryOption?.text ?: "",
                     selectedPaymentOption?.text ?: ""
-                )) {
-                    isOrderSent = true
-                }
+                )
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(context, R.string.check_you_re_data, Toast.LENGTH_SHORT).show()
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    fun setNewUNN(newUNN: String) {
+        viewModelScope.launch {
+            if (newUNN.matches("\\d*".toRegex())) {
+                unn = newUNN
+            }
+        }
+    }
+
+    fun setNewFullName(newFullName: String) {
+        viewModelScope.launch {
+            if (newFullName.matches("[\\w\\s-]{0,256}".toRegex())) {
+                fullName = newFullName
+            }
+        }
+    }
+
+    fun setNewPhone(newPhone: String) {
+        viewModelScope.launch {
+            if (newPhone.isEmpty() || newPhone.matches("[\\p{Sm}8]\\d*".toRegex())) {
+                phone = newPhone
+            }
+        }
+    }
+
+    fun setNewPostalCode(newPostalCode: String) {
+        viewModelScope.launch {
+            if (newPostalCode.matches("\\d*".toRegex())) {
+                postalCode = newPostalCode
+            }
+        }
+    }
+
+    fun setNewCity(newCity: String) {
+        viewModelScope.launch {
+            if (newCity.matches("[\\w\\s-]{0,256}".toRegex())) {
+                city = newCity
+            }
+        }
+    }
+
+    fun setNewCountry(newCountry: String) {
+        viewModelScope.launch {
+            if (newCountry.matches("[\\w\\s-]{0,256}".toRegex())) {
+                country = newCountry
+            }
+        }
+    }
+
+    fun setNewAddress(newAddress: String) {
+        viewModelScope.launch {
+            if (newAddress.matches("[\\w\\s-,.]{0,256}".toRegex())) {
+                address = newAddress
+            }
+        }
+    }
+
+    fun setNewEmail(newEmail: String) {
+        viewModelScope.launch {
+            email = newEmail
+        }
+    }
+
+    fun setNewCompanyName(newCompanyName: String) {
+        viewModelScope.launch {
+            companyName = newCompanyName
         }
     }
 }

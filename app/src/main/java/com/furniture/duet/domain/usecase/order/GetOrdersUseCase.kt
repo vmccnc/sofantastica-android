@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetOrdersUseCase @Inject constructor(
     private val repository: OrderRepository
 ) {
-    suspend operator fun invoke() = repository.getOrders()
+    suspend operator fun invoke(page: Int) = repository.getOrders(page)
 }

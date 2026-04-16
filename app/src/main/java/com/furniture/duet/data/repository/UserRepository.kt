@@ -10,5 +10,16 @@ interface UserRepository {
         phoneNumber: String,
         password: String
     )
-    suspend fun updateAccount(accountModel: AccountModel)
+    suspend fun updateAccount(
+        customerType: String,
+        firstAndLastName: String,
+        companyName: String,
+        unn: String,
+        phone: String,
+        email: String,
+        address: String,
+        city: String,
+        country: String,
+        postCode: String
+    )
 }

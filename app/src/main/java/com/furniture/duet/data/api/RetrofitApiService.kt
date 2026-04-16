@@ -14,7 +14,7 @@ import com.furniture.duet.data.model.cart.CartItemUpdateResponse
 import com.furniture.duet.data.model.furniture.CategoryDto
 import com.furniture.duet.data.model.furniture.FurniturePageModel
 import com.furniture.duet.data.model.order.CreateOrderModel
-import com.furniture.duet.data.model.order.GetOrdersModel
+import com.furniture.duet.data.model.order.OrderResponseDto
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -103,7 +103,11 @@ interface RetrofitApiService {
     ): Response<Unit>
 
     @GET("sofantastic/order/{userId}")
-    suspend fun listOrders(@retrofit2.http.Path("userId") userId: String): Response<GetOrdersModel>
+    suspend fun listOrders(
+        @retrofit2.http.Path("userId") userId: String,
+        @retrofit2.http.Query("page") page: Int,
+        @retrofit2.http.Query("size") size: Int
+    ): Response<OrderResponseDto>
 
     @retrofit2.http.POST("sofantastic/order/place")
     suspend fun createOrder(@retrofit2.http.Body order: CreateOrderModel): Response<OrderDto>

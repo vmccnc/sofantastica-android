@@ -12,8 +12,6 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UpdateUserUseCase @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val connectionManager: InternetConnectionManager,
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
@@ -28,23 +26,17 @@ class UpdateUserUseCase @Inject constructor(
         country: String,
         postCode: String
     ) {
-        connectionManager.isOnline()
-        auth.currentUser ?: throw IsNotAuthorizeException()
-
         userRepository.updateAccount(
-            AccountModel(
-                userId = auth.currentUser?.uid ?: "",
-                customerType = customerType,
-                firstAndLastName = firstAndLastName,
-                companyName = companyName,
-                unn = unn,
-                phone = phone,
-                email = email,
-                address = address,
-                city = city,
-                country = country,
-                postCode = postCode
-            )
+            customerType = customerType,
+            firstAndLastName = firstAndLastName,
+            companyName = companyName,
+            unn = unn,
+            phone = phone,
+            email = email,
+            address = address,
+            city = city,
+            country = country,
+            postCode = postCode
         )
     }
 }

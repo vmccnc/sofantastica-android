@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furniture.duet.R
 import com.furniture.duet.domain.exceptions.ResIdException
+import com.furniture.duet.domain.exceptions.WrongPhoneNumberException
 import com.furniture.duet.domain.usecase.account.LogOutUseCase
 import com.furniture.duet.domain.usecase.account.ResetPasswordUesCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 import com.furniture.duet.domain.usecase.account.SignInUseCase
 import com.furniture.duet.domain.usecase.account.SignUpUseCase
 import com.furniture.duet.ui.common.UiState
+import com.google.firebase.auth.FirebaseAuth
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -25,7 +28,8 @@ class AuthViewModel @Inject constructor(
     private val _signInUseCase: SignInUseCase,
     private val _signUpUseCase: SignUpUseCase,
     private val _logOut: LogOutUseCase,
-    private val resetPasswordUseCase: ResetPasswordUesCase,
+    private val _firebaseAuth: FirebaseAuth,
+    private val _resetPasswordUseCase: ResetPasswordUesCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private companion object {
@@ -52,6 +56,11 @@ class AuthViewModel @Inject constructor(
 
     var isPrivacyPolicyChecked by mutableStateOf(false)
 
+    init {
+        if (_firebaseAuth.currentUser != null)
+            uiState = UiState.Success(Unit)
+    }
+
     fun signIn() {
         viewModelScope.launch {
             try {
@@ -67,29 +76,41 @@ class AuthViewModel @Inject constructor(
 
     fun signUp() {
         viewModelScope.launch {
+            if (isPrivacyPolicyChecked) {
+                Toast.makeText(context, R.string.privacy_policy_not_checked, Toast.LENGTH_SHORT).show()
+                return@launch
+            }
             try {
-                if (
-                    isPrivacyPolicyChecked &&
-                    email.isNotEmpty() && email.endsWith("@gmail.com") &&
-                    phoneNumber.isNotEmpty() &&
-                    fullName.isNotEmpty() &&
-                    phoneNumber.isNotEmpty() &&
-                    Pattern.compile("\\p{Sm}\\d{10,12}").matcher(phoneNumber).matches() &&
-                    password.length >= 8 &&
-                    Pattern.compile(".*[A-Z]+.*").matcher(password).matches() &&
-                    Pattern.compile(".*[^A-Za-z0-9]+.*").matcher(password).matches() &&
-                    Pattern.compile(".*\\d+.*").matcher(password).matches()
-                ) {
-                    _signUpUseCase(
-                        fullName,
-                        phoneNumber,
-                        email,
-                        password
-                    )
-                    uiState = UiState.Success(Unit)
-                } else {
-                    Toast.makeText(context, "Check your data", Toast.LENGTH_SHORT).show()
-                }
+//                if (
+//                    isPrivacyPolicyChecked &&
+//                    email.isNotEmpty() && email.endsWith("@gmail.com") &&
+//                    phoneNumber.isNotEmpty() &&
+//                    fullName.isNotEmpty() &&
+//                    phoneNumber.isNotEmpty() &&
+//                    Pattern.compile("\\p{Sm}\\d{10,12}").matcher(phoneNumber).matches() &&
+//                    password.length >= 8 &&
+//                    Pattern.compile(".*[A-Z]+.*").matcher(password).matches() &&
+//                    Pattern.compile(".*[^A-Za-z0-9]+.*").matcher(password).matches() &&
+//                    Pattern.compile(".*\\d+.*").matcher(password).matches()
+//                ) {
+//                    _signUpUseCase(
+//                        fullName,
+//                        phoneNumber,
+//                        email,
+//                        password
+//                    )
+//                    uiState = UiState.Success(Unit)
+//                } else {
+//                    Toast.makeText(context, "Check your data", Toast.LENGTH_SHORT).show()
+//                }
+
+                _signUpUseCase(
+                    fullName,
+                    phoneNumber,
+                    email,
+                    password
+                )
+                uiState = UiState.Success(Unit)
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -111,7 +132,13 @@ class AuthViewModel @Inject constructor(
 
     fun resetPassword() {
         viewModelScope.launch {
-            resetPasswordUseCase(email)
+            try {
+                _resetPasswordUseCase(email)
+                email = ""
+                isForgotPassword = false
+            } catch (e: ResIdException) {
+                Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -123,7 +150,9 @@ class AuthViewModel @Inject constructor(
 
     fun setNewPassword(newPassword: String) {
         viewModelScope.launch {
-            password = newPassword
+            if (newPassword.isEmpty() || newPassword.last() != ' ') {
+                password = newPassword
+            }
         }
     }
 
@@ -135,14 +164,15 @@ class AuthViewModel @Inject constructor(
 
     fun setNewFullName(newFullName: String) {
         viewModelScope.launch {
-            fullName = newFullName
+            if (newFullName.matches("[\\w\\s-]{0,256}".toRegex())) {
+                fullName = newFullName
+            }
         }
     }
 
     fun setNewPhoneNumber(newPhoneNumber: String) {
         viewModelScope.launch {
-            if (newPhoneNumber.isEmpty() ||
-                Pattern.compile("\\p{Sm}?\\d*").matcher(newPhoneNumber).matches()) {
+            if (newPhoneNumber.isEmpty() || newPhoneNumber.matches("[\\p{Sm}8]\\d*".toRegex())) {
                 phoneNumber = newPhoneNumber
             }
         }

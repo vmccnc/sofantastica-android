@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +32,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,7 +63,6 @@ import com.furniture.duet.ui.theme.UnselectedPageColor
 @Composable
 fun FurnitureDetailRoute(
     id: Int,
-    goBack: () -> Unit,
     viewModel: FurnitureDetailViewModel = hiltViewModel()
 ) {
     if (viewModel.isDialogOpened) {
@@ -70,8 +75,7 @@ fun FurnitureDetailRoute(
             }
             is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
             is UiState.Success -> FurnitureDetailScreen(
-                item = state.data,
-                goBack = goBack
+                item = state.data
             )
         }
     }
@@ -79,15 +83,18 @@ fun FurnitureDetailRoute(
 
 @Composable
 fun FurnitureDetailScreen(item: FurnitureFabricDto,
-                          goBack: () -> Unit,
                           viewModel: FurnitureDetailViewModel = hiltViewModel()) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
-    val margin_20 = dimensionResource(R.dimen.margin_20)
     val margin_5 = dimensionResource(R.dimen.margin_5)
     val size_10 = dimensionResource(R.dimen.margin_10)
-    val size_48 = dimensionResource(R.dimen.size_48)
+    val titleSize = LocalConfiguration.current.screenWidthDp - 200
+    val imagesHeight = LocalConfiguration.current.screenHeightDp / 3
 
-    ConstraintLayout(modifier = Modifier.padding(horizontal = margin_16)) {
+    ConstraintLayout(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = margin_16)
+    ) {
         val (carouselLayout, dotIndicator,
             view3DBtn, nameTxt, priceTxt, fabricLayout, favBtn,
             selectFabricBtn, addToCartBtn, descriptionLayout, dimensionsLayout) = createRefs()
@@ -96,7 +103,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             val pagerState = rememberPagerState(pageCount = { imageUrls.size })
             HorizontalPager(
                 modifier = Modifier
-                    .fillMaxHeight(.3f)
+                    .heightIn(max = imagesHeight.dp)
                     .fillMaxWidth()
                     .constrainAs(carouselLayout) {
                         top.linkTo(parent.top)
@@ -177,6 +184,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             color = FurnitureDetailTextColor,
             modifier = Modifier
                 .padding(vertical = 10.dp)
+                .width(titleSize.dp)
                 .constrainAs(nameTxt) {
                     top.linkTo(view3DBtn.bottom, margin_16)
                     start.linkTo(parent.start)
