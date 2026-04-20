@@ -118,7 +118,7 @@ fun CatalogScreen(
         )
     }
     var columnsCount = LocalConfiguration.current.screenWidthDp / 170
-    if (columnsCount > 4) columnsCount = 4
+    if (columnsCount > 3) columnsCount = 3
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columnsCount),

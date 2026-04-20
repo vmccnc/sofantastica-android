@@ -37,6 +37,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -96,7 +97,9 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             .padding(horizontal = margin_16)
     ) {
         val (carouselLayout, dotIndicator,
-            view3DBtn, nameTxt, priceTxt, fabricLayout, favBtn,
+            view3DBtn, nameTxt, priceTxt,
+            totalPriceLabel, totalPrice,
+            fabricLayout, favBtn,
             selectFabricBtn, addToCartBtn, descriptionLayout, dimensionsLayout) = createRefs()
 
         item.imageUrls.let { imageUrls ->
@@ -192,7 +195,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
         )
 
         Text(
-            text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
+            text = stringResource(R.string.furniture_total_price).format(item.basePrice),
             style = MaterialTheme.typography.titleMedium,
             color = FurnitureDetailTextColor,
             modifier = Modifier
@@ -200,6 +203,28 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                 .padding(horizontal = 20.dp, vertical = 10.dp)
                 .constrainAs(priceTxt) {
                     top.linkTo(view3DBtn.bottom, margin_16)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        Text(
+            text = stringResource(R.string.cart_total),
+            style = MaterialTheme.typography.bodyMedium,
+            color = FurnitureDetailTextColor,
+            modifier = Modifier
+                .constrainAs(totalPriceLabel) {
+                    top.linkTo(fabricLayout.bottom, margin_16)
+                    start.linkTo(parent.start)
+                }
+        )
+
+        Text(
+            text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            color = FurnitureDetailTextColor,
+            modifier = Modifier
+                .constrainAs(totalPrice) {
+                    top.linkTo(fabricLayout.bottom, margin_16)
                     end.linkTo(parent.end)
                 }
         )
@@ -225,7 +250,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                     .fillMaxWidth()
                     .padding(top = margin_16)
                     .constrainAs(selectFabricBtn) {
-                        top.linkTo(fabricLayout.bottom)
+                        top.linkTo(totalPriceLabel.bottom)
                     }
             ) {
                 Text(
@@ -256,7 +281,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                         .fillMaxWidth()
                         .padding(top = margin_16)
                         .constrainAs(addToCartBtn) {
-                            top.linkTo(fabricLayout.bottom)
+                            top.linkTo(totalPriceLabel.bottom)
                         },
                     openDialog = viewModel::openDialog,
                     openDialogBtnModifier = Modifier
@@ -270,8 +295,9 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             } else {
                 AddedToCartButtons(
                     layoutModifier = Modifier
+                        .fillMaxWidth()
                         .constrainAs(selectFabricBtn) {
-                            top.linkTo(fabricLayout.bottom)
+                            top.linkTo(totalPriceLabel.bottom)
                         },
                     count = viewModel.count,
                     setCount = viewModel::setCountInCart

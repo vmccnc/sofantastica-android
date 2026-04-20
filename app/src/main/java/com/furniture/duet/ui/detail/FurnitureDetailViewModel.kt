@@ -82,10 +82,10 @@ class FurnitureDetailViewModel @Inject constructor(
         }
     }
 
-    fun chooseFabric(fabric: FabricDto) {
+    fun chooseFabric(fabric: FabricDto?) {
         viewModelScope.launch {
             try {
-                if (uiState is UiState.Success) {
+                if (uiState is UiState.Success && fabric != null) {
                     val furniture = (uiState as UiState.Success).data
                     val cartItem = _getCartItem(furniture.furnitureId, fabric.id)
                     uiState = UiState.Success(
@@ -108,8 +108,8 @@ class FurnitureDetailViewModel @Inject constructor(
                     )
                     cartId = cartItem?.id ?: 0
                     count = cartItem?.quantity ?: 0
-                    isDialogOpened = false
                 }
+                isDialogOpened = false
             } catch (e: Exception) {
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 //uiState = UiState.Error(e)

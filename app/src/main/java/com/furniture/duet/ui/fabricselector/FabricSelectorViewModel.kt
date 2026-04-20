@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furniture.duet.data.model.fabric.FabricDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class FabricSelectorViewModel @Inject constructor(
     var uiState by mutableStateOf<UiState<FabricSelectorModel>>(UiState.Loading)
         private set
 
+    var selectedFabric by mutableStateOf<FabricDto?>(null)
+        private set
+
     init {
         viewModelScope.launch {
             try {
@@ -36,6 +40,12 @@ class FabricSelectorViewModel @Inject constructor(
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
 
+        }
+    }
+
+    fun selectFabric(fabric: FabricDto) {
+        viewModelScope.launch {
+            selectedFabric = fabric
         }
     }
 }

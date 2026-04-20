@@ -17,6 +17,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -71,25 +72,26 @@ fun FavoritesScreen(
         }
         return
     }
+    var columnsCount = LocalConfiguration.current.screenWidthDp / 170
+    if (columnsCount > 3) columnsCount = 3
 
-    Column(Modifier.padding(margin_16)) {
-        Text(text = stringResource(R.string.favorites_label),
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = margin_5)
-        )
-
-        LazyVerticalGrid(
-            modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(margin_16),
-            horizontalArrangement = Arrangement.spacedBy(margin_16)
-        ) {
-            items(furniture) { item ->
-                FurnitureCard(item, onItemClick, { onToggleFavorite(item) })
-            }
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize().padding(margin_16),
+        columns = GridCells.Fixed(columnsCount),
+        verticalArrangement = Arrangement.spacedBy(margin_16),
+        horizontalArrangement = Arrangement.spacedBy(margin_16)
+    ) {
+        item(span = { GridItemSpan(columnsCount) }) {
+            Text(text = stringResource(R.string.favorites_label),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = margin_5)
+            )
+        }
+        items(furniture) { item ->
+            FurnitureCard(item, onItemClick, { onToggleFavorite(item) })
         }
     }
 }

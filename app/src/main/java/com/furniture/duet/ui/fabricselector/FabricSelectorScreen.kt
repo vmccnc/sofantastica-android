@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +15,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,12 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.furniture.duet.R
 import com.furniture.duet.data.model.fabric.FabricDto
@@ -41,24 +46,30 @@ import com.furniture.duet.data.model.fabric.FabricSelectorModel
 import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.common.UiState
+import com.furniture.duet.ui.theme.EnabledBtnColor
 import com.furniture.duet.ui.theme.FabricPrimaryColor
 import com.furniture.duet.ui.theme.FabricSecondaryColor
+import com.furniture.duet.ui.theme.LightBackground
 import com.furniture.duet.ui.theme.SelectedSupplierColor
 
 @Composable
 fun FabricSelectorRoute(
     closeDialog: () -> Unit,
-    chooseFabric: (FabricDto) -> Unit,
+    chooseFabric: (FabricDto?) -> Unit,
     viewModel: FabricSelectorViewModel = hiltViewModel()
 ) {
-    Dialog(onDismissRequest = closeDialog) {
+    Dialog(
+        onDismissRequest = closeDialog
+    ) {
         when (val state = viewModel.uiState) {
             is UiState.Loading -> LoadingUI()
             is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
             is UiState.Success -> FabricSelectorScreen(
                 chooseFabric,
+                viewModel::selectFabric,
                 closeDialog,
-                state.data
+                state.data,
+                viewModel.selectedFabric
             )
         }
     }
@@ -66,17 +77,25 @@ fun FabricSelectorRoute(
 
 @Composable
 fun FabricSelectorScreen(
-    chooseFabric: (FabricDto) -> Unit,
+    chooseFabric: (FabricDto?) -> Unit,
+    selectFabric: (FabricDto) -> Unit,
     closeDialog: () -> Unit,
-    data: FabricSelectorModel
+    data: FabricSelectorModel,
+    selectedFabric: FabricDto?
 ) {
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val margin_60 = dimensionResource(R.dimen.margin_60)
+    val roundedShape = RoundedCornerShape(margin_60)
 
     val pagerState = rememberPagerState(pageCount = { data.fabricsBySuppliers.size })
     var tabState by remember { mutableStateOf(0) }
 
     if (data.fabricsBySuppliers.isNotEmpty()) {
         Column(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            modifier = Modifier
+                .background(Color.White, RoundedCornerShape(margin_20))
+                .padding(margin_16)
         ) {
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 Text(
@@ -97,15 +116,15 @@ fun FabricSelectorScreen(
                 selectedTabIndex = 0,
                 indicator = {},
                 divider = {},
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = Color.Transparent
             ) {
                 data.suppliers.forEachIndexed { index, title ->
-                    var tabModifier: Modifier = Modifier
+                    var tabModifier: Modifier = Modifier.clip(roundedShape)
                     var textColor: Color = FabricPrimaryColor
                     if (pagerState.currentPage == index) {
                         textColor = Color.White
                         tabModifier = Modifier
-                            .background(SelectedSupplierColor, shape = RoundedCornerShape(50.dp))
+                            .background(SelectedSupplierColor, shape = roundedShape)
                     }
                     Tab(
                         selected = pagerState.currentPage == index,
@@ -120,7 +139,7 @@ fun FabricSelectorScreen(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = textColor
                             )
-                        },
+                        }
                     )
                 }
             }
@@ -128,7 +147,23 @@ fun FabricSelectorScreen(
             HorizontalPager(state = pagerState) { page ->
                 LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
                     items(data.fabricsBySuppliers[page]) { fabric ->
-                        FabricItem(fabric, chooseFabric)
+                        FabricItem(fabric, selectFabric, fabric == selectedFabric)
+                    }
+                    item {
+                        TextButton(
+                            onClick = { chooseFabric(selectedFabric) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = EnabledBtnColor,
+                                contentColor = Color.White
+                            ),
+                            shape = roundedShape
+                        ) {
+                            Text(
+                                text = stringResource(R.string.confirm_the_selection),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 }
             }
@@ -137,8 +172,24 @@ fun FabricSelectorScreen(
 }
 
 @Composable
-fun FabricItem(item: FabricDto, chooseFabric: (FabricDto) -> Unit) {
-    ConstraintLayout(modifier = Modifier.fillMaxWidth().clickable { chooseFabric(item) }) {
+fun FabricItem(item: FabricDto,
+               selectFabric: (FabricDto) -> Unit,
+               isSelected: Boolean
+) {
+    val margin_5 = dimensionResource(R.dimen.margin_5)
+    val margin_60 = dimensionResource(R.dimen.margin_60)
+    val roundedShape = RoundedCornerShape(margin_60)
+    val backgroundColor =
+        if (isSelected) LightBackground
+        else Color.Transparent
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = margin_5)
+            .clip(roundedShape)
+            .clickable { selectFabric(item) }
+            .background(backgroundColor, roundedShape)
+    ) {
         val (image, nameTxt, priceTxt) = createRefs()
         AsyncImage(
             model = item.fabricUrl,
@@ -147,9 +198,9 @@ fun FabricItem(item: FabricDto, chooseFabric: (FabricDto) -> Unit) {
             modifier = Modifier
                 .clip(CircleShape)
                 .constrainAs(image) {
-                    start.linkTo(parent.start, margin = 5.dp)
-                    top.linkTo(parent.top, margin = 5.dp)
-                    bottom.linkTo(parent.bottom, margin = 5.dp)
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                 }
         )
         Text(item.name,

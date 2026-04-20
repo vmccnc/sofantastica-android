@@ -130,4 +130,5 @@
     <string name="account_label">Account</string>
     <string name="check_you_re_data">Check you\'re data</string>
     <string name="privacy_policy_not_checked">Please Accept Privacy Policy</string>
+    <string name="confirm_the_selection">Confirm the selection</string>
 </resources>
