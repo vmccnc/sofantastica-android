@@ -78,7 +78,7 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 contentPadding = PaddingValues(vertical = margin_16)
             ) {
                 Text(
-                    text = stringResource(R.string.i_have_an_account)
+                    text = stringResource(R.string.login)
                 )
             }
 
@@ -93,61 +93,13 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 contentPadding = PaddingValues(vertical = margin_16)
             ) {
                 Text(
-                    text = stringResource(R.string.i_don_t_have_an_account)
+                    text = stringResource(R.string.register)
                 )
             }
 
         }
 
         Column {
-            TextField(
-                value = viewModel.fullName,
-                onValueChange = viewModel::setNewFullName,
-                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
-                singleLine = true,
-                shape = roundedShape,
-                label = {
-                    Text(
-                        text = stringResource(R.string.full_name_placeholder),
-                        color = EnabledBtnColor,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedTextColor = EnabledBtnColor,
-                    focusedTextColor = EnabledBtnColor,
-                    unfocusedLabelColor = EnabledBtnColor,
-                    focusedLabelColor = EnabledBtnColor
-                )
-            )
-            TextField(
-                value = viewModel.phoneNumber,
-                onValueChange = viewModel::setNewPhoneNumber,
-                modifier = Modifier.fillMaxWidth().padding(top = margin_20),
-                singleLine = true,
-                shape = roundedShape,
-                label = {
-                    Text(
-                        text = stringResource(R.string.phone_placeholder),
-                        color = EnabledBtnColor,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedTextColor = EnabledBtnColor,
-                    focusedTextColor = EnabledBtnColor,
-                    unfocusedLabelColor = EnabledBtnColor,
-                    focusedLabelColor = EnabledBtnColor
-                )
-            )
             TextField(
                 value = viewModel.email,
                 onValueChange = viewModel::setNewEmail,
@@ -181,7 +133,7 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 shape = roundedShape,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = margin_20),
+                    .padding(top = margin_20),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White,
@@ -193,8 +145,11 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
                     focusedLabelColor = EnabledBtnColor
                 ),
                 trailingIcon = {
+                    val passIcon =
+                        if (viewModel.isPasswordHidden) R.drawable.i_hide_pass
+                        else R.drawable.i_show_pass
                     Icon(
-                        painter = painterResource(R.drawable.i_show_password),
+                        painter = painterResource(passIcon),
                         contentDescription = null,
                         modifier = Modifier
                             .size(margin_20)
@@ -207,6 +162,49 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 label = {
                     Text(
                         text = stringResource(R.string.password_placeholder),
+                        color = EnabledBtnColor,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            )
+            TextField(
+                value = viewModel.passwordConfirmation,
+                onValueChange = viewModel::setNewPasswordConfirmation,
+                visualTransformation =
+                    if (viewModel.isPasswordConfirmationHidden) PasswordVisualTransformation()
+                    else VisualTransformation.None,
+                shape = roundedShape,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = margin_20),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = EnabledBtnColor,
+                    focusedTextColor = EnabledBtnColor,
+                    unfocusedLabelColor = EnabledBtnColor,
+                    focusedLabelColor = EnabledBtnColor
+                ),
+                trailingIcon = {
+                    val passIcon =
+                        if (viewModel.isPasswordConfirmationHidden) R.drawable.i_hide_pass
+                        else R.drawable.i_show_pass
+                    Icon(
+                        painter = painterResource(passIcon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(margin_20)
+                            .clickable {
+                                viewModel.togglePasswordConfirmationHidden()
+                            }
+                    )
+                },
+                singleLine = true,
+                label = {
+                    Text(
+                        text = stringResource(R.string.password_confirmation_placeholder),
                         color = EnabledBtnColor,
                         style = MaterialTheme.typography.bodyLarge
                     )

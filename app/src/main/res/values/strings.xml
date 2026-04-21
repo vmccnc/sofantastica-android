@@ -24,6 +24,7 @@
     <string name="incorrect_phone">Incorrect Phone Number</string>
     <string name="empty_field">One or More Fields Are Empty</string>
     <string name="incorrect_email_format">Incorrect Email Format</string>
+    <string name="passwords_do_not_match">Passwords don\'t match</string>
     <string name="incorrect_password_format">Password must contain at least 8 symbols, 1 digit, 1 сapital letter and 1 special character</string>
     <string name="no_matching_data">There is no matching data for the selected filters</string>
     <string name="cart_is_empty">Your cart is empty, please add items to your cart</string>
@@ -49,6 +50,7 @@
     <string name="postal_code_placeholder">Postal code</string>
     <string name="email_placeholder">Email</string>
     <string name="password_placeholder">Password</string>
+    <string name="password_confirmation_placeholder">Password Confirmation</string>
     <string name="phone_placeholder">Mobile phone number</string>
     <string name="delivery_without_deposit">Delivery without Deposit</string>
     <string name="delivery_with_deposit">Delivery with deposit</string>
@@ -95,10 +97,8 @@
     <string name="sort_label">Sorting: </string>
     <string name="price_range_label">Price: </string>
     <string name="price_range">%d - %d, PLN</string>
-    <string name="i_don_t_have_an_account">I don’t have an account</string>
-    <string name="i_have_an_account">I have an account</string>
     <string name="login">Login</string>
-    <string name="register">Create an account</string>
+    <string name="register">Sign Up</string>
     <string name="forget_your_password">Forget your Password?</string>
     <string name="set_price_range">Set price range</string>
     <string name="reset_password">Reset Password</string>

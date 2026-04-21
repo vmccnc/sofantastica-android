@@ -29,8 +29,6 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun createAccount(
         email: String,
-        firstAndLastName: String,
-        phoneNumber: String,
         password: String
     ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
@@ -43,9 +41,7 @@ class UserRepositoryImpl @Inject constructor(
         api.createUser(
             AccountModel(
                 userId = auth.currentUser?.uid ?: "",
-                email = email,
-                firstAndLastName = firstAndLastName,
-                phone = phoneNumber
+                email = email
             )
         )
     }

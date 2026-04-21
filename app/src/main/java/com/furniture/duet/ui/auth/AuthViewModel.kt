@@ -40,15 +40,15 @@ class AuthViewModel @Inject constructor(
         private set
     var password by mutableStateOf(EMPTY_STRING)
         private set
-    var phoneNumber by mutableStateOf(EMPTY_STRING)
-        private set
-    var fullName by mutableStateOf(EMPTY_STRING)
+    var passwordConfirmation by mutableStateOf(EMPTY_STRING)
         private set
 
     var uiState by mutableStateOf<UiState<Unit>>(UiState.Loading)
         private set
 
     var isPasswordHidden by mutableStateOf(true)
+        private set
+    var isPasswordConfirmationHidden by mutableStateOf(true)
         private set
 
     var isLogin by mutableStateOf(true)
@@ -81,34 +81,11 @@ class AuthViewModel @Inject constructor(
                 return@launch
             }
             try {
-//                if (
-//                    isPrivacyPolicyChecked &&
-//                    email.isNotEmpty() && email.endsWith("@gmail.com") &&
-//                    phoneNumber.isNotEmpty() &&
-//                    fullName.isNotEmpty() &&
-//                    phoneNumber.isNotEmpty() &&
-//                    Pattern.compile("\\p{Sm}\\d{10,12}").matcher(phoneNumber).matches() &&
-//                    password.length >= 8 &&
-//                    Pattern.compile(".*[A-Z]+.*").matcher(password).matches() &&
-//                    Pattern.compile(".*[^A-Za-z0-9]+.*").matcher(password).matches() &&
-//                    Pattern.compile(".*\\d+.*").matcher(password).matches()
-//                ) {
-//                    _signUpUseCase(
-//                        fullName,
-//                        phoneNumber,
-//                        email,
-//                        password
-//                    )
-//                    uiState = UiState.Success(Unit)
-//                } else {
-//                    Toast.makeText(context, "Check your data", Toast.LENGTH_SHORT).show()
-//                }
 
                 _signUpUseCase(
-                    fullName,
-                    phoneNumber,
                     email,
-                    password
+                    password,
+                    passwordConfirmation
                 )
                 uiState = UiState.Success(Unit)
             } catch (e: ResIdException) {
@@ -162,19 +139,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun setNewFullName(newFullName: String) {
+    fun setNewPasswordConfirmation(newPasswordConfirmation: String) {
         viewModelScope.launch {
-            if (newFullName.matches("[\\w\\s-]{0,256}".toRegex())) {
-                fullName = newFullName
+            if (newPasswordConfirmation.isEmpty() || newPasswordConfirmation.last() != ' ') {
+                passwordConfirmation = newPasswordConfirmation
             }
         }
     }
 
-    fun setNewPhoneNumber(newPhoneNumber: String) {
+    fun togglePasswordConfirmationHidden() {
         viewModelScope.launch {
-            if (newPhoneNumber.isEmpty() || newPhoneNumber.matches("[\\p{Sm}8]\\d*".toRegex())) {
-                phoneNumber = newPhoneNumber
-            }
+            isPasswordConfirmationHidden = !isPasswordConfirmationHidden
         }
     }
 }

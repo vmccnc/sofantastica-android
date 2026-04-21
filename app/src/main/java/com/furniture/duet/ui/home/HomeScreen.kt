@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,6 +69,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -209,7 +211,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
         StepListScreen(viewModel.stepList)
 
-        AboutUsScreen()
+        AboutUsScreen(
+            viewModel::openWhatsUp,
+            viewModel::openInstagram,
+            viewModel::openTikTok,
+        )
     }
 }
 
@@ -304,7 +310,11 @@ fun StepListScreen(stepList: List<InfoModel>) {
 }
 
 @Composable
-fun AboutUsScreen() {
+fun AboutUsScreen(
+    openWhatsUp: () -> Unit,
+    openInstagram: () -> Unit,
+    openTikTok: () -> Unit,
+) {
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
@@ -388,18 +398,27 @@ fun AboutUsScreen() {
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = margin_20)
+                    .clickable {
+                        openWhatsUp()
+                    }
             )
             Image(
                 painter = painterResource(R.drawable.i_instagram),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = margin_20)
+                    .clickable {
+                        openInstagram()
+                    }
             )
             Image(
                 painter = painterResource(R.drawable.i_tiktok),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = margin_20)
+                    .clickable {
+                        openTikTok()
+                    }
             )
         }
     }

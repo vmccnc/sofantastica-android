@@ -6,8 +6,6 @@ interface UserRepository {
     suspend fun getAccountInfo(): AccountModel?
     suspend fun createAccount(
         email: String,
-        firstAndLastName: String,
-        phoneNumber: String,
         password: String
     )
     suspend fun updateAccount(

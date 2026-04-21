@@ -191,6 +191,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                 .constrainAs(nameTxt) {
                     top.linkTo(view3DBtn.bottom, margin_16)
                     start.linkTo(parent.start)
+                    end.linkTo(priceTxt.start)
                 }
         )
 

@@ -6,6 +6,7 @@ import com.furniture.duet.data.repository.FavoritesRepository
 import com.furniture.duet.data.repository.UserRepository
 import com.furniture.duet.data.repository.UserRepositoryImpl
 import com.furniture.duet.domain.exceptions.EmptyFieldException
+import com.furniture.duet.domain.exceptions.PasswordRepeatException
 import com.furniture.duet.domain.exceptions.WrongEmailFormatException
 import com.furniture.duet.domain.exceptions.WrongLoginOrPasswordException
 import com.furniture.duet.domain.exceptions.WrongPasswordFormatException
@@ -25,19 +26,12 @@ class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
-        fullName: String,
-        phoneNumber: String,
         email: String,
-        password: String
+        password: String,
+        passwordConfirmation: String
     ) {
         if (!email.matches(Regex.fromLiteral(".+@.+\\..+"))) {
             throw WrongEmailFormatException()
-        }
-        if (!phoneNumber.matches(Regex.fromLiteral("[\\+8]\\d{10,12}"))) {
-            throw WrongPhoneNumberException()
-        }
-        if (fullName.isEmpty()) {
-            throw EmptyFieldException()
         }
         if (password.length < 8 ||
             !password.matches(Regex.fromLiteral(".*[A-Z]+.*")) ||
@@ -46,10 +40,12 @@ class SignUpUseCase @Inject constructor(
         ) {
             throw WrongPasswordFormatException()
         }
+
+        if (password != passwordConfirmation)
+            throw PasswordRepeatException()
+
         userRepository.createAccount(
             email = email,
-            firstAndLastName = fullName,
-            phoneNumber = phoneNumber,
             password = password
         )
     }

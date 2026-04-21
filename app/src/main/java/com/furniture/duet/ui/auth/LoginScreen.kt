@@ -85,7 +85,7 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 ),
                 shape = roundedShape,
                 contentPadding = PaddingValues(vertical = margin_16)
-            ) { Text(stringResource(R.string.i_have_an_account)) }
+            ) { Text(stringResource(R.string.login)) }
 
             TextButton(
                 onClick = { viewModel.isLogin = false },
@@ -96,7 +96,7 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 ),
                 shape = roundedShape,
                 contentPadding = PaddingValues(vertical = margin_16)
-            ) { Text(stringResource(R.string.i_don_t_have_an_account)) }
+            ) { Text(stringResource(R.string.register)) }
 
         }
 
@@ -144,8 +144,11 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
                     focusedLabelColor = EnabledBtnColor
                 ),
                 trailingIcon = {
+                    val passIcon =
+                        if (viewModel.isPasswordHidden) R.drawable.i_hide_pass
+                        else R.drawable.i_show_pass
                     Icon(
-                        painter = painterResource(R.drawable.i_show_password),
+                        painter = painterResource(passIcon),
                         contentDescription = null,
                         modifier = Modifier
                             .size(margin_20)
