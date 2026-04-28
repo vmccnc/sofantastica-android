@@ -15,7 +15,7 @@ class SetFavoriteUseCase @Inject constructor(
             favoriteRepo.addFavorite(
                 id = item.furnitureId,
                 name = item.furnitureName,
-                basePrice = item.totalPrice,
+                basePrice = item.basePrice,
                 imageUrl = item.furnitureUrl
             )
         } else {

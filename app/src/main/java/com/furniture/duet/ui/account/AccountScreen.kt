@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -23,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,6 +43,7 @@ import com.furniture.duet.ui.main.ErrorUI
 import com.furniture.duet.ui.common.UiState
 import com.furniture.duet.ui.main.LoadingUI
 import com.furniture.duet.ui.orders.OrderHistoryScreen
+import com.furniture.duet.ui.orders.StyledTextField
 import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
@@ -53,7 +58,6 @@ fun AccountRoute(
         else -> {
             var accountMode by remember { mutableStateOf(false) }
             val margin_16 = dimensionResource(R.dimen.margin_16)
-            val margin_5 = dimensionResource(R.dimen.margin_5)
             val margin_20 = dimensionResource(R.dimen.margin_20)
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
@@ -62,7 +66,7 @@ fun AccountRoute(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = margin_5)
+                        .padding(margin_16)
                 )
 
                 Row(
@@ -115,6 +119,8 @@ fun AccountScreen(
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val margin_5 = dimensionResource(R.dimen.margin_5)
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    val margin_2 = dimensionResource(R.dimen.margin_2)
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -161,6 +167,41 @@ fun AccountScreen(
             placeholder = stringResource(R.string.post_code_label),
             isEditable = viewModel.isEditable
         )
+
+        val tipColor = Color.Black.copy(.45f)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                modifier = Modifier
+                    .padding(horizontal = margin_2, vertical = margin_16)
+                    .size(margin_16),
+                checked = viewModel.isBusiness,
+                onCheckedChange = { viewModel.isBusiness = it },
+                colors = CheckboxDefaults.colors(
+                    checkmarkColor = tipColor,
+                    uncheckedColor = tipColor,
+                    checkedColor = tipColor,
+                )
+            )
+            Text(
+                text = "\tIs Business",
+                color = tipColor,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        if (viewModel.isBusiness) {
+            StyledAccountTextField(
+                value = viewModel.unn,
+                changeValue = viewModel::setNewUNN,
+                placeholder = stringResource(R.string.unn_placeholder),
+                isEditable = viewModel.isEditable)
+            StyledAccountTextField(
+                value = viewModel.companyName,
+                changeValue = viewModel::setNewCompanyName,
+                placeholder = stringResource(R.string.company_placeholder),
+                isEditable = viewModel.isEditable)
+        }
+
         if (viewModel.isEditable) {
             Button(
                 modifier = Modifier

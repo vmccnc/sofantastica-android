@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -82,6 +83,14 @@ fun OrderHistoryContent(
    loadNextPage: () -> Unit
 ) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
+    if (data.orders.isEmpty()) {
+        Text(
+            modifier = Modifier.padding(margin_16).fillMaxSize(),
+            text = stringResource(R.string.empty_orders),
+            textAlign = TextAlign.Center
+        )
+        return
+    }
     Text(
         text = stringResource(R.string.my_orders),
         modifier = Modifier.padding(top = margin_16, start = margin_16)
@@ -172,12 +181,14 @@ fun OrderContent(order: OrderDto) {
                 .padding(top = margin_16), Arrangement.SpaceBetween) {
                 Text(
                     text = stringResource(R.string.delivery_method),
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.End
                 )
                 Text(
                     text = order.typeOfDelivery,
                     color = detailColor,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.End
                 )
             }
             Row(Modifier
@@ -190,7 +201,8 @@ fun OrderContent(order: OrderDto) {
                 Text(
                     text = "${order.address}; ${order.city}; ${order.country}; ${order.postCode}",
                     color = detailColor,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.End
                 )
             }
         }

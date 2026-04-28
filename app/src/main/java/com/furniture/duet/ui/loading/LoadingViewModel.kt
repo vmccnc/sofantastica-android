@@ -24,12 +24,8 @@ class LoadingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            try {
-                loadData()
-                uiState = UiState.Success(Unit)
-            } catch (e: Exception) {
-                uiState = UiState.Error(e)
-            }
+            loadData()
+            uiState = UiState.Success(Unit)
         }
     }
 }

@@ -5,7 +5,7 @@ import com.furniture.duet.data.model.cart.CartItemModel
 
 interface CartRepository {
     suspend fun loadCart()
-    suspend fun syncCart()
+    //suspend fun syncCart()
     suspend fun setQuantity(id: Int, newCount: Int)
     suspend fun setQuantity(furnitureId: Int, fabricId: Int, newCount: Int)
     suspend fun getCartCount(): Int

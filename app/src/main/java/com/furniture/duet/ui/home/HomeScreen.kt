@@ -156,7 +156,9 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             }
 
             Text(
-                buildAnnotatedString {
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = buildAnnotatedString {
                     withStyle(style = SpanStyle(
                         fontFamily = MarcellusFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -185,7 +187,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     .fillMaxWidth()
             ) {
                 viewModel.bestChoiseList.forEach { item ->
-                    Column {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Image(
                             painter = painterResource(item.imageId),
                             contentDescription = null
@@ -212,6 +214,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         StepListScreen(viewModel.stepList)
 
         AboutUsScreen(
+            viewModel::openYoutube,
             viewModel::openWhatsUp,
             viewModel::openInstagram,
             viewModel::openTikTok,
@@ -311,6 +314,7 @@ fun StepListScreen(stepList: List<InfoModel>) {
 
 @Composable
 fun AboutUsScreen(
+    openYoutube: () -> Unit,
     openWhatsUp: () -> Unit,
     openInstagram: () -> Unit,
     openTikTok: () -> Unit,
@@ -393,6 +397,15 @@ fun AboutUsScreen(
         )
 
         Row(modifier = Modifier.padding(top = margin_20, bottom = margin_10)) {
+            Image(
+                painter = painterResource(R.drawable.i_youtube),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = margin_20)
+                    .clickable {
+                        openYoutube()
+                    }
+            )
             Image(
                 painter = painterResource(R.drawable.i_whatsup),
                 contentDescription = null,

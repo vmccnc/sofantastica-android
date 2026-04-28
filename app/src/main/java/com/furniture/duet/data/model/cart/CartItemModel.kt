@@ -9,6 +9,7 @@ data class CartItemModel(
     val fabricUrl: String,
     val furnitureName: String,
     val fabricName: String,
+    val basePrice: Int,
     val totalPrice: Int,
     val isFavorite: Boolean
 )

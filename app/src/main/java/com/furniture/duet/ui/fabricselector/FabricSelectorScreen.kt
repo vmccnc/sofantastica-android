@@ -83,6 +83,7 @@ fun FabricSelectorScreen(
     data: FabricSelectorModel,
     selectedFabric: FabricDto?
 ) {
+    val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
     val margin_60 = dimensionResource(R.dimen.margin_60)
@@ -102,7 +103,7 @@ fun FabricSelectorScreen(
                     stringResource(R.string.select_fabric),
                     color = FabricSecondaryColor,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(margin_10)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
@@ -136,7 +137,7 @@ fun FabricSelectorScreen(
                         text = {
                             Text(
                                 text = title,
-                                style = MaterialTheme.typography.labelSmall,
+                                style = MaterialTheme.typography.displayMedium,
                                 color = textColor
                             )
                         }
@@ -212,7 +213,7 @@ fun FabricItem(item: FabricDto,
                 bottom.linkTo(priceTxt.top)
             }
         )
-        Text(stringResource(R.string.fabric_price).format(item.price),
+        Text(stringResource(R.string.selected_fabric_price).format(item.price),
             style = MaterialTheme.typography.titleSmall,
             color = FabricSecondaryColor,
             modifier = Modifier.constrainAs(priceTxt) {

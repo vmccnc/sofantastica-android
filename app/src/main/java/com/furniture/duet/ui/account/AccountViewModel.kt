@@ -35,6 +35,7 @@ class AccountViewModel @Inject constructor(
     private val connectionManager: InternetConnectionManager,
     private val _getUser: GetUserDataUseCase,
     private val _updateUser: UpdateUserUseCase,
+    private val _logOut: LogOutUseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -53,6 +54,12 @@ class AccountViewModel @Inject constructor(
     var city by mutableStateOf("")
         private set
     var postCode by mutableStateOf("")
+        private set
+
+    var isBusiness by mutableStateOf(false)
+    var unn by mutableStateOf("")
+        private set
+    var companyName by mutableStateOf("")
         private set
 
     var uiState by mutableStateOf<UiState<Unit>>(UiState.Loading)
@@ -78,6 +85,7 @@ class AccountViewModel @Inject constructor(
             }
         } catch (e: ResIdException) {
             Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+            uiState = UiState.Success(Unit)
         } catch (e: Exception) {
             uiState = UiState.Error(e)
         }
@@ -150,6 +158,20 @@ class AccountViewModel @Inject constructor(
             if (newAddress.matches("[\\w\\s-,.]{0,256}".toRegex())) {
                 address = newAddress
             }
+        }
+    }
+
+    fun setNewUNN(newUNN: String) {
+        viewModelScope.launch {
+            if (newUNN.matches("\\d*".toRegex())) {
+                unn = newUNN
+            }
+        }
+    }
+
+    fun setNewCompanyName(newCompanyName: String) {
+        viewModelScope.launch {
+            companyName = newCompanyName
         }
     }
 

@@ -98,7 +98,6 @@ fun CatalogScreen(
     viewModel: CatalogViewModel = hiltViewModel()
 ) {
     val size_75 = dimensionResource(R.dimen.size_75)
-    val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_12 = dimensionResource(R.dimen.margin_12)
     val margin_16 = dimensionResource(R.dimen.margin_16)
@@ -132,9 +131,7 @@ fun CatalogScreen(
                 Text(text = stringResource(R.string.catalog_label),
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = margin_5)
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 TextField(
@@ -164,13 +161,14 @@ fun CatalogScreen(
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = margin_10)
                         .clip(shape = RoundedCornerShape(margin_20))
                 )
 
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(margin_12),
+                        .padding(vertical = margin_10),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(margin_16, alignment = Alignment.CenterHorizontally)
                 ) {
@@ -193,7 +191,6 @@ fun CatalogScreen(
                             )
                             Text(
                                 item.title,
-                                modifier = Modifier.padding(top = margin_12),
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -202,7 +199,7 @@ fun CatalogScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(
@@ -223,7 +220,7 @@ fun CatalogScreen(
                         )
                     }
                     Row(
-                        horizontalArrangement = Arrangement.Start,
+                        horizontalArrangement = Arrangement.End,
                         modifier = Modifier
                             .weight(1f)
                             .clickable { viewModel.openPriceRangeDialog() }
@@ -241,13 +238,20 @@ fun CatalogScreen(
                         )
                     }
                 }
+                if (data.list.isEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(margin_16).fillMaxSize(),
+                        text = stringResource(R.string.empty_catalog),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
         items(data.list) { item ->
             FurnitureCard(item, onItemClick, viewModel::onToggleFavorite)
         }
         item(span = { GridItemSpan(columnsCount) }) {
-            if (data.isLast) return@item
+            if (data.isLast || data.list.isEmpty()) return@item
             TextButton(
                 onClick = viewModel::loadNextPage,
                 colors = ButtonDefaults.buttonColors(
@@ -323,7 +327,7 @@ fun FurnitureCard(
             color = Color.White
         )
         Text(
-            text = stringResource(R.string.furniture_price).format(item.basePrice),
+            text = stringResource(R.string.furniture_total_price).format(item.basePrice),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .padding(start = margin_10, bottom = margin_10)

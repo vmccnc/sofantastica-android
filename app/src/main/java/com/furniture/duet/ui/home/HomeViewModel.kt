@@ -55,6 +55,11 @@ class HomeViewModel @Inject constructor(
         R.drawable.sofa33, R.drawable.sofa34, R.drawable.sofa35
     )
 
+    fun openYoutube() {
+        openUri("https://www.youtube.com/@Sofantastica")
+    }
+
+
     fun openWhatsUp() {
         openUri("https://wa.me/451566158")
     }

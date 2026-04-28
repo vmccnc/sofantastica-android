@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.furniture.duet.R
+import com.furniture.duet.data.data_store.CountStorage
 import com.furniture.duet.ui.account.AccountRoute
 import com.furniture.duet.ui.auth.LoginRoute
 import com.furniture.duet.ui.auth.LoginScreen
@@ -52,6 +54,7 @@ import com.furniture.duet.ui.detail.FurnitureDetailRoute
 import com.furniture.duet.ui.theme.FurnitureCardBackgroundColor
 import com.furniture.duet.ui.theme.SelectedRouteBackgroundColor
 import com.furniture.duet.ui.theme.SelectedRouteIconColor
+import kotlinx.coroutines.flow.collectLatest
 
 sealed class Screen(val route: String, val icon: @Composable () -> Unit) {
     object Home : Screen("home", { Icon(painterResource(R.drawable.i_home), contentDescription = null) })
@@ -64,7 +67,6 @@ sealed class Screen(val route: String, val icon: @Composable () -> Unit) {
             Icon(painterResource(R.drawable.i_basket), contentDescription = null)
 
             val viewModel: MainViewModel = hiltViewModel()
-            viewModel.getCartCount()
             if (viewModel.cartCount > 0) {
                 Text(
                     text = viewModel.cartCount.toString(),

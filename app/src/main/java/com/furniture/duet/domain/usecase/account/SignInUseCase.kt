@@ -12,12 +12,10 @@ import javax.inject.Inject
 
 class SignInUseCase @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val connectionManager: InternetConnectionManager,
     private val cartRepository: CartRepository,
     private val favoritesRepository: FavoritesRepository
 ) {
     suspend operator fun invoke(email: String, password: String) {
-        connectionManager.isOnline()
         if (!email.matches(".+@.+\\..+".toRegex())) {
             throw WrongEmailFormatException()
         }

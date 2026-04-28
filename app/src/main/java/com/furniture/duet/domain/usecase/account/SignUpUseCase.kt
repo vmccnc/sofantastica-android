@@ -30,13 +30,13 @@ class SignUpUseCase @Inject constructor(
         password: String,
         passwordConfirmation: String
     ) {
-        if (!email.matches(Regex.fromLiteral(".+@.+\\..+"))) {
+        if (!email.matches(".+@.+\\..+".toRegex())) {
             throw WrongEmailFormatException()
         }
         if (password.length < 8 ||
-            !password.matches(Regex.fromLiteral(".*[A-Z]+.*")) ||
-            !password.matches(Regex.fromLiteral(".*[^A-Za-z0-9]+.*")) ||
-            !password.matches(Regex.fromLiteral(".*\\d+.*"))
+            !password.matches(".*[A-Z]+.*".toRegex()) ||
+            !password.matches(".*[^A-Za-z0-9]+.*".toRegex()) ||
+            !password.matches(".*\\d+.*".toRegex())
         ) {
             throw WrongPasswordFormatException()
         }

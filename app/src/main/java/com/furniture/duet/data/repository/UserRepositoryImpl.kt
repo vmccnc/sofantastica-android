@@ -24,7 +24,7 @@ class UserRepositoryImpl @Inject constructor(
         auth.currentUser ?: IsNotAuthorizeException()
         val userInfo = api.getUser(auth.currentUser?.uid ?: "")
         if (userInfo.isSuccessful) userInfo.body()
-        else null
+        else throw Exception("No such user")
     }
 
     override suspend fun createAccount(

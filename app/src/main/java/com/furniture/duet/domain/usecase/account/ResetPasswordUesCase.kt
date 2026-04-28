@@ -13,7 +13,7 @@ class ResetPasswordUesCase @Inject constructor(
 ) {
     suspend operator fun invoke(email: String) {
         connectionManager.isOnline()
-        if (!email.matches(Regex.fromLiteral(".+@.+\\..+"))) {
+        if (!email.matches(".+@.+\\..+".toRegex())) {
             throw WrongLoginOrPasswordException()
         }
         firebaseAuth.sendPasswordResetEmail(email).await()

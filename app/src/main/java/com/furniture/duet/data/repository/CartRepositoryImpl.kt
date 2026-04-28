@@ -25,45 +25,45 @@ class CartRepositoryImpl @Inject constructor(
     private val cartDao: CartDao,
     @ApplicationContext private val context: Context
 ) : CartRepository {
+//    override suspend fun loadCart(): Unit = withContext(Dispatchers.IO) {
+//        connectionManager.isOnline()
+//        try {
+//            val user = auth.currentUser ?: throw IsNotAuthorizeException()
+//            val response = api.getCart(user.uid)
+//            if (!response.isSuccessful || response.body() == null) return@withContext
+//            val cartDto = response.body()!!
+//
+//            val cartList = mutableListOf<CartItemEntity>()
+//
+//            cartDto.items.forEach {
+//                val priceList = it.checkCalculation.split(" ")
+//                cartList.add(CartItemEntity(
+//                    id = it.id,
+//                    furnitureId = it.furnitureId,
+//                    furnitureName = it.furnitureName,
+//                    furnitureUrl = it.furnitureUrl,
+//                    fabricId = it.fabricId,
+//                    fabricName = it.fabricName,
+//                    fabricUrl = it.fabricUrl,
+//                    quantity = it.quantity,
+//                    basePrice = priceList[0].toDouble().toInt(),
+//                    fabricPrice = priceList[2].toDouble().toInt()
+//                ))
+//            }
+//
+//            cartDao.insertAll(cartList)
+//            CountStorage.setCartCount(context, cartDto.items.size)
+//        } catch (_: IsNotAuthorizeException) {
+//        }
+//    }
+
     override suspend fun loadCart(): Unit = withContext(Dispatchers.IO) {
-        connectionManager.isOnline()
-        try {
-            val user = auth.currentUser ?: throw IsNotAuthorizeException()
-            val response = api.getCart(user.uid)
-            if (!response.isSuccessful || response.body() == null) return@withContext
-            val cartDto = response.body()!!
-
-            val cartList = mutableListOf<CartItemEntity>()
-
-            cartDto.items.forEach {
-                val priceList = it.checkCalculation.split(" ")
-                cartList.add(CartItemEntity(
-                    id = it.id,
-                    furnitureId = it.furnitureId,
-                    furnitureName = it.furnitureName,
-                    furnitureUrl = it.furnitureUrl,
-                    fabricId = it.fabricId,
-                    fabricName = it.fabricName,
-                    fabricUrl = it.fabricUrl,
-                    quantity = it.quantity,
-                    basePrice = priceList[0].toDouble().toInt(),
-                    fabricPrice = priceList[2].toDouble().toInt()
-                ))
-            }
-
-            cartDao.insertAll(cartList)
-            CountStorage.setCartCount(context, cartDto.items.size)
-        } catch (_: IsNotAuthorizeException) {
-        }
-    }
-
-    override suspend fun syncCart(): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
         val user = auth.currentUser ?: throw IsNotAuthorizeException()
         val response = api.getCart(user.uid)
-        if (response.isSuccessful || response.body() == null) return@withContext
+        if (!response.isSuccessful || response.body() == null) return@withContext
 
-        val apiCart = response.body()!!.items
+        val apiCart = response.body()!!.items.toMutableSet()
         val localCart = cartDao.getLocalCart()
 
         val cartList = mutableListOf<CartItemEntity>()
@@ -84,19 +84,20 @@ class CartRepositoryImpl @Inject constructor(
                 )
                 if (addResponse.isSuccessful) {
                     addResponse.body()?.let {
-                        val prices = it.checkCalculation.split(" ")
+                        val basePrice = it.checkCalculation.substringBefore(".00").toInt()
+                        //val prices = it.checkCalculation.split(" ")
                         cartList.add(
                             CartItemEntity(
                                 id = it.id,
                                 furnitureId = it.furnitureId,
-                                fabricId = it.fabricId,
-                                quantity = it.quantity,
                                 furnitureName = it.furnitureName,
                                 furnitureUrl = it.furnitureUrl,
+                                fabricId = it.fabricId,
                                 fabricName = it.fabricName,
                                 fabricUrl = it.fabricUrl,
-                                basePrice = prices[0].toInt(),
-                                fabricPrice = prices[2].toInt()
+                                basePrice = basePrice,
+                                fabricPrice = it.priceSofaWithFabric - basePrice,
+                                quantity = it.quantity
                             )
                         )
                     }
@@ -122,8 +123,28 @@ class CartRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+                apiCart.remove(foundedItem)
             }
         }
+        apiCart.forEach {
+            val basePrice = it.checkCalculation.substringBefore(".00").toInt()
+            //val prices = it.checkCalculation.split(" ")
+            cartList.add(
+                CartItemEntity(
+                    id = it.id,
+                    furnitureId = it.furnitureId,
+                    furnitureName = it.furnitureName,
+                    furnitureUrl = it.furnitureUrl,
+                    fabricId = it.fabricId,
+                    fabricName = it.fabricName,
+                    fabricUrl = it.fabricUrl,
+                    basePrice = basePrice,
+                    fabricPrice = it.priceSofaWithFabric - basePrice,
+                    quantity = it.quantity
+                )
+            )
+        }
+
         cartDao.deleteAll()
         cartDao.insertAll(cartList)
         CountStorage.setCartCount(context, cartList.size)

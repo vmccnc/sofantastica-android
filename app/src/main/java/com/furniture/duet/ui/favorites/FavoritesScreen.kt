@@ -59,8 +59,14 @@ fun FavoritesScreen(
     goToCatalog: () -> Unit
 ) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
-    val margin_5 = dimensionResource(R.dimen.margin_5)
     if (furniture.isEmpty()) {
+        Text(text = stringResource(R.string.favorites_label),
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(margin_16)
+        )
         Column(modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +93,6 @@ fun FavoritesScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = margin_5)
             )
         }
         items(furniture) { item ->

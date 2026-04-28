@@ -12,6 +12,7 @@ interface CartDao {
     @Query("SELECT cart.id, cart.furnitureId, cart.fabricId, cart.quantity, " +
             "cart.furnitureUrl AS furnitureUrl, cart.fabricUrl AS fabricUrl, " +
             "cart.furnitureName AS furnitureName, cart.fabricName AS fabricName, " +
+            "cart.basePrice AS basePrice, " +
             "(cart.basePrice + cart.fabricPrice)*cart.quantity AS totalPrice, " +
             "favorites.id IS NOT NULL AS isFavorite " +
             "FROM cart " +

@@ -76,12 +76,11 @@ class AuthViewModel @Inject constructor(
 
     fun signUp() {
         viewModelScope.launch {
-            if (isPrivacyPolicyChecked) {
+            if (!isPrivacyPolicyChecked) {
                 Toast.makeText(context, R.string.privacy_policy_not_checked, Toast.LENGTH_SHORT).show()
                 return@launch
             }
             try {
-
                 _signUpUseCase(
                     email,
                     password,
@@ -112,9 +111,13 @@ class AuthViewModel @Inject constructor(
             try {
                 _resetPasswordUseCase(email)
                 email = ""
+                password = ""
+                passwordConfirmation = ""
                 isForgotPassword = false
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
+            }  catch (e: Exception) {
+                uiState = UiState.Error(e)
             }
         }
     }

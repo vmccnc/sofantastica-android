@@ -83,8 +83,6 @@ fun CartScreen(
     viewModel: CartViewModel = hiltViewModel()
 ) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
-    val margin_5 = dimensionResource(R.dimen.margin_5)
-    val size_48 = dimensionResource(R.dimen.size_48)
 
     val data = (viewModel.uiState as UiState.Success).data
 
@@ -94,11 +92,21 @@ fun CartScreen(
                 .padding(horizontal = margin_16)
                 .fillMaxSize()
         ) {
-            val (emptyCartImage, emptyCartText) = createRefs()
+            val (cartLabel, emptyCartImage, emptyCartText) = createRefs()
+            Text(text = stringResource(R.string.cart_label),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .constrainAs(cartLabel) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
             Image(
                 modifier = Modifier
                     .constrainAs(emptyCartImage) {
-                        top.linkTo(parent.top)
+                        top.linkTo(cartLabel.bottom)
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -126,14 +134,13 @@ fun CartScreen(
                     Text(text = stringResource(R.string.cart_label),
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = margin_5)
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Text(
                         text = stringResource(R.string.cart_products_count).format(data.items.count()),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TitleColor
+                        color = TitleColor,
+                        modifier = Modifier.padding(vertical = margin_16)
                     )
                 }
             }
@@ -195,129 +202,99 @@ fun CartItem(
     setFavorite: (CartItemModel) -> Unit,
     remove: (Int) -> Unit
 ) {
-    val width = LocalConfiguration.current.screenWidthDp - 240
 
     val margin_5 = dimensionResource(R.dimen.margin_5)
     val margin_8 = dimensionResource(R.dimen.margin_8)
-    val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
     val size_24 = dimensionResource(R.dimen.size_24)
+    val size_40 = dimensionResource(R.dimen.size_40)
     val size_130 = dimensionResource(R.dimen.size_130)
-    ConstraintLayout(
+
+    val width = LocalConfiguration.current.screenWidthDp.dp -
+            margin_16*2 - margin_8*2 - size_130 - size_40*2
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = margin_8)
             .background(Color.White, RoundedCornerShape(margin_20))
-            .padding(margin_10)
+            .padding(margin_8),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val (furnitureImage, furnitureName, fabricName, fabricImage,
-            favBtn, removeBtn, counter, price, spacer
-        ) = createRefs()
-
         AsyncImage(
             modifier = Modifier
                 .size(size_130)
                 .padding(end = margin_5)
-                .clip(RoundedCornerShape(margin_20))
-                .constrainAs(furnitureImage) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                },
+                .clip(RoundedCornerShape(margin_20)),
             model = item.furnitureUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             error = painterResource(R.drawable.no_image)
         )
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    modifier = Modifier.width(width),
+                    text = item.furnitureName,
+                    color = FurnitureDetailTextColor,
+                    style = MaterialTheme.typography.titleSmall
+                )
 
-        Text(
-            modifier = Modifier
-                .width(width.dp)
-                .constrainAs(furnitureName) {
-                    top.linkTo(parent.top)
-                    start.linkTo(furnitureImage.end)
-                },
-            text = item.furnitureName,
-            color = FurnitureDetailTextColor,
-            style = MaterialTheme.typography.titleSmall
-        )
+                val favoriteIcon =
+                    if(item.isFavorite) painterResource(R.drawable.i_favorite)
+                    else painterResource(R.drawable.i_favorite_border)
+                Image(
+                    modifier = Modifier.clickable { setFavorite(item) },
+                    painter = favoriteIcon,
+                    contentDescription = null
+                )
 
-        val favoriteIcon =
-            if(item.isFavorite) painterResource(R.drawable.i_favorite)
-            else painterResource(R.drawable.i_favorite_border)
-        Image(
-            modifier = Modifier
-                .clickable { setFavorite(item) }
-                .constrainAs(favBtn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(removeBtn.start)
-                },
-            painter = favoriteIcon,
-            contentDescription = null
-        )
-        Image(
-            modifier = Modifier
-                .clickable { remove(item.id) }
-                .constrainAs(removeBtn) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                },
-            painter = painterResource(R.drawable.i_trash),
-            contentDescription = null
-        )
-
-        AsyncImage(
-            modifier = Modifier
-                .size(size_24)
-                .clip(CircleShape)
-                .constrainAs(fabricImage) {
-                    top.linkTo(fabricName.top)
-                    bottom.linkTo(fabricName.bottom)
-                    start.linkTo(furnitureImage.end)
-                },
-            model = item.fabricUrl,
-            contentDescription = null,
-            error = painterResource(R.drawable.no_image)
-        )
-        Text(
-            modifier = Modifier
-                .padding(margin_8)
-                .constrainAs(fabricName) {
-                    top.linkTo(furnitureName.bottom)
-                    start.linkTo(fabricImage.end)
-                },
-            text = item.fabricName,
-            color = FabricSecondaryColor,
-            style = MaterialTheme.typography.titleSmall
-        )
-
-        Spacer(modifier = Modifier.constrainAs(spacer){
-            top.linkTo(fabricImage.bottom)
-            bottom.linkTo(counter.top, margin_16)
-        })
-
-        CartCounter(
-            item.quantity,
-            { newCount -> setCount(item.id, newCount) },
-            Modifier.constrainAs(counter) {
-                //top.linkTo(fabricImage.bottom, margin_16)
-                start.linkTo(furnitureImage.end)
-                bottom.linkTo(parent.bottom)
+                Image(
+                    modifier = Modifier.clickable { remove(item.id) },
+                    painter = painterResource(R.drawable.i_trash),
+                    contentDescription = null
+                )
             }
-        )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AsyncImage(
+                    modifier = Modifier.size(size_24).clip(CircleShape),
+                    model = item.fabricUrl,
+                    contentDescription = null,
+                    error = painterResource(R.drawable.no_image)
+                )
+                Text(
+                    modifier = Modifier.padding(margin_8),
+                    text = item.fabricName,
+                    color = FabricSecondaryColor,
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CartCounter(
+                    item.quantity,
+                    { newCount -> setCount(item.id, newCount) }
+                )
+                Text(
+                    modifier = Modifier.padding(start = margin_5),
+                    text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
+                    color = FurnitureDetailTextColor,
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.End
+                )
+            }
 
-        Text(
-            modifier = Modifier
-                .constrainAs(price) {
-                    top.linkTo(counter.top)
-                    bottom.linkTo(counter.bottom)
-                    end.linkTo(parent.end)
-                },
-            text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
-            color = FurnitureDetailTextColor,
-            style = MaterialTheme.typography.titleSmall
-        )
+        }
     }
 }
 

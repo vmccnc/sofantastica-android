@@ -31,9 +31,11 @@ class OrderViewModel @Inject constructor(
         private set
 
     var isBusiness by mutableStateOf(false)
-
     var unn by mutableStateOf("")
         private set
+    var companyName by mutableStateOf("")
+        private set
+
     var fullName by mutableStateOf("")
         private set
     var city by mutableStateOf("")
@@ -47,8 +49,6 @@ class OrderViewModel @Inject constructor(
     var phone by mutableStateOf("")
         private set
     var country by mutableStateOf("")
-        private set
-    var companyName by mutableStateOf("")
         private set
 
     val deliveryOptionList = listOf(
