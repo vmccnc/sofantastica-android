@@ -32,7 +32,7 @@ class CartRepositoryImpl @Inject constructor(
         val response = api.getCart(user.uid)
         val apiCart = response.body()!!.items
         val localCart = apiCart.map {
-            val basePrice = it.checkCalculation.substringBefore(".00").toInt()
+            val basePrice = it.checkCalculation.substringBefore(".00").substring(1).toInt()
             CartItemEntity(
                 id = it.id,
                 furnitureId = it.furnitureId,

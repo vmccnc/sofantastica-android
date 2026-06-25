@@ -103,7 +103,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
-    val size_170 = dimensionResource(R.dimen.size_170)
 
     val  state = rememberScrollState()
 
