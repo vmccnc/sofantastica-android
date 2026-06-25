@@ -27,23 +27,15 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val _signInUseCase: SignInUseCase,
     private val _signUpUseCase: SignUpUseCase,
-    private val _logOut: LogOutUseCase,
-    private val _firebaseAuth: FirebaseAuth,
     private val _resetPasswordUseCase: ResetPasswordUesCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private companion object {
-        const val EMPTY_STRING = ""
-    }
 
-    var email by mutableStateOf(EMPTY_STRING)
+    var email by mutableStateOf("")
         private set
-    var password by mutableStateOf(EMPTY_STRING)
+    var password by mutableStateOf("")
         private set
-    var passwordConfirmation by mutableStateOf(EMPTY_STRING)
-        private set
-
-    var uiState by mutableStateOf<UiState<Unit>>(UiState.Loading)
+    var passwordConfirmation by mutableStateOf("")
         private set
 
     var isPasswordHidden by mutableStateOf(true)
@@ -56,9 +48,14 @@ class AuthViewModel @Inject constructor(
 
     var isPrivacyPolicyChecked by mutableStateOf(false)
 
-    init {
-        if (_firebaseAuth.currentUser != null)
-            uiState = UiState.Success(Unit)
+    var uiState by mutableStateOf<UiState<Unit>>(UiState.Loading)
+        private set
+
+    fun logOnCompeted() {
+        email = ""
+        password = ""
+        passwordConfirmation = ""
+        uiState = UiState.Loading
     }
 
     fun signIn() {
@@ -95,28 +92,14 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun logOut() {
-        viewModelScope.launch {
-            uiState = try {
-                _logOut()
-                UiState.Loading
-            } catch (e: Exception) {
-                UiState.Error(e)
-            }
-        }
-    }
-
     fun resetPassword() {
         viewModelScope.launch {
             try {
                 _resetPasswordUseCase(email)
-                email = ""
-                password = ""
-                passwordConfirmation = ""
                 isForgotPassword = false
             } catch (e: ResIdException) {
                 Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
-            }  catch (e: Exception) {
+            } catch (e: Exception) {
                 uiState = UiState.Error(e)
             }
         }

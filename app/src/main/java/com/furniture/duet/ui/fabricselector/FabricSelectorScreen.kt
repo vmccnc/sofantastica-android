@@ -211,7 +211,7 @@ fun FabricItem(item: FabricDto,
                 start.linkTo(image.end, margin = 10.dp)
                 top.linkTo(parent.top, margin = 5.dp)
                 bottom.linkTo(priceTxt.top)
-            }
+            },
         )
         Text(stringResource(R.string.selected_fabric_price).format(item.price),
             style = MaterialTheme.typography.titleSmall,

@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Sofantastica</string>
-    <string name="furniture_total_price" translatable="false">%d, PLN</string>
-    <string name="selected_fabric_price" translatable="false">+%d, PLN</string>
-    <string name="select_fabric">Select Fabric</string>
-    <string name="change_fabric">Change Fabric</string>
+    <string name="furniture_total_price" translatable="false">%d, Zl</string>
+    <string name="selected_fabric_price" translatable="false">+%d, Zl</string>
+    <string name="select_fabric">Select fabric</string>
+    <string name="change_fabric">Change fabric</string>
     <string name="fabric_label">Fabric</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="data_is_loading">Data is loading. Please wait</string>
@@ -50,17 +50,14 @@
     <string name="password_placeholder">Password</string>
     <string name="password_confirmation_placeholder">Password Confirmation</string>
     <string name="phone_placeholder">Mobile phone number</string>
-    <string name="delivery_without_deposit">Delivery without Deposit</string>
-    <string name="delivery_with_deposit">Delivery with deposit</string>
-    <string name="delivery_with_deposit_at_the_selected_time">Delivery with deposit at the selected time</string>
-    <string name="delivery_price">From %d, PLN</string>
+    <string name="delivery_price">From %d, Zl</string>
     <string name="delivery_title">Delivery</string>
     <string name="payment_title">Payment</string>
     <string name="payment_card">Payment card</string>
     <string name="blik" translatable="false">BLIK</string>
     <string name="fast_transfer" translatable="false">Fast transfer</string>
     <string name="cash_on_delivery">Cash on delivery</string>
-    <string name="go_father">Go Father</string>
+    <string name="go_father">Go Further</string>
     <string name="including_shipping">Including shipping</string>
     <string name="sofantastica_title" translatable="false">SOFANTASTICA</string>
     <string name="comfort_style_for_your_home"><![CDATA[Comfort & Style\nfor your home]]></string>
@@ -70,7 +67,7 @@
     <string name="ultimate_comfort">Ultimate\ncomfort</string>
     <string name="budget_friendly">Budget\nfriendly</string>
     <string name="built_to_last">Built\nto last</string>
-    <string name="choose_a_furniture_model">Choose\na  furniture model</string>
+    <string name="choose_a_furniture_model">Choose\na furniture model</string>
     <string name="select_upholstery_fabric">Select upholstery fabric</string>
     <string name="add_reinforcement_options">Add reinforcement options</string>
     <string name="place_your_order">Place your order</string>
@@ -84,9 +81,9 @@
     <string name="regulations">Regulations</string>
     <string name="address">24 Adama Mickiewicza Street, Goszcz 56-416 Twardogóra</string>
     <string name="call_us">Call Us:\t</string>
-    <string name="phone_number" translatable="false">451566158</string>
+    <string name="phone_number" translatable="false">+48 500 405 819</string>
     <string name="contact_us">Contact us:\t</string>
-    <string name="email" translatable="false">kontakt@sofantastic.pl</string>
+    <string name="email" translatable="false">akordirect@gmail.com</string>
     <string name="sort_price_asc">Price: from lowest</string>
     <string name="sort_price_desc">Price: from highest</string>
     <string name="sort_new">New</string>
@@ -94,7 +91,7 @@
     <string name="filter_price" translatable="false">%d</string>
     <string name="sort_label">Sorting: </string>
     <string name="price_range_label">Price: </string>
-    <string name="price_range" translatable="false">%d - %d, PLN</string>
+    <string name="price_range" translatable="false">%d - %d, Zl</string>
     <string name="login">Login</string>
     <string name="register">Sign Up</string>
     <string name="forget_your_password">Forget your Password?</string>
@@ -129,7 +126,23 @@
     <string name="check_you_re_data">Check you\'re data</string>
     <string name="privacy_policy_not_checked">Please Accept Privacy Policy</string>
     <string name="confirm_the_selection">Confirm the selection</string>
-    <string name="empty_orders">The order list is empty</string>
+    <string name="empty_orders">You don\'t have any orders registered yet</string>
     <string name="empty_catalog">Nothing found</string>
+    <string name="dimensions_label">Dimensions</string>
+    <string name="width_label">Width:</string>
+    <string name="height_label">Height:</string>
+    <string name="depth_label">Depth:</string>
+    <string name="undefined_width" translatable="false">some width</string>
+    <string name="undefined_height" translatable="false">some height</string>
+    <string name="undefined_depth" translatable="false">some depth</string>
+    <string name="order_pending">Pending</string>
+    <string name="order_confirmed">Confirmed</string>
+    <string name="order_shipped">Shipped</string>
+    <string name="order_delivered">Delivered</string>
+    <string name="order_cancelled">Cancelled</string>
+    <string name="delivery_pickup">Pickup</string>
+    <string name="delivery_standard">Standard</string>
+    <string name="delivery_scheduled">Scheduled</string>
+    <string name="order_amount">%d pc.</string>
 </resources>
 

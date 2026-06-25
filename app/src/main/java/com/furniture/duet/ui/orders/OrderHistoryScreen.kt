@@ -53,6 +53,7 @@ import com.furniture.duet.R
 import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.order.OrderHistoryModel
 import com.furniture.duet.data.model.order.OrderItemDto
+import com.furniture.duet.data.model.order.OrderModel
 import com.furniture.duet.ui.cart.CartCounter
 import com.furniture.duet.ui.cart.CartScreen
 import com.furniture.duet.ui.common.UiState
@@ -69,9 +70,7 @@ fun OrderHistoryScreen(
     viewModel: OrderHistoryViewModel = hiltViewModel()
 ) {
     when (val state = viewModel.uiState) {
-        is UiState.Loading -> {
-            LoadingUI()
-        }
+        is UiState.Loading -> LoadingUI()
         is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
         is UiState.Success<OrderHistoryModel> -> OrderHistoryContent(state.data, viewModel::loadNextPage)
     }
@@ -120,7 +119,7 @@ fun OrderHistoryContent(
 }
 
 @Composable
-fun OrderContent(order: OrderDto) {
+fun OrderContent(order: OrderModel) {
     val size_5 = dimensionResource(R.dimen.margin_5)
     val size_8 = dimensionResource(R.dimen.margin_8)
     val margin_16 = dimensionResource(R.dimen.margin_16)
@@ -134,7 +133,7 @@ fun OrderContent(order: OrderDto) {
             .fillMaxWidth()
             .padding(vertical = margin_16), Arrangement.SpaceBetween, Alignment.CenterVertically) {
             Text(
-                text = order.status,
+                text = stringResource(order.status.textId),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
                     .background(InactiveSliderColor, RoundedCornerShape(radius_64))
@@ -171,7 +170,7 @@ fun OrderContent(order: OrderDto) {
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = order.typeOfPayment,
+                    text = stringResource(order.typeOfPayment.textId),
                     color = detailColor,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -185,7 +184,7 @@ fun OrderContent(order: OrderDto) {
                     textAlign = TextAlign.End
                 )
                 Text(
-                    text = order.typeOfDelivery,
+                    text = stringResource(order.typeOfDelivery.textId),
                     color = detailColor,
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End
@@ -223,7 +222,7 @@ fun OrderItemContent(item: OrderItemDto) {
             .fillMaxWidth()
             .padding(top = margin_32)
     ) {
-        val (furnitureImage, furnitureName, fabricName, fabricImage, price) = createRefs()
+        val (furnitureImage, furnitureName, fabricName, fabricImage, price, amount) = createRefs()
 
         AsyncImage(
             modifier = Modifier
@@ -285,6 +284,18 @@ fun OrderItemContent(item: OrderItemDto) {
                     start.linkTo(fabricImage.end)
                 },
             text = item.fabricName,
+            color = FabricSecondaryColor,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        Text(
+            modifier = Modifier
+                .padding(margin_8)
+                .constrainAs(amount) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(furnitureImage.end, size_24)
+                },
+            text = stringResource(R.string.order_amount).format(item.amountOfItems),
             color = FabricSecondaryColor,
             style = MaterialTheme.typography.titleSmall
         )

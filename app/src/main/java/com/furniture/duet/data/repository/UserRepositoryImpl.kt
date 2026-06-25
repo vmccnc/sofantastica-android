@@ -2,15 +2,13 @@ package com.furniture.duet.data.repository
 
 import com.furniture.duet.background.InternetConnectionManager
 import com.furniture.duet.data.api.RetrofitApiService
+import com.furniture.duet.data.model.account.AccountDto
 import com.furniture.duet.data.model.account.AccountModel
 import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
 import com.furniture.duet.domain.exceptions.SignUpException
 import com.furniture.duet.domain.exceptions.WrongLoginOrPasswordException
-import com.furniture.duet.domain.usecase.account.SignUpUseCase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -19,31 +17,76 @@ class UserRepositoryImpl @Inject constructor(
     private val api: RetrofitApiService,
     private val connectionManager: InternetConnectionManager
 ): UserRepository {
-    override suspend fun getAccountInfo() = withContext(Dispatchers.IO) {
-        connectionManager.isOnline()
-        auth.currentUser ?: IsNotAuthorizeException()
-        val userInfo = api.getUser(auth.currentUser?.uid ?: "")
-        if (userInfo.isSuccessful) userInfo.body()
-        else throw Exception("No such user")
+
+    private companion object {
+        var userRole: String = ""
     }
 
-    override suspend fun createAccount(
+    override suspend fun signIn(email: String, password: String): Unit = withContext(Dispatchers.IO) {
+        connectionManager.isOnline()
+        try {
+            auth.signInWithEmailAndPassword(email, password)
+        } catch (_: Exception) {
+        }
+        if (auth.currentUser == null)
+            throw WrongLoginOrPasswordException()
+    }
+
+    override suspend fun signUp(
         email: String,
         password: String
     ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
-        try {
-            auth.createUserWithEmailAndPassword(email, password).await()
-        } catch (_: Exception) {
-            throw SignUpException()
-        }
 
-        api.createUser(
-            AccountModel(
-                userId = auth.currentUser?.uid ?: "",
-                email = email
+        try {
+            auth.createUserWithEmailAndPassword(email, password)
+        } catch (_: Exception) {
+
+        }
+        if (auth.currentUser == null)
+            throw SignUpException()
+        api.addUser(
+            AccountDto(
+                userId = auth.currentUser!!.uid,
+                customerType = "",
+                firstAndLastName = "",
+                companyName = "",
+                unn = "",
+                phone = "",
+                email = email,
+                address = "",
+                city = "",
+                country = "",
+                postCode = "",
+                role = "USER"
             )
         )
+    }
+
+    override suspend fun getUserData(): AccountModel? = withContext(Dispatchers.IO) {
+        connectionManager.isOnline()
+        if (auth.currentUser == null)
+            return@withContext null
+        val userId = auth.currentUser!!.uid
+        val response = api.getUser(userId)
+        var userInfo: AccountModel? = null
+        if (response.isSuccessful) {
+            response.body()?.let {
+                userRole = it.role
+                userInfo = AccountModel(
+                    firstAndLastName = it.firstAndLastName,
+                    companyName = it.companyName,
+                    unn = it.unn,
+                    phone = it.phone,
+                    email = it.email,
+                    address = it.address,
+                    city = it.city,
+                    country = it.country,
+                    postCode = it.postCode
+                )
+            }
+        }
+        userInfo
     }
 
     override suspend fun updateAccount(
@@ -59,13 +102,13 @@ class UserRepositoryImpl @Inject constructor(
         postCode: String
     ): Unit = withContext(Dispatchers.IO) {
         connectionManager.isOnline()
-        auth.currentUser ?: throw IsNotAuthorizeException()
+        val user = auth.currentUser ?: throw IsNotAuthorizeException()
 
-        val userId = auth.currentUser?.uid ?: ""
+        val userId = user.uid
 
         api.updateUser(
             userId,
-            AccountModel(
+            AccountDto(
                 userId = userId,
                 customerType = customerType,
                 firstAndLastName = firstAndLastName,
@@ -76,7 +119,8 @@ class UserRepositoryImpl @Inject constructor(
                 address = address,
                 city = city,
                 country = country,
-                postCode = postCode
+                postCode = postCode,
+                role = userRole
             )
         )
     }

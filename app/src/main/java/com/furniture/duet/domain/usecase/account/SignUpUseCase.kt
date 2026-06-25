@@ -23,6 +23,7 @@ import kotlin.reflect.jvm.internal.impl.builtins.StandardNames.FqNames.number
 
 
 class SignUpUseCase @Inject constructor(
+    private val cartRepository: CartRepository,
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
@@ -44,9 +45,10 @@ class SignUpUseCase @Inject constructor(
         if (password != passwordConfirmation)
             throw PasswordRepeatException()
 
-        userRepository.createAccount(
-            email = email,
-            password = password
+        userRepository.signUp(
+            email,
+            password
         )
+        cartRepository.syncCart()
     }
 }

@@ -47,15 +47,12 @@
     <string name="password_placeholder">Hasło</string>
     <string name="password_confirmation_placeholder">Potwierdzenie hasła</string>
     <string name="phone_placeholder">Numer telefonu komórkowego</string>
-    <string name="delivery_without_deposit">Dostawa bez depozytu</string>
-    <string name="delivery_with_deposit">Dostawa z zaliczką</string>
-    <string name="delivery_with_deposit_at_the_selected_time">Dostawa z zaliczką w wybranym terminie</string>
     <string name="delivery_price">Od %d zł</string>
     <string name="delivery_title">Dostawa</string>
     <string name="payment_title">Zapłata</string>
     <string name="payment_card">Karta płatnicza</string>
     <string name="cash_on_delivery">Płatność przy odbiorze</string>
-    <string name="go_father">Idź Ojcze</string>
+    <string name="go_father">Zamówić</string>
     <string name="including_shipping">W tym wysyłka</string>
     <string name="comfort_style_for_your_home"><![CDATA[Komfort i styl\ndla Twojego domu]]></string>
     <string name="collection">Kolekcja</string>
@@ -118,7 +115,19 @@
     <string name="check_you_re_data">Sprawdź swoje dane</string>
     <string name="privacy_policy_not_checked">Proszę zaakceptować Politykę prywatności</string>
     <string name="confirm_the_selection">Potwierdź wybór</string>
-    <string name="empty_orders">Lista zamówień jest pusta</string>
+    <string name="empty_orders">Nie masz jeszcze żadnych zamówień</string>
     <string name="empty_catalog">Nic nie znaleziono</string>
+    <string name="dimensions_label">Wymiary</string>
+    <string name="width_label">Szerokość:</string>
+    <string name="height_label">Wysokość:</string>
+    <string name="depth_label">Głębokość:</string>
+    <string name="order_pending">Oczekujące</string>
+    <string name="order_confirmed">Potwierdzone</string>
+    <string name="order_shipped">Wysłane</string>
+    <string name="order_delivered">Dostarczone</string>
+    <string name="order_cancelled">Anulowane</string>
+    <string name="delivery_pickup">Odbiór osobisty</string>
+    <string name="delivery_standard">Dostawa standardowa</string>
+    <string name="delivery_scheduled">Dostawa na wybraną godzinę</string>
+    <string name="order_amount">%d szt.</string>
 </resources>
-

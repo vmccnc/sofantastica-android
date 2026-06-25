@@ -1,21 +1,15 @@
 package com.furniture.duet.domain.usecase.account
 
-import com.furniture.duet.background.InternetConnectionManager
-import com.furniture.duet.data.model.account.AccountModel
-import com.furniture.duet.data.repository.CartRepository
-import com.furniture.duet.data.repository.FavoritesRepository
+import com.furniture.duet.data.model.account.AccountDto
+import com.furniture.duet.data.model.order.CustomerType
 import com.furniture.duet.data.repository.UserRepository
-import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
-import com.furniture.duet.domain.exceptions.WrongLoginOrPasswordException
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UpdateUserUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
+
     suspend operator fun invoke(
-        customerType: String,
         firstAndLastName: String,
         companyName: String,
         unn: String,
@@ -26,6 +20,10 @@ class UpdateUserUseCase @Inject constructor(
         country: String,
         postCode: String
     ) {
+        val customerType =
+            if (unn.isNotEmpty()) CustomerType.BUSINESS.name
+            else CustomerType.PRIVATE.name
+
         userRepository.updateAccount(
             customerType = customerType,
             firstAndLastName = firstAndLastName,

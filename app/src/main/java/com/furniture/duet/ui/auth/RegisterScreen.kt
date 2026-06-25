@@ -46,7 +46,9 @@ import com.furniture.duet.ui.common.UiState
 import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
-fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
+fun RegisterScreen(
+    viewModel: AuthViewModel = hiltViewModel()
+) {
     val tipColor = Color.Black.copy(.45f)
 
     val size_2 = dimensionResource(R.dimen.margin_2)
@@ -59,7 +61,7 @@ fun RegisterScreen(viewModel: AuthViewModel = hiltViewModel()) {
             .fillMaxSize()
             .padding(margin_16)
             .verticalScroll(state = rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Row(

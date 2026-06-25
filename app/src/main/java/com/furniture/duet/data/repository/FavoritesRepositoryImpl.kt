@@ -15,9 +15,9 @@ import com.furniture.duet.domain.exceptions.IsNotFoundedException
 import javax.inject.Inject
 
 class FavoritesRepositoryImpl @Inject constructor(
+    private val auth: FirebaseAuth,
     private val api: RetrofitApiService,
     private val favoriteDao: FavoriteDao,
-    private val auth: FirebaseAuth,
     private val connectionManager: InternetConnectionManager
 ) : FavoritesRepository {
     override suspend fun loadFavorites() {

@@ -4,6 +4,7 @@ import com.furniture.duet.data.model.furniture.FurnitureDto
 import com.furniture.duet.data.model.fabric.FabricDto
 import com.furniture.duet.data.model.order.OrderDto
 import com.furniture.duet.data.model.PriceDto
+import com.furniture.duet.data.model.account.AccountDto
 import com.furniture.duet.data.model.account.AccountModel
 import com.furniture.duet.data.model.cart.CartItemDto
 import com.furniture.duet.data.model.cart.AddCartItemResponse
@@ -133,18 +134,20 @@ interface RetrofitApiService {
         @retrofit2.http.Path("furnitureId") furnitureId: Long
     ): Response<Unit>
 
-    @GET("sofantastic/user/{userId}")
-    suspend fun getUser(@retrofit2.http.Path("userId") userId: String): Response<AccountModel>
+    @GET("sofantastic/user")
+    suspend fun addUser(
+        @retrofit2.http.Body user: AccountDto
+    ): Response<AccountDto>
 
-    @POST("sofantastic/user")
-    suspend fun createUser(
-        @retrofit2.http.Body user: AccountModel
-    ): Response<AccountModel>
+    @GET("sofantastic/user/{id}")
+    suspend fun getUser(
+        @retrofit2.http.Path("id") id: String
+    ): Response<AccountDto>
 
     @PUT("sofantastic/user/{id}")
     suspend fun updateUser(
         @retrofit2.http.Path("id") id: String,
-        @retrofit2.http.Body user: AccountModel
-    ): Response<AccountModel>
+        @retrofit2.http.Body user: AccountDto
+    ): Response<AccountDto>
 
 }

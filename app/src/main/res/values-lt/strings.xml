@@ -47,15 +47,12 @@
     <string name="password_placeholder">Slaptažodis</string>
     <string name="password_confirmation_placeholder">Slaptažodžio patvirtinimas</string>
     <string name="phone_placeholder">Mobiliojo telefono numeris</string>
-    <string name="delivery_without_deposit">Pristatymas be užstato</string>
-    <string name="delivery_with_deposit">Pristatymas su užstatu</string>
-    <string name="delivery_with_deposit_at_the_selected_time">Pristatymas pasirinktu laiku su užstatu</string>
     <string name="delivery_price">Nuo %d, PLN</string>
     <string name="delivery_title">Pristatymas</string>
     <string name="payment_title">Mokėjimas</string>
     <string name="payment_card">Mokėjimo kortelė</string>
     <string name="cash_on_delivery">Grynieji pinigai pristatymo metu</string>
-    <string name="go_father">Eik, Tėve</string>
+    <string name="go_father">Užsakyti</string>
     <string name="including_shipping">Įskaitant siuntimą</string>
     <string name="comfort_style_for_your_home"><![CDATA[Komfortas ir stilius\njūsų namams]]></string>
     <string name="collection">Kolekcija</string>
@@ -118,6 +115,19 @@
     <string name="check_you_re_data">Patikrinkite savo duomenis</string>
     <string name="privacy_policy_not_checked">Prašome sutikti su privatumo politika</string>
     <string name="confirm_the_selection">Patvirtinkite pasirinkimą</string>
-    <string name="empty_orders">Pasūtījumu saraksts ir tukšs</string>
+    <string name="empty_orders">Dar neturite jokių užsakymų</string>
     <string name="empty_catalog">Nekas nav atrasts</string>
+    <string name="dimensions_label">Matmenys</string>
+    <string name="width_label">Plotis:</string>
+    <string name="height_label">Aukštis:</string>
+    <string name="depth_label">Gylis:</string>
+    <string name="order_pending">Pendens</string>
+    <string name="order_confirmed">Confirmatum</string>
+    <string name="order_shipped">Missum</string>
+    <string name="order_delivered">Traditum</string>
+    <string name="order_cancelled">Abolitum</string>
+    <string name="delivery_pickup">Atsiėmimas vietoje</string>
+    <string name="delivery_standard">Standartinis pristatymas</string>
+    <string name="delivery_scheduled">Pristatymas nustatytu laiku</string>
+    <string name="order_amount">%d vnt.</string>
 </resources>

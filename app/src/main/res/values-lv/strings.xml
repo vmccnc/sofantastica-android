@@ -47,15 +47,12 @@
     <string name="password_placeholder">Parole</string>
     <string name="password_confirmation_placeholder">Paroles apstiprināšana</string>
     <string name="phone_placeholder">Mobilā tālruņa numurs</string>
-    <string name="delivery_without_deposit">Piegāde bez depozīta</string>
-    <string name="delivery_with_deposit">Piegāde ar depozītu</string>
-    <string name="delivery_with_deposit_at_the_selected_time">Piegāde ar priekšapmaksu izvēlētajā laikā</string>
     <string name="delivery_price">No %d, PLN</string>
     <string name="delivery_title">Piegāde</string>
     <string name="payment_title">Maksājums</string>
     <string name="payment_card">Maksājumu karte</string>
     <string name="cash_on_delivery">Skaidrā naudā piegādes brīdī</string>
-    <string name="go_father">Ej, tēvs</string>
+    <string name="go_father">Pasūtīt</string>
     <string name="including_shipping">Ieskaitot piegādi</string>
     <string name="comfort_style_for_your_home"><![CDATA[Komforts un stils\njūsu mājām]]></string>
     <string name="collection">Kolekcija</string>
@@ -118,6 +115,19 @@
     <string name="check_you_re_data">Pārbaudiet savus datus</string>
     <string name="privacy_policy_not_checked">Lūdzu, piekrītiet konfidencialitātes politikai</string>
     <string name="confirm_the_selection">Apstipriniet izvēli</string>
-    <string name="empty_orders">Užsakymų sąrašas tuščias</string>
+    <string name="empty_orders">Jums vēl nav neviena pasūtījuma</string>
     <string name="empty_catalog">Nieko nerasta</string>
+    <string name="dimensions_label">Izmēri</string>
+    <string name="width_label">Platums:</string>
+    <string name="height_label">Augstums:</string>
+    <string name="depth_label">Dziļums:</string>
+    <string name="order_pending">Gaida apstiprinājumu</string>
+    <string name="order_confirmed">Apstiprināts</string>
+    <string name="order_shipped">Nosūtīts</string>
+    <string name="order_delivered">Piegādāts</string>
+    <string name="order_cancelled">Atcelts</string>
+    <string name="delivery_pickup">Pašizvešana</string>
+    <string name="delivery_standard">Standarta piegāde</string>
+    <string name="delivery_scheduled">Piegāde noteiktā laikā</string>
+    <string name="order_amount">%d gab.</string>
 </resources>

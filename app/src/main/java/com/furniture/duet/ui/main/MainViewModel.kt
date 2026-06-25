@@ -24,8 +24,13 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            try {
+            } catch (_: Exception) {
+
+            }
+
             _getCartCount().collectLatest {
-                cartCount = it
+                cartCount = it ?: 0
             }
         }
     }

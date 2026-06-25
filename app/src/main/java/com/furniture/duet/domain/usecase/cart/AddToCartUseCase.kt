@@ -34,6 +34,7 @@ class AddToCartUseCase @Inject constructor(
             fabricPrice = furnitureDetail.fabricPrice,
             quantity = quantity
         )
+        CountStorage.increaseCartCount(context)
         return cartId
     }
 }

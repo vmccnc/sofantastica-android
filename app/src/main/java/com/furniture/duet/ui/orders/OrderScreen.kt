@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furniture.duet.R
+import com.furniture.duet.data.model.order.DeliveryMethodType
+import com.furniture.duet.data.model.order.PaymentType
 import com.furniture.duet.ui.cart.CartViewModel
 import com.furniture.duet.ui.main.MainViewModel
 import com.furniture.duet.ui.theme.EnabledBtnColor
@@ -46,6 +48,7 @@ import com.furniture.duet.ui.theme.FabricSecondaryColor
 import com.furniture.duet.ui.theme.FurnitureDetailTextColor
 import com.furniture.duet.ui.theme.SearchBarBackgroundColor
 import com.furniture.duet.ui.theme.TitleColor
+import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enabled
 
 @Composable
 fun MakeOrderScreen(
@@ -109,13 +112,13 @@ fun MakeOrderScreen(
         StyledTextField(viewModel.fullName, viewModel::setNewFullName,
             stringResource(R.string.full_name_placeholder))
         StyledTextField(viewModel.country, viewModel::setNewCountry,
-            stringResource(R.string.country_placeholder))
+            stringResource(R.string.country_placeholder), viewModel.isAddressEnabled())
         StyledTextField(viewModel.city, viewModel::setNewCity,
-            stringResource(R.string.city_placeholder))
+            stringResource(R.string.city_placeholder), viewModel.isAddressEnabled())
         StyledTextField(viewModel.address, viewModel::setNewAddress,
-            stringResource(R.string.address_placeholder))
+            stringResource(R.string.address_placeholder), viewModel.isAddressEnabled())
         StyledTextField(viewModel.postalCode, viewModel::setNewPostalCode,
-            stringResource(R.string.postal_code_placeholder))
+            stringResource(R.string.postal_code_placeholder), viewModel.isAddressEnabled())
         StyledTextField(viewModel.email, viewModel::setNewEmail,
             stringResource(R.string.email_placeholder))
         StyledTextField(viewModel.phone, viewModel::setNewPhone,
@@ -154,8 +157,7 @@ fun MakeOrderScreen(
         PaymentOptionSelector()
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -206,7 +208,8 @@ fun MakeOrderScreen(
 fun StyledTextField(
     value: String,
     changeValue: (String) -> Unit,
-    placeholder: String
+    placeholder: String,
+    enabled: Boolean = true
 ) {
     val margin_60 = dimensionResource(R.dimen.margin_60)
     val margin_5 = dimensionResource(R.dimen.margin_5)
@@ -214,16 +217,16 @@ fun StyledTextField(
         value = value,
         onValueChange = changeValue,
         textStyle = MaterialTheme.typography.bodyMedium,
+        enabled = enabled,
         placeholder = {
-            Text(text = placeholder,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium)
         },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = SearchBarBackgroundColor,
             unfocusedContainerColor = SearchBarBackgroundColor,
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledContainerColor = Color.Gray
         ),
         singleLine = true,
         modifier = Modifier
@@ -244,7 +247,7 @@ fun DeliveryOptionSelector(viewModel: OrderViewModel = hiltViewModel()){
         color = EnabledBtnColor
     )
 
-    viewModel.deliveryOptionList.forEach { deliveryOption ->
+    DeliveryMethodType.values().forEach { deliveryOption ->
         Row(
             Modifier
                 .fillMaxWidth()
@@ -264,7 +267,7 @@ fun DeliveryOptionSelector(viewModel: OrderViewModel = hiltViewModel()){
             )
             Column {
                 Text(
-                    text = deliveryOption.text,
+                    text = stringResource(deliveryOption.textId),
                     style = MaterialTheme.typography.labelSmall,
                     color = EnabledBtnColor
                 )
@@ -294,13 +297,16 @@ fun PaymentOptionSelector(viewModel: OrderViewModel = hiltViewModel()){
         style = MaterialTheme.typography.bodyLarge,
         color = EnabledBtnColor
     )
+    PaymentType.entries.forEach { paymentOption ->
+        val backgroundColor =
+            if (paymentOption == PaymentType.CASH) Color.White
+            else Color.Gray
 
-    viewModel.paymentOptionList.forEach { paymentOption ->
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = margin_10)
-                .background(Color.White, RoundedCornerShape(size_24))
+                .background(backgroundColor, RoundedCornerShape(size_24))
                 .padding(margin_10)
                 .selectable(
                     selected = (paymentOption == viewModel.selectedPaymentOption),
@@ -311,54 +317,22 @@ fun PaymentOptionSelector(viewModel: OrderViewModel = hiltViewModel()){
         ) {
             RadioButton(
                 selected = (paymentOption == viewModel.selectedPaymentOption),
-                onClick = { viewModel.selectPaymentOption(paymentOption) }
+                onClick = { viewModel.selectPaymentOption(paymentOption) },
+                enabled = paymentOption == PaymentType.CASH,
+//                selected = (paymentOption == viewModel.selectedPaymentOption),
+//                onClick = { viewModel.selectPaymentOption(paymentOption) }
             )
             Text(
-                text = paymentOption.text,
+                text = stringResource(paymentOption.textId),
                 style = MaterialTheme.typography.labelSmall,
                 color = EnabledBtnColor
             )
             Spacer(Modifier.weight(1f))
             Image(
-                painter = painterResource(paymentOption.logo),
+                painter = painterResource(paymentOption.logoId),
                 contentDescription = null,
                 modifier = Modifier.padding(margin_10)
             )
         }
-    }
- 
-    val cashOptionBackgroundColor =
-        if (viewModel.isCashPaymentOptionEnabled) Color.White
-        else Color.Gray
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = margin_10)
-            .background(cashOptionBackgroundColor, RoundedCornerShape(size_24))
-            .padding(margin_10)
-            .selectable(
-                selected = (viewModel.cashPaymentOption == viewModel.selectedPaymentOption),
-                onClick = { viewModel.selectPaymentOption(viewModel.cashPaymentOption) },
-                role = Role.RadioButton,
-                enabled = viewModel.isCashPaymentOptionEnabled
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            enabled = viewModel.isCashPaymentOptionEnabled,
-            selected = (viewModel.cashPaymentOption == viewModel.selectedPaymentOption),
-            onClick = { viewModel.selectPaymentOption(viewModel.cashPaymentOption) }
-        )
-        Text(
-            text = viewModel.cashPaymentOption.text,
-            style = MaterialTheme.typography.labelSmall,
-            color = EnabledBtnColor
-        )
-        Spacer(Modifier.weight(1f))
-        Image(
-            painter = painterResource(viewModel.cashPaymentOption.logo),
-            contentDescription = null,
-            modifier = Modifier.padding(margin_10)
-        )
     }
 }

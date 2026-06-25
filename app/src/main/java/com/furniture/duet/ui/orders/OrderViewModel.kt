@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furniture.duet.R
 import com.furniture.duet.data.model.order.CreateOrderModel
-import com.furniture.duet.data.model.order.DeliveryOptionModel
-import com.furniture.duet.data.model.order.PaymentOptionModel
+import com.furniture.duet.data.model.order.DeliveryMethodType
+import com.furniture.duet.data.model.order.PaymentType
 import com.furniture.duet.domain.exceptions.IsNotAuthorizeException
 import com.furniture.duet.domain.exceptions.ResIdException
 import com.furniture.duet.domain.usecase.account.GetUserDataUseCase
@@ -51,40 +51,18 @@ class OrderViewModel @Inject constructor(
     var country by mutableStateOf("")
         private set
 
-    val deliveryOptionList = listOf(
-        DeliveryOptionModel(context.getString(R.string.delivery_without_deposit), 100),
-        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit), 150),
-        DeliveryOptionModel(context.getString(R.string.delivery_with_deposit_at_the_selected_time), 180)
-    )
-
-    var selectedDeliveryOption by mutableStateOf<DeliveryOptionModel?>(null)
+    var selectedDeliveryOption by mutableStateOf<DeliveryMethodType?>(null)
         private set
 
-    fun selectDeliveryOption(newSelectedOption: DeliveryOptionModel) {
+    fun selectDeliveryOption(newSelectedOption: DeliveryMethodType) {
         selectedDeliveryOption = newSelectedOption
-        if (deliveryOptionList[0] == newSelectedOption) {
-            isCashPaymentOptionEnabled = false
-            if (selectedPaymentOption == cashPaymentOption)
-                selectedPaymentOption = null
-        } else {
-            isCashPaymentOptionEnabled = true
-        }
     }
 
-    val paymentOptionList = listOf(
-        PaymentOptionModel(context.getString(R.string.payment_card), R.drawable.i_payment_card),
-        //PaymentOptionModel(context.getString(R.string.blik), R.drawable.i_blink),
-        //PaymentOptionModel(context.getString(R.string.fast_transfer), R.drawable.i_przelewy),
-    )
-
-    var isCashPaymentOptionEnabled by mutableStateOf(true)
-        private set
-    val cashPaymentOption = PaymentOptionModel(context.getString(R.string.cash_on_delivery), R.drawable.i_cash)
-
-    var selectedPaymentOption by mutableStateOf<PaymentOptionModel?>(null)
+    var selectedPaymentOption by mutableStateOf<PaymentType?>(null)
         private set
 
-    fun selectPaymentOption(newSelectedPaymentOption: PaymentOptionModel) {
+    fun selectPaymentOption(newSelectedPaymentOption: PaymentType) {
+        if(newSelectedPaymentOption != PaymentType.CASH) return
         selectedPaymentOption = newSelectedPaymentOption
     }
 
@@ -110,8 +88,7 @@ class OrderViewModel @Inject constructor(
                 isOrderSent = _createOrder(isBusiness, fullName,
                     companyName, unn, email, phone,
                     address, city, postalCode, country,
-                    selectedDeliveryOption?.text ?: "",
-                    selectedPaymentOption?.text ?: ""
+                    selectedDeliveryOption, selectedPaymentOption
                 )
             } catch (e: IllegalArgumentException) {
                 Toast.makeText(context, R.string.check_you_re_data, Toast.LENGTH_SHORT).show()
@@ -187,5 +164,10 @@ class OrderViewModel @Inject constructor(
         viewModelScope.launch {
             companyName = newCompanyName
         }
+    }
+
+    fun isAddressEnabled(): Boolean {
+        if (selectedDeliveryOption == null) return true
+        return selectedDeliveryOption != DeliveryMethodType.Pickup
     }
 }

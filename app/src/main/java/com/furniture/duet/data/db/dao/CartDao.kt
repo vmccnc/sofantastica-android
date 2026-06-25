@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.furniture.duet.data.db.entity.CartItemEntity
 import com.furniture.duet.data.model.cart.CartItemModel
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDao {
@@ -29,8 +30,8 @@ interface CartDao {
     @Query("SELECT MAX(id) FROM cart")
     suspend fun getLastId(): Int?
 
-    @Query("SELECT COUNT(*) FROM cart")
-    fun getCartCount(): Int
+    @Query("SELECT SUM(quantity) FROM cart")
+    fun getCartCount(): Flow<Int?>
 
     @Query("SELECT * FROM cart WHERE id = :id")
     suspend fun getCartItem(id: Int): CartItemEntity?

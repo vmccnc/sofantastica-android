@@ -89,7 +89,7 @@ fun CartScreen(
     if (data.items.isEmpty()) {
         ConstraintLayout(
             modifier = Modifier
-                .padding(horizontal = margin_16)
+                .padding(margin_16)
                 .fillMaxSize()
         ) {
             val (cartLabel, emptyCartImage, emptyCartText) = createRefs()
@@ -128,7 +128,7 @@ fun CartScreen(
             )
         }
     } else {
-        LazyColumn(modifier = Modifier.padding(horizontal = margin_16)) {
+        LazyColumn(modifier = Modifier.padding(margin_16)) {
             item {
                 Column {
                     Text(text = stringResource(R.string.cart_label),
@@ -306,11 +306,12 @@ fun CartCounter(
 ) {
     val margin_10 = dimensionResource(R.dimen.margin_10)
     val size_40 = dimensionResource(R.dimen.size_40)
+    val roundedShape = RoundedCornerShape(size_40)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .background(Color.White, RoundedCornerShape(size_40))
-            .border(1.dp, EnabledBtnColor, RoundedCornerShape(size_40))
+            .background(Color.White, roundedShape)
+            .border(1.dp, EnabledBtnColor, roundedShape)
     ) {
         Image(
             modifier = Modifier

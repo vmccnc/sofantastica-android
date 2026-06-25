@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -53,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -61,6 +63,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.paging.PagingData
@@ -156,7 +159,9 @@ fun CatalogScreen(
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { viewModel.onSearch() }
+                        onGo = {
+                            viewModel.onSearch()
+                        }
                     ),
                     singleLine = true,
                     modifier = Modifier
@@ -320,11 +325,14 @@ fun FurnitureCard(
             text = item.name,
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier
+                .padding(top = margin_10, start = margin_10, end = margin_10)
                 .constrainAs(nameTxt) {
-                    top.linkTo(image.bottom, margin = margin_10)
-                    start.linkTo(parent.start, margin = margin_10)
+                    top.linkTo(image.bottom)
+                    start.linkTo(parent.start)
                 },
-            color = Color.White
+            color = Color.White,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
             text = stringResource(R.string.furniture_total_price).format(item.basePrice),

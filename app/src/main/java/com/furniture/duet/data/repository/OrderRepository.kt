@@ -15,7 +15,7 @@ interface OrderRepository {
         city: String,
         postCode: String,
         country: String,
-        typeOfDelivery: String,
+        typeOfDelivery: Int,
         typeOfPayment: String
     ): Boolean
     suspend fun getOrders(page: Int): OrderHistoryModel

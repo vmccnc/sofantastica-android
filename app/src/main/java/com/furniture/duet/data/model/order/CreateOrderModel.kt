@@ -12,7 +12,7 @@ data class CreateOrderModel(
     val city: String,
     val postCode: String,
     val country: String,
-    val typeOfDelivery: String,
+    val typeOfDelivery: Int,
     val typeOfPayment: String,
-    val status: String = "NEW"
+    val status: String = OrderStatus.PENDING.name
 )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -55,6 +58,7 @@ import com.furniture.duet.ui.theme.EnabledBtnColor
 import com.furniture.duet.ui.theme.FabricPrimaryColor
 import com.furniture.duet.ui.theme.FabricSecondaryColor
 import com.furniture.duet.ui.theme.FurnitureDetailTextColor
+import com.furniture.duet.ui.theme.LightBackground
 import com.furniture.duet.ui.theme.PriceBackgroundColor
 import com.furniture.duet.ui.theme.SelectedPageColor
 import com.furniture.duet.ui.theme.TitleColor
@@ -87,7 +91,10 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                           viewModel: FurnitureDetailViewModel = hiltViewModel()) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_5 = dimensionResource(R.dimen.margin_5)
-    val size_10 = dimensionResource(R.dimen.margin_10)
+    val margin_20 = dimensionResource(R.dimen.margin_20)
+    val margin_10 = dimensionResource(R.dimen.margin_10)
+    val size_40 = dimensionResource(R.dimen.size_40)
+    val size_24 = dimensionResource(R.dimen.size_24)
     val titleSize = LocalConfiguration.current.screenWidthDp - 200
     val imagesHeight = LocalConfiguration.current.screenHeightDp / 3
 
@@ -135,7 +142,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                         .padding(horizontal = margin_16)
                         .clip(CircleShape)
                         .background(color)
-                        .size(size_10)
+                        .size(margin_10)
                     )
                 }
             }
@@ -144,7 +151,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                 else painterResource(R.drawable.i_favorite_border)
             Image(
                 modifier = Modifier
-                    .padding(size_10)
+                    .padding(margin_10)
                     .clip(CircleShape)
                     .background(Color.White)
                     .clickable { viewModel.toggleFavorite() }
@@ -186,7 +193,7 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             style = MaterialTheme.typography.titleMedium,
             color = FurnitureDetailTextColor,
             modifier = Modifier
-                .padding(vertical = 10.dp)
+                .padding(vertical = margin_20)
                 .width(titleSize.dp)
                 .constrainAs(nameTxt) {
                     top.linkTo(view3DBtn.bottom, margin_16)
@@ -200,8 +207,8 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             style = MaterialTheme.typography.titleMedium,
             color = FurnitureDetailTextColor,
             modifier = Modifier
-                .background(PriceBackgroundColor, RoundedCornerShape(40.dp))
-                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .background(PriceBackgroundColor, RoundedCornerShape(size_40))
+                .padding(horizontal = margin_20, vertical = margin_20)
                 .constrainAs(priceTxt) {
                     top.linkTo(view3DBtn.bottom, margin_16)
                     end.linkTo(parent.end)
@@ -211,21 +218,26 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
         Text(
             text = stringResource(R.string.cart_total),
             style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
             color = FurnitureDetailTextColor,
             modifier = Modifier
+                .padding(top = margin_16)
                 .constrainAs(totalPriceLabel) {
-                    top.linkTo(fabricLayout.bottom, margin_16)
+                    top.linkTo(fabricLayout.bottom)
                     start.linkTo(parent.start)
                 }
         )
 
         Text(
             text = stringResource(R.string.furniture_total_price).format(item.totalPrice),
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
             color = FurnitureDetailTextColor,
+            textAlign = TextAlign.Center,
             modifier = Modifier
+                .padding(top = margin_16)
                 .constrainAs(totalPrice) {
-                    top.linkTo(fabricLayout.bottom, margin_16)
+                    top.linkTo(fabricLayout.bottom)
                     end.linkTo(parent.end)
                 }
         )
@@ -299,7 +311,8 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
                         .fillMaxWidth()
                         .constrainAs(selectFabricBtn) {
                             top.linkTo(totalPriceLabel.bottom)
-                        },
+                        }
+                        .padding(vertical = margin_16),
                     count = viewModel.count,
                     setCount = viewModel::setCountInCart
                 )
@@ -310,13 +323,28 @@ fun FurnitureDetailScreen(item: FurnitureFabricDto,
             layoutModifier = Modifier
                 .fillMaxWidth()
                 .padding(top = margin_16)
-                .background(Color.White, RoundedCornerShape(24.dp))
+                .background(Color.White, RoundedCornerShape(size_24))
                 .constrainAs(descriptionLayout) {
                     top.linkTo(selectFabricBtn.bottom)
                 },
             isDescriptionOpened = viewModel.isDescriptionOpened,
             toggleDescription = viewModel::toggleDescription,
             descriptionText = item.description
+        )
+
+        Dimensions(
+            layoutModifier = Modifier
+                .fillMaxWidth()
+                .padding(top = margin_16)
+                .background(Color.White, RoundedCornerShape(size_24))
+                .constrainAs(dimensionsLayout) {
+                    top.linkTo(descriptionLayout.bottom)
+                },
+            isDimensionsOpened = viewModel.isDimensionsOpened,
+            toggleDimensions = viewModel::toggleDimensions,
+            width = 0,
+            height = 0,
+            depth = 0
         )
 
     }
@@ -422,7 +450,6 @@ fun AddedToCartButtons(
     count: Int,
     setCount: (Int) -> Unit
 ) {
-    val margin_16 = dimensionResource(R.dimen.margin_16)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -434,9 +461,9 @@ fun AddedToCartButtons(
         )
         Text(
             text = stringResource(R.string.product_added_to_cart),
-            modifier = Modifier.padding(margin_16),
             style = MaterialTheme.typography.bodyMedium,
-            color = TitleColor
+            color = TitleColor,
+            modifier = Modifier.fillMaxSize(.5f)
         )
         CartCounter(count, setCount)
     }
@@ -476,9 +503,108 @@ fun Description(
         if (isDescriptionOpened) {
             Text(
                 text = descriptionText,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(start = margin_16, end = margin_16, bottom = margin_16)
             )
+        }
+    }
+}
+
+@Composable
+fun Dimensions(
+    layoutModifier: Modifier,
+    isDimensionsOpened: Boolean,
+    toggleDimensions: () -> Unit,
+    width: Int,
+    height: Int,
+    depth: Int
+) {
+    val margin_16 = dimensionResource(R.dimen.margin_16)
+    Column(
+        modifier = layoutModifier
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(margin_16)
+                .clickable { toggleDimensions() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.dimensions_label),
+                style = MaterialTheme.typography.labelSmall
+            )
+            val arrowPainter =
+                if (isDimensionsOpened) painterResource(R.drawable.i_arrow_up)
+                else painterResource(R.drawable.i_arrow_down)
+            Image(
+                painter = arrowPainter,
+                contentDescription = null
+            )
+        }
+
+        if (isDimensionsOpened) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(margin_16),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.width_label),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    //text = width.toString(),
+                    stringResource(R.string.undefined_width),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = margin_16),
+                color = LightBackground
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(margin_16),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.height_label),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+//                    text = height.toString(),
+                    text = stringResource(R.string.undefined_height),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = margin_16),
+                color = LightBackground
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(margin_16),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.depth_label),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+//                    text = height.toString(),
+                    text = stringResource(R.string.undefined_depth),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }

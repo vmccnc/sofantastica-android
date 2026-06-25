@@ -129,29 +129,31 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             Text(
                 text = stringResource(R.string.collection),
                 style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                softWrap = false
             )
 
-            Row(modifier = Modifier
-                .padding(bottom = margin_20)
-                .height(size_170), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.padding(bottom = margin_20),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Image(
                     modifier = Modifier
                         .weight(.5f)
                         .padding(end = margin_5)
-                        .fillMaxHeight()
                         .clip(shape = RoundedCornerShape(margin_20)),
                     painter = painterResource(R.drawable.home_image_1),
-                    contentDescription = null
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
                 Image(
                     modifier = Modifier
                         .weight(.5f)
                         .padding(start = margin_5)
-                        .fillMaxHeight()
                         .clip(shape = RoundedCornerShape(margin_20)),
                     painter = painterResource(R.drawable.home_image_2),
-                    contentDescription = null
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -181,13 +183,15 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             )
 
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(margin_20)
-                    .fillMaxWidth()
+                    .padding(vertical = margin_20)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
                 viewModel.bestChoiseList.forEach { item ->
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Image(
                             painter = painterResource(item.imageId),
                             contentDescription = null

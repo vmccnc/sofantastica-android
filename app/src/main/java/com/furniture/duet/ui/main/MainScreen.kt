@@ -42,6 +42,7 @@ import androidx.navigation.NavType
 import com.furniture.duet.R
 import com.furniture.duet.data.data_store.CountStorage
 import com.furniture.duet.ui.account.AccountRoute
+import com.furniture.duet.ui.account.AccountScreen
 import com.furniture.duet.ui.auth.LoginRoute
 import com.furniture.duet.ui.auth.LoginScreen
 import com.furniture.duet.ui.auth.RegisterScreen
@@ -111,7 +112,7 @@ fun MainScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEach { screen ->
-                    val selected = currentRoute == screen.route
+                    val selected = currentRoute?.startsWith(screen.route) ?: false
                     NavigationBarItem(
                         modifier = Modifier.clip(RoundedCornerShape(20.dp)),
                         selected = selected,
@@ -154,7 +155,7 @@ fun MainScreen() {
                 )
             }
             composable(Screen.Account.route) {
-                LoginRoute()
+                AccountRoute()
             }
             composable(
                 route = "detail/{id}",

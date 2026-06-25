@@ -22,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,13 +49,12 @@ import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
 fun AccountRoute(
-    logOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState
     when(state) {
         is UiState.Error -> ErrorUI("Error: ${state.throwable.message}")
-        is UiState.Loading -> LoadingUI()
+        is UiState.Loading -> LoginRoute(viewModel::getUserData)
         else -> {
             var accountMode by remember { mutableStateOf(false) }
             val margin_16 = dimensionResource(R.dimen.margin_16)
@@ -105,7 +105,7 @@ fun AccountRoute(
                     )
                 }
                 if (accountMode)
-                    AccountScreen(logOut)
+                    AccountScreen()
                 else
                     OrderHistoryScreen()
             }
@@ -115,7 +115,6 @@ fun AccountRoute(
 
 @Composable
 fun AccountScreen(
-    logOut: () -> Unit,
     viewModel: AccountViewModel = hiltViewModel()
 ) {
     val margin_5 = dimensionResource(R.dimen.margin_5)
@@ -239,7 +238,7 @@ fun AccountScreen(
             modifier = Modifier
                 .padding(vertical = margin_5)
                 .fillMaxWidth(),
-            onClick = { logOut() },
+            onClick = { viewModel.logOut() },
             colors = ButtonDefaults.buttonColors(
                 containerColor = EnabledBtnColor,
                 contentColor = Color.White

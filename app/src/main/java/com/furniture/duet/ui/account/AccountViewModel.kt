@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.furniture.duet.background.InternetConnectionManager
 import com.furniture.duet.data.model.account.AccountModel
+import com.furniture.duet.data.model.order.OrderHistoryModel
 import com.furniture.duet.domain.exceptions.ResIdException
 import com.furniture.duet.domain.usecase.account.GetUserDataUseCase
 import com.furniture.duet.domain.usecase.account.LogOutUseCase
@@ -32,7 +33,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val connectionManager: InternetConnectionManager,
     private val _getUser: GetUserDataUseCase,
     private val _updateUser: UpdateUserUseCase,
     private val _logOut: LogOutUseCase,
@@ -71,8 +71,8 @@ class AccountViewModel @Inject constructor(
 
     fun getUserData() {
         try {
-            connectionManager.isOnline()
             viewModelScope.launch {
+                uiState = UiState.Loading
                 _getUser()?.let {
                     email = it.email
                     fullName = it.firstAndLastName
@@ -80,12 +80,13 @@ class AccountViewModel @Inject constructor(
                     country = it.country
                     city = it.city
                     postCode = it.postCode
+                    unn = it.unn
+                    companyName = it.companyName
                     uiState = UiState.Success(Unit)
                 }
             }
         } catch (e: ResIdException) {
             Toast.makeText(context, e.resId, Toast.LENGTH_SHORT).show()
-            uiState = UiState.Success(Unit)
         } catch (e: Exception) {
             uiState = UiState.Error(e)
         }
@@ -99,10 +100,9 @@ class AccountViewModel @Inject constructor(
         isEditable = false
         viewModelScope.launch {
             _updateUser(
-                customerType = "",
                 firstAndLastName = fullName,
-                companyName = "",
-                unn = "",
+                companyName = companyName,
+                unn = unn,
                 phone = phone,
                 email = email,
                 address = address,
@@ -172,6 +172,21 @@ class AccountViewModel @Inject constructor(
     fun setNewCompanyName(newCompanyName: String) {
         viewModelScope.launch {
             companyName = newCompanyName
+        }
+    }
+
+    fun logOut() {
+        viewModelScope.launch {
+            _logOut()
+            email = ""
+            fullName = ""
+            address = ""
+            country = ""
+            city = ""
+            postCode = ""
+            unn = ""
+            companyName = ""
+            uiState = UiState.Loading
         }
     }
 

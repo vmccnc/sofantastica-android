@@ -42,6 +42,7 @@ import com.furniture.duet.ui.theme.EnabledBtnColor
 
 @Composable
 fun LoginRoute(
+    afterLogIn: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState
@@ -54,12 +55,17 @@ fun LoginRoute(
                 RegisterScreen()
             }
         }
-        else -> AccountRoute(viewModel::logOut)
+        else -> {
+            viewModel.logOnCompeted()
+            afterLogIn()
+        }
     }
 }
 
 @Composable
-fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
+fun LoginScreen(
+    viewModel: AuthViewModel = hiltViewModel()
+) {
     val margin_16 = dimensionResource(R.dimen.margin_16)
     val margin_20 = dimensionResource(R.dimen.margin_20)
     val roundedShape = RoundedCornerShape(margin_20)
@@ -69,7 +75,7 @@ fun LoginScreen(viewModel: AuthViewModel = hiltViewModel()) {
             .fillMaxSize()
             .padding(margin_16)
             .verticalScroll(state = rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Row(modifier = Modifier
